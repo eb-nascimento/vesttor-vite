@@ -1,0 +1,33 @@
+.card {
+  padding: 16px;
+  border-radius: 12px;
+  color: black;
+  margin-bottom: 12px;
+  font-family: Arial;
+}
+
+.card h2 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.card p {
+  margin: 8px 0 0;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+/* RECEITAS */
+.receita {
+  background-color: #2ecc71;
+}
+
+/* DESPESAS */
+.despesa {
+  background-color: #e74c3c;
+}
+
+/* SALDO */
+.saldo {
+  background-color: #3498db;
+}
