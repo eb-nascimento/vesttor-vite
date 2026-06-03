@@ -4,6 +4,7 @@ import "./App.css";
 import Header from "./components/Header";
 import ContainerResumo from "./components/ContainerResumo";
 import Form from "./components/Form";
+import ListaTransacoes from "./components/ListaTransacoes";
 
 import {
   calcularSaldo,
@@ -28,6 +29,7 @@ function App() {
           despesas={calcularDespesas(transacoes)}
         />
         <Form onAdd={adicionarTransacao} />
+        <ListaTransacoes transacoes={transacoes} />
       </main>
     </>
   );

@@ -17,16 +17,16 @@
 }
 
 /* RECEITAS */
-.receita {
+.card.receita {
   background-color: #2ecc71;
 }
 
 /* DESPESAS */
-.despesa {
+.card.despesa {
   background-color: #e74c3c;
 }
 
 /* SALDO */
-.saldo {
+.card.saldo {
   background-color: #3498db;
 }
