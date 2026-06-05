@@ -1,17 +1,35 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // import "./form.css";
 import { criarTransacao } from "../utils/transacao";
 
-function Form({ onAdd }) {
+function Form({ onAdd, onEdit, transacaoEditando }) {
   const [descricao, setDescricao] = useState("");
   const [valor, setValor] = useState("");
   const [tipo, setTipo] = useState("receita");
 
-  function adicionarTransacao() {
-    const nova = criarTransacao(descricao, valor, tipo);
-    onAdd(nova);
+  useEffect(() => {
+    if (transacaoEditando) {
+      setDescricao(transacaoEditando.descricao);
+      setValor(transacaoEditando.valor);
+      setTipo(transacaoEditando.tipo);
+    } else {
+      setDescricao("");
+      setValor("");
+      setTipo("receita");
+    }
+  }, [transacaoEditando]);
 
-    // Limpar os campos após adicionar
+  function salvar() {
+    if (transacaoEditando) {
+      onEdit(transacaoEditando.id, {
+        descricao,
+        valor: Number(valor),
+        tipo,
+      });
+    } else {
+      const nova = criarTransacao(descricao, valor, tipo);
+      onAdd(nova);
+    }
     setDescricao("");
     setValor("");
     setTipo("receita");
@@ -19,8 +37,7 @@ function Form({ onAdd }) {
 
   return (
     <section className="form-container">
-      <h2>Nova Transação</h2>
-
+      <h2>{transacaoEditando ? "Editar Transação" : "Nova Transação"}</h2>
       <input
         type="text"
         placeholder="Descrição"
@@ -40,7 +57,9 @@ function Form({ onAdd }) {
         <option value="despesa">Despesa</option>
       </select>
 
-      <button onClick={adicionarTransacao}>Adicionar</button>
+      <button onClick={salvar}>
+        {transacaoEditando ? "Salvar Alterações" : "Adicionar"}
+      </button>
     </section>
   );
 }

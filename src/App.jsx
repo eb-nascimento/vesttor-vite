@@ -1,35 +1,45 @@
 import { useState } from "react";
 import "./App.css";
 
+import { useTransacoes } from "./hooks/useTransacoes";
+
 import Header from "./components/Header";
 import ContainerResumo from "./components/ContainerResumo";
 import Form from "./components/Form";
 import ListaTransacoes from "./components/ListaTransacoes";
 
-import {
-  calcularSaldo,
-  calcularReceitas,
-  calcularDespesas,
-} from "./utils/calculos";
-
 function App() {
-  const [transacoes, setTransacoes] = useState([]);
-
-  function adicionarTransacao(nova) {
-    setTransacoes([...transacoes, nova]);
-  }
+  const {
+    transacoes,
+    adicionarTransacao,
+    excluirTransacao,
+    editarTransacao,
+    iniciarEdicao,
+    transacaoEditando,
+    saldo,
+    receitas,
+    despesas,
+  } = useTransacoes();
 
   return (
     <>
       <Header />
       <main>
         <ContainerResumo
-          saldo={calcularSaldo(transacoes)}
-          receitas={calcularReceitas(transacoes)}
-          despesas={calcularDespesas(transacoes)}
+          saldo={saldo}
+          receitas={receitas}
+          despesas={despesas}
         />
-        <Form onAdd={adicionarTransacao} />
-        <ListaTransacoes transacoes={transacoes} />
+        <Form
+          onAdd={adicionarTransacao}
+          onEdit={editarTransacao}
+          transacaoEditando={transacaoEditando}
+        />
+        <ListaTransacoes
+          transacoes={transacoes}
+          onExcluir={excluirTransacao}
+          onEditar={iniciarEdicao}
+        />
       </main>
     </>
   );
