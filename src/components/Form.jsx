@@ -3,34 +3,40 @@ import { useEffect, useState } from "react";
 import { criarTransacao } from "../utils/transacao";
 
 function Form({ onAdd, onEdit, transacaoEditando, cancelarEdicao }) {
+  const [data, setData] = useState(new Date().toISOString().split("T")[0]);
   const [descricao, setDescricao] = useState("");
   const [valor, setValor] = useState("");
   const [tipo, setTipo] = useState("receita");
 
   useEffect(() => {
     if (transacaoEditando) {
+      setData(transacaoEditando.data);
       setDescricao(transacaoEditando.descricao);
       setValor(transacaoEditando.valor);
       setTipo(transacaoEditando.tipo);
     } else {
+      setData(new Date().toISOString().split("T")[0]);
       setDescricao("");
       setValor("");
       setTipo("receita");
     }
   }, [transacaoEditando]);
 
-  function salvar() {
+  function salvar(e) {
+    e.preventDefault();
     if (transacaoEditando) {
       onEdit(transacaoEditando.id, {
+        data,
         descricao,
         valor: Number(valor),
         tipo,
       });
-      onEdit(cancelarEdicao);
+      cancelarEdicao();
     } else {
-      const nova = criarTransacao(descricao, valor, tipo);
+      const nova = criarTransacao(data, descricao, valor, tipo);
       onAdd(nova);
     }
+    setData(new Date().toISOString().split("T")[0]);
     setDescricao("");
     setValor("");
     setTipo("receita");
@@ -40,6 +46,12 @@ function Form({ onAdd, onEdit, transacaoEditando, cancelarEdicao }) {
     <section className="form-container">
       <h2>{transacaoEditando ? "Editar Transação" : "Nova Transação"}</h2>
       <form onSubmit={salvar}>
+        <input
+          type="date"
+          placeholder="Data"
+          value={data}
+          onChange={(e) => setData(e.target.value)}
+        />
         <input
           type="text"
           placeholder="Descrição"

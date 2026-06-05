@@ -1,29 +1,15 @@
 import { useState } from "react";
 
+import { filtrarTransacoes, ordenarTransacoes } from "../utils/transacao";
+
 function ListaTransacoes({ transacoes, onExcluir, onEditar }) {
-  const [ordenacao, setOrdenacao] = useState("data");
+  // Estados que controlam como a lista sera exibida na tela.
+  const [ordenacao, setOrdenacao] = useState("data-decrescente");
   const [filtro, setFiltro] = useState("todas");
-
-  const transacoesFiltradas = transacoes.filter((item) => {
-    if (filtro === "todas") return true;
-    return item.tipo === filtro;
-  });
-
-  const transacoesOrdenadas = [...transacoesFiltradas].sort((a, b) => {
-    if (ordenacao === "data-crescente") {
-      return new Date(a.data) - new Date(b.data);
-    }
-    if (ordenacao === "data-decrescente") {
-      return new Date(b.data) - new Date(a.data);
-    }
-    if (ordenacao === "valor-crescente") {
-      return a.valor - b.valor;
-    }
-    if (ordenacao === "valor-decrescente") {
-      return b.valor - a.valor;
-    }
-    return b.valor - a.valor;
-  });
+  // Primeiro aplicamos o filtro sobre a lista original de transacoes.
+  const transacoesFiltradas = filtrarTransacoes(transacoes, filtro);
+  // Depois ordenamos uma copia da lista filtrada, sem alterar o estado original.
+  const transacoesOrdenadas = ordenarTransacoes(transacoesFiltradas, ordenacao);
 
   return (
     <section className="lista-transacoes">
@@ -51,9 +37,11 @@ function ListaTransacoes({ transacoes, onExcluir, onEditar }) {
         </select>
       </section>
 
+      {/* O map usa a lista final, ja filtrada e ordenada. */}
       {transacoesOrdenadas.map((item) => (
         <div key={item.id} className={`transacao ${item.tipo}`}>
           <div>
+            <p className="data">{item.data.split("-").reverse().join("/")}</p>
             <p>{item.descricao}</p>
             <span style={{ color: item.tipo === "receita" ? "green" : "red" }}>
               {item.valor.toLocaleString("pt-BR", {
