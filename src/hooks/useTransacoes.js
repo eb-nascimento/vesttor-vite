@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   calcularSaldo,
   calcularReceitas,
@@ -6,12 +6,24 @@ import {
 } from "../utils/calculos";
 
 export function useTransacoes() {
-  const [transacoes, setTransacoes] = useState([]);
-  const [transacaoEditando, setTransacaoEditando] = useState(null);
+  const STORAGE_KEY = "minhas-transacoes";
 
+  const [transacoes, setTransacoes] = useState(() => {
+    const transacoesSalvas = localStorage.getItem(STORAGE_KEY);
+    if (transacoesSalvas) {
+      return JSON.parse(transacoesSalvas);
+    }
+    return [];
+  });
+
+  const [transacaoEditando, setTransacaoEditando] = useState(null);
   const saldo = calcularSaldo(transacoes);
   const receitas = calcularReceitas(transacoes);
   const despesas = calcularDespesas(transacoes);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(transacoes));
+  }, [transacoes]);
 
   function adicionarTransacao(nova) {
     setTransacoes((prev) => [...prev, nova]);
