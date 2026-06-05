@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 // import "./form.css";
 import { criarTransacao } from "../utils/transacao";
 
-function Form({ onAdd, onEdit, transacaoEditando }) {
+function Form({ onAdd, onEdit, transacaoEditando, cancelarEdicao }) {
   const [descricao, setDescricao] = useState("");
   const [valor, setValor] = useState("");
   const [tipo, setTipo] = useState("receita");
@@ -26,6 +26,7 @@ function Form({ onAdd, onEdit, transacaoEditando }) {
         valor: Number(valor),
         tipo,
       });
+      onEdit(cancelarEdicao);
     } else {
       const nova = criarTransacao(descricao, valor, tipo);
       onAdd(nova);
@@ -56,6 +57,13 @@ function Form({ onAdd, onEdit, transacaoEditando }) {
         <option value="receita">Receita</option>
         <option value="despesa">Despesa</option>
       </select>
+
+      <button
+        style={{ display: transacaoEditando ? "block" : "none" }}
+        onClick={cancelarEdicao}
+      >
+        Cancelar
+      </button>
 
       <button onClick={salvar}>
         {transacaoEditando ? "Salvar Alterações" : "Adicionar"}

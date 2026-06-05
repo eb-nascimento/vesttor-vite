@@ -45,5 +45,6 @@ export function useTransacoes() {
     editarTransacao,
     transacaoEditando,
     iniciarEdicao,
+    cancelarEdicao,
   };
 }

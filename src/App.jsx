@@ -16,6 +16,7 @@ function App() {
     editarTransacao,
     iniciarEdicao,
     transacaoEditando,
+    cancelarEdicao,
     saldo,
     receitas,
     despesas,
@@ -34,6 +35,7 @@ function App() {
           onAdd={adicionarTransacao}
           onEdit={editarTransacao}
           transacaoEditando={transacaoEditando}
+          cancelarEdicao={cancelarEdicao}
         />
         <ListaTransacoes
           transacoes={transacoes}
