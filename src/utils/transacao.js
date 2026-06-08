@@ -32,3 +32,23 @@ export function ordenarTransacoes(transacoes, ordenacao) {
     return 0;
   });
 }
+
+export function validarTransacao({ data, descricao, valor, tipo }) {
+  if (!descricao.trim()) {
+    return "A descrição é obrigatória.";
+  }
+
+  if (!valor || Number.isNaN(Number(valor)) || Number(valor) <= 0) {
+    return "O valor deve ser um número positivo.";
+  }
+
+  if (!data) {
+    return "A data é obrigatória.";
+  }
+
+  if (tipo !== "receita" && tipo !== "despesa") {
+    return "Tipo de transação inválido.";
+  }
+
+  return "";
+}

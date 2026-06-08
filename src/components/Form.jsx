@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 // import "./form.css";
-import { criarTransacao } from "../utils/transacao";
+import { criarTransacao, validarTransacao } from "../utils/transacao";
 
 function Form({ onAdd, onEdit, transacaoEditando, cancelarEdicao }) {
   const [data, setData] = useState(new Date().toISOString().split("T")[0]);
@@ -26,18 +26,15 @@ function Form({ onAdd, onEdit, transacaoEditando, cancelarEdicao }) {
   function salvar(e) {
     e.preventDefault();
 
-    if (!descricao.trim()) {
-      setErro("A descrição é obrigatória.");
-      return;
-    }
+    const mensagemErro = validarTransacao({
+      data,
+      descricao,
+      valor,
+      tipo,
+    });
 
-    if (!valor || isNaN(valor) || Number(valor) <= 0) {
-      setErro("O valor deve ser um número positivo.");
-      return;
-    }
-
-    if (!data) {
-      setErro("A data é obrigatória.");
+    if (mensagemErro) {
+      setErro(mensagemErro);
       return;
     }
 
