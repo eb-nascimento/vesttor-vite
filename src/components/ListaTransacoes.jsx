@@ -11,6 +11,8 @@ function ListaTransacoes({ transacoes, onExcluir, onEditar }) {
   // Depois ordenamos uma copia da lista filtrada, sem alterar o estado original.
   const transacoesOrdenadas = ordenarTransacoes(transacoesFiltradas, ordenacao);
 
+  const listaVazia = transacoesOrdenadas.length === 0;
+
   return (
     <section className="lista-transacoes">
       <h2>Transações</h2>
@@ -36,6 +38,10 @@ function ListaTransacoes({ transacoes, onExcluir, onEditar }) {
           <option value="valor-decrescente">Valor Decrescente</option>
         </select>
       </section>
+
+      {listaVazia && (
+        <p className="lista-vazia">{obterMensagemVazia(filtro)}</p>
+      )}
 
       {/* O map usa a lista final, ja filtrada e ordenada. */}
       {transacoesOrdenadas.map((item) => (
@@ -63,6 +69,18 @@ function ListaTransacoes({ transacoes, onExcluir, onEditar }) {
       <hr />
     </section>
   );
+}
+
+function obterMensagemVazia(filtro) {
+  if (filtro === "receita") {
+    return "Nenhuma receita encontrada.";
+  }
+
+  if (filtro === "despesa") {
+    return "Nenhuma despesa encontrada.";
+  }
+
+  return "Nenhuma transação cadastrada.";
 }
 
 export default ListaTransacoes;
