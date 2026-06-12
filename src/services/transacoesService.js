@@ -1,13 +1,15 @@
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../config/firebase";
+
+const transacaoCollection = collection(db, "transacoes");
 const API_URL = "http://localhost:3000/transacoes";
 
 export async function buscarTransacoes() {
-  const resposta = await fetch(API_URL);
-
-  if (!resposta.ok) {
-    throw new Error("Não foi possível buscar as transações.");
-  }
-
-  return resposta.json();
+  const snapshot = await getDocs(transacaoCollection);
+  return snapshot.docs.map((documento) => ({
+    ...documento.data(),
+    id: documento.id,
+  }));
 }
 
 export async function criarTransacaoNaApi(transacao) {

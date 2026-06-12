@@ -1,7 +1,5 @@
 import "./App.css";
-
 import { useTransacoes } from "./hooks/useTransacoes";
-
 import Header from "./components/Header";
 import ContainerResumo from "./components/ContainerResumo";
 import Form from "./components/Form";
@@ -43,7 +41,7 @@ function App() {
 
         {erro && <p className="erro-msg">{erro}</p>}
 
-        {!carregando && !erro && (
+        {!carregando && (
           <ListaTransacoes
             transacoes={transacoes}
             onExcluir={excluirTransacao}

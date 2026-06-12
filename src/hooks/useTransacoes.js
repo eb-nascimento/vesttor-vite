@@ -41,21 +41,25 @@ export function useTransacoes() {
 
   async function adicionarTransacao(nova) {
     try {
+      setErro("");
+
       const transacaoCriada = await criarTransacaoNaApi(nova);
 
       setTransacoes((prev) => [...prev, transacaoCriada]);
     } catch (erro) {
-      console.error(erro);
+      setErro(erro.message);
     }
   }
 
   async function excluirTransacao(id) {
     try {
+      setErro("");
+
       await excluirTransacaoNaApi(id);
 
       setTransacoes((prev) => prev.filter((item) => item.id !== id));
     } catch (erro) {
-      console.error(erro);
+      setErro(erro.message);
     }
   }
 
@@ -65,13 +69,15 @@ export function useTransacoes() {
 
   async function editarTransacao(id, novosDados) {
     try {
+      setErro("");
+
       const transacaoAtualizada = await editarTransacaoNaApi(id, novosDados);
 
       setTransacoes((prev) =>
         prev.map((item) => (item.id === id ? transacaoAtualizada : item)),
       );
     } catch (erro) {
-      console.error(erro);
+      setErro(erro.message);
     }
   }
 
