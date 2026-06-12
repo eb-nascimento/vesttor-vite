@@ -1,6 +1,5 @@
 export function criarTransacao(data, descricao, valor, tipo) {
   return {
-    id: Date.now(),
     data,
     descricao,
     valor: Number(valor),

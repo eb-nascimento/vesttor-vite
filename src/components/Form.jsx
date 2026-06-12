@@ -88,6 +88,7 @@ function Form({ onAdd, onEdit, transacaoEditando, cancelarEdicao }) {
         </select>
 
         <button
+          type="button"
           style={{ display: transacaoEditando ? "block" : "none" }}
           onClick={cancelarEdicao}
         >

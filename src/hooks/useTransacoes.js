@@ -1,4 +1,12 @@
 import { useEffect, useState } from "react";
+
+import {
+  buscarTransacoes,
+  criarTransacaoNaApi,
+  excluirTransacaoNaApi,
+  editarTransacaoNaApi,
+} from "../services/transacoesService";
+
 import {
   calcularSaldo,
   calcularReceitas,
@@ -6,41 +14,65 @@ import {
 } from "../utils/calculos";
 
 export function useTransacoes() {
-  const STORAGE_KEY = "minhas-transacoes";
-
-  const [transacoes, setTransacoes] = useState(() => {
-    const transacoesSalvas = localStorage.getItem(STORAGE_KEY);
-    if (transacoesSalvas) {
-      return JSON.parse(transacoesSalvas);
-    }
-    return [];
-  });
-
+  const [transacoes, setTransacoes] = useState([]);
   const [transacaoEditando, setTransacaoEditando] = useState(null);
   const saldo = calcularSaldo(transacoes);
   const receitas = calcularReceitas(transacoes);
   const despesas = calcularDespesas(transacoes);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState("");
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(transacoes));
-  }, [transacoes]);
+    async function carregarTransacoes() {
+      try {
+        setCarregando(true);
+        setErro("");
 
-  function adicionarTransacao(nova) {
-    setTransacoes((prev) => [...prev, nova]);
+        const dados = await buscarTransacoes();
+        setTransacoes(dados);
+      } catch (erro) {
+        setErro(erro.message);
+      } finally {
+        setCarregando(false);
+      }
+    }
+    carregarTransacoes();
+  }, []);
+
+  async function adicionarTransacao(nova) {
+    try {
+      const transacaoCriada = await criarTransacaoNaApi(nova);
+
+      setTransacoes((prev) => [...prev, transacaoCriada]);
+    } catch (erro) {
+      console.error(erro);
+    }
   }
 
-  function excluirTransacao(id) {
-    setTransacoes((prev) => prev.filter((item) => item.id !== id));
+  async function excluirTransacao(id) {
+    try {
+      await excluirTransacaoNaApi(id);
+
+      setTransacoes((prev) => prev.filter((item) => item.id !== id));
+    } catch (erro) {
+      console.error(erro);
+    }
   }
 
   function iniciarEdicao(transacao) {
     setTransacaoEditando(transacao);
   }
 
-  function editarTransacao(id, novosDados) {
-    setTransacoes((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, ...novosDados } : item)),
-    );
+  async function editarTransacao(id, novosDados) {
+    try {
+      const transacaoAtualizada = await editarTransacaoNaApi(id, novosDados);
+
+      setTransacoes((prev) =>
+        prev.map((item) => (item.id === id ? transacaoAtualizada : item)),
+      );
+    } catch (erro) {
+      console.error(erro);
+    }
   }
 
   function cancelarEdicao() {
@@ -49,6 +81,8 @@ export function useTransacoes() {
 
   return {
     transacoes,
+    carregando,
+    erro,
     saldo,
     receitas,
     despesas,

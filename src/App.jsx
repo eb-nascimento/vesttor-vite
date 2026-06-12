@@ -1,4 +1,3 @@
-import { useState } from "react";
 import "./App.css";
 
 import { useTransacoes } from "./hooks/useTransacoes";
@@ -11,6 +10,8 @@ import ListaTransacoes from "./components/ListaTransacoes";
 function App() {
   const {
     transacoes,
+    carregando,
+    erro,
     adicionarTransacao,
     excluirTransacao,
     editarTransacao,
@@ -37,11 +38,18 @@ function App() {
           transacaoEditando={transacaoEditando}
           cancelarEdicao={cancelarEdicao}
         />
-        <ListaTransacoes
-          transacoes={transacoes}
-          onExcluir={excluirTransacao}
-          onEditar={iniciarEdicao}
-        />
+
+        {carregando && <p>Carregando transações...</p>}
+
+        {erro && <p className="erro-msg">{erro}</p>}
+
+        {!carregando && !erro && (
+          <ListaTransacoes
+            transacoes={transacoes}
+            onExcluir={excluirTransacao}
+            onEditar={iniciarEdicao}
+          />
+        )}
       </main>
     </>
   );

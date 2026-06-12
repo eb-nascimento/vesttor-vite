@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { filtrarTransacoes, ordenarTransacoes } from "../utils/transacao";
-import ItemTransacao from "./itemTransacao";
+import ItemTransacao from "./ItemTransacao";
 import ControlesTransacoes from "./ControlesTransacoes";
 
 function ListaTransacoes({ transacoes, onExcluir, onEditar }) {

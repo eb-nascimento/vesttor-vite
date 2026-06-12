@@ -1,0 +1,12 @@
+{
+  "transacoes": [
+    {
+      "id": "djkd5ERMb0k",
+      "data": "2026-06-12",
+      "descricao": "teste api edit",
+      "valor": 200,
+      "tipo": "receita"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
