@@ -11,8 +11,9 @@ const firebaseConfig = {
   appId: "1:484962553511:web:887fc9bbd50dbc2f859582",
   measurementId: "G-07V5TWV124",
 };
-// Initialize Firebase
+// Inicializa uma unica instancia do Firebase para toda a aplicacao.
 const app = initializeApp(firebaseConfig);
 
+// Exporta os servicos compartilhados pelo restante do projeto.
 export const db = getFirestore(app);
 export const auth = getAuth(app);

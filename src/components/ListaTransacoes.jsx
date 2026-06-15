@@ -4,15 +4,13 @@ import ItemTransacao from "./ItemTransacao";
 import ControlesTransacoes from "./ControlesTransacoes";
 
 function ListaTransacoes({ transacoes, onExcluir, onEditar }) {
-  // Estados que controlam como a lista sera exibida na tela.
+  // Filtro e ordenacao alteram somente a exibicao, nao os dados no Firestore.
   const [ordenacao, setOrdenacao] = useState("data-decrescente");
-  // Estado para controlar o filtro ativo. O valor "todas" mostra todas as transacoes, sem filtrar por tipo.
   const [filtro, setFiltro] = useState("todas");
-  // Primeiro aplicamos o filtro sobre a lista original de transacoes.
+
+  // Fluxo de exibicao: lista original -> filtro -> ordenacao -> renderizacao.
   const transacoesFiltradas = filtrarTransacoes(transacoes, filtro);
-  // Depois ordenamos uma copia da lista filtrada, sem alterar o estado original.
   const transacoesOrdenadas = ordenarTransacoes(transacoesFiltradas, ordenacao);
-  // Variavel booleana para controlar a exibicao da mensagem de lista vazia.
   const listaVazia = transacoesOrdenadas.length === 0;
 
   return (
@@ -27,7 +25,6 @@ function ListaTransacoes({ transacoes, onExcluir, onEditar }) {
       {listaVazia && (
         <p className="lista-vazia">{obterMensagemVazia(filtro)}</p>
       )}
-      {/* O map usa a lista final, ja filtrada e ordenada. */}
       {transacoesOrdenadas.map((item) => (
         <ItemTransacao
           key={item.id}
@@ -39,7 +36,8 @@ function ListaTransacoes({ transacoes, onExcluir, onEditar }) {
     </section>
   );
 }
-// Funcao auxiliar para obter a mensagem de lista vazia, dependendo do filtro ativo.
+
+// A mensagem pertence a interface e varia conforme o filtro selecionado.
 function obterMensagemVazia(filtro) {
   if (filtro === "receita") {
     return "Nenhuma receita encontrada.";

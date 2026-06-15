@@ -10,6 +10,8 @@ import { logout } from "./services/authService";
 
 function App() {
   const { usuario, carregandoAuth } = useAuth();
+
+  // O UID segue para o hook e limita as transacoes ao usuario atual.
   const {
     transacoes,
     carregando,
@@ -23,11 +25,14 @@ function App() {
     saldo,
     receitas,
     despesas,
-  } = useTransacoes();
+  } = useTransacoes(usuario?.uid);
 
+  // Evita mostrar o login antes de o Firebase restaurar uma sessao existente.
   if (carregandoAuth) {
     return <p>Verificando sessão...</p>;
   }
+
+  // Sem sessao autenticada, somente o formulario de acesso e exibido.
   if (!usuario) {
     return <FormAuth />;
   }

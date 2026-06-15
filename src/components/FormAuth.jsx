@@ -8,10 +8,12 @@ function FormAuth() {
   const [erro, setErro] = useState("");
 
   async function entrar(e) {
+    // Impede o recarregamento nativo do formulario.
     e.preventDefault();
 
     try {
       setErro("");
+      // Ao entrar, o Firebase atualiza automaticamente o observador em useAuth.
       await login(email, senha);
     } catch (erro) {
       setErro(erro.message);
@@ -21,6 +23,7 @@ function FormAuth() {
   async function cadastrar() {
     try {
       setErro("");
+      // O Firebase autentica o usuario logo depois de criar a conta.
       await cadastroUsuario(email, senha);
     } catch (erro) {
       setErro(erro.message);

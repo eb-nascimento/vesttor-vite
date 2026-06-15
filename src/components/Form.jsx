@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-// import "./form.css";
 import { criarTransacao, validarTransacao } from "../utils/transacao";
 
 function Form({ onAdd, onEdit, transacaoEditando, cancelarEdicao }) {
@@ -11,6 +10,7 @@ function Form({ onAdd, onEdit, transacaoEditando, cancelarEdicao }) {
 
   useEffect(() => {
     if (transacaoEditando) {
+      // O Firestore usa Timestamp, mas input type="date" exige YYYY-MM-DD.
       setData(transacaoEditando.data.toDate().toISOString().split("T")[0]);
       setDescricao(transacaoEditando.descricao);
       setValor(transacaoEditando.valor);
@@ -26,6 +26,7 @@ function Form({ onAdd, onEdit, transacaoEditando, cancelarEdicao }) {
   function salvar(e) {
     e.preventDefault();
 
+    // A util retorna uma mensagem ou string vazia quando os dados sao validos.
     const mensagemErro = validarTransacao({
       data,
       descricao,
@@ -41,6 +42,7 @@ function Form({ onAdd, onEdit, transacaoEditando, cancelarEdicao }) {
     setErro("");
 
     if (transacaoEditando) {
+      // A existencia de transacaoEditando define o modo de edicao.
       onEdit(transacaoEditando.id, {
         data,
         descricao,
@@ -49,9 +51,12 @@ function Form({ onAdd, onEdit, transacaoEditando, cancelarEdicao }) {
       });
       cancelarEdicao();
     } else {
+      // No modo de criacao, o util monta o objeto antes de envia-lo ao hook.
       const nova = criarTransacao(data, descricao, valor, tipo);
       onAdd(nova);
     }
+
+    // Limpa o formulario depois de uma operacao valida.
     setData(new Date().toISOString().split("T")[0]);
     setDescricao("");
     setValor("");

@@ -1,4 +1,5 @@
 export function criarTransacao(data, descricao, valor, tipo) {
+  // Normaliza o valor antes de enviar a transacao para a camada de dados.
   return {
     data,
     descricao,
@@ -8,6 +9,7 @@ export function criarTransacao(data, descricao, valor, tipo) {
 }
 
 export function filtrarTransacoes(transacoes, filtro) {
+  // "todas" preserva a lista; os demais valores filtram pelo tipo.
   return transacoes.filter((item) => {
     if (filtro === "todas") return true;
     return item.tipo === filtro;
@@ -15,8 +17,10 @@ export function filtrarTransacoes(transacoes, filtro) {
 }
 
 export function ordenarTransacoes(transacoes, ordenacao) {
+  // sort altera o array recebido, por isso ordenamos uma copia.
   return [...transacoes].sort((a, b) => {
     if (ordenacao === "data-crescente") {
+      // Timestamp.toMillis transforma a data em numero para comparacao.
       return a.data.toMillis() - b.data.toMillis();
     }
     if (ordenacao === "data-decrescente") {
@@ -33,6 +37,7 @@ export function ordenarTransacoes(transacoes, ordenacao) {
 }
 
 export function validarTransacao({ data, descricao, valor, tipo }) {
+  // Retorna o primeiro erro; string vazia significa dados validos.
   if (!descricao.trim()) {
     return "A descrição é obrigatória.";
   }

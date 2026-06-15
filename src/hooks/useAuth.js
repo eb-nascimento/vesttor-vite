@@ -8,10 +8,13 @@ export function useAuth() {
   const [carregandoAuth, setCarregandoAuth] = useState(true);
 
   useEffect(() => {
+    // Executa ao iniciar e sempre que o estado da sessao mudar.
     const cancelarObservacao = onAuthStateChanged(auth, (usuarioAtual) => {
       setUsuario(usuarioAtual);
       setCarregandoAuth(false);
     });
+
+    // Remove o observador quando o componente for desmontado.
     return cancelarObservacao;
   }, []);
   return {
