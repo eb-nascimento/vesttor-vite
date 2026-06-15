@@ -4,8 +4,12 @@ import Header from "./components/Header";
 import ContainerResumo from "./components/ContainerResumo";
 import Form from "./components/Form";
 import ListaTransacoes from "./components/ListaTransacoes";
+import { useAuth } from "./hooks/useAuth";
+import FormAuth from "./components/FormAuth";
+import { logout } from "./services/authService";
 
 function App() {
+  const { usuario, carregandoAuth } = useAuth();
   const {
     transacoes,
     carregando,
@@ -20,6 +24,13 @@ function App() {
     receitas,
     despesas,
   } = useTransacoes();
+
+  if (carregandoAuth) {
+    return <p>Verificando sessão...</p>;
+  }
+  if (!usuario) {
+    return <FormAuth />;
+  }
 
   return (
     <>
@@ -48,6 +59,11 @@ function App() {
             onEditar={iniciarEdicao}
           />
         )}
+
+        <p>{usuario.email}</p>
+        <button type="button" onClick={logout}>
+          Sair
+        </button>
       </main>
     </>
   );
