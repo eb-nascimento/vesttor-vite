@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import {
-  buscarTransacoes,
+  observarTransacoes,
   criarTransacaoNaApi,
   excluirTransacaoNaApi,
   editarTransacaoNaApi,
@@ -25,38 +25,33 @@ export function useTransacoes(userId) {
   const despesas = calcularDespesas(transacoes);
 
   useEffect(() => {
-    async function carregarTransacoes() {
-      // Durante a verificacao da sessao ainda pode nao existir um userId.
-      if (!userId) {
-        setTransacoes([]);
-        setCarregando(false);
-        return;
-      }
-      try {
-        setCarregando(true);
-        setErro("");
-
-        const dados = await buscarTransacoes(userId);
-        setTransacoes(dados);
-      } catch (erro) {
-        setErro(erro.message);
-      } finally {
-        setCarregando(false);
-      }
+    if (!userId) {
+      setTransacoes([]);
+      setCarregando(false);
+      return;
     }
+    setCarregando(true);
+    setErro("");
 
-    carregarTransacoes();
-    // Uma troca de usuario exige uma nova consulta ao Firestore.
+    const cancelarObservacao = observarTransacoes(
+      userId,
+      (dados) => {
+        setTransacoes(dados);
+        setCarregando(false);
+      },
+      (erro) => {
+        setErro(erro.message);
+        setCarregando(false);
+      },
+    );
+
+    return cancelarObservacao;
   }, [userId]);
 
   async function adicionarTransacao(nova) {
     try {
       setErro("");
-
-      const transacaoCriada = await criarTransacaoNaApi(nova, userId);
-
-      // Atualiza a tela sem buscar novamente toda a colecao.
-      setTransacoes((prev) => [...prev, transacaoCriada]);
+      await criarTransacaoNaApi(nova, userId);
     } catch (erro) {
       setErro(erro.message);
     }
@@ -65,11 +60,7 @@ export function useTransacoes(userId) {
   async function excluirTransacao(id) {
     try {
       setErro("");
-
       await excluirTransacaoNaApi(id);
-
-      // Remove do estado somente depois que o Firestore confirmar a exclusao.
-      setTransacoes((prev) => prev.filter((item) => item.id !== id));
     } catch (erro) {
       setErro(erro.message);
     }
@@ -82,13 +73,7 @@ export function useTransacoes(userId) {
   async function editarTransacao(id, novosDados) {
     try {
       setErro("");
-
-      const transacaoAtualizada = await editarTransacaoNaApi(id, novosDados);
-
-      // Substitui somente a transacao que possui o ID atualizado.
-      setTransacoes((prev) =>
-        prev.map((item) => (item.id === id ? transacaoAtualizada : item)),
-      );
+      await editarTransacaoNaApi(id, novosDados);
     } catch (erro) {
       setErro(erro.message);
     }

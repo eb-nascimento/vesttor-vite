@@ -1,6 +1,5 @@
 import {
   collection,
-  getDocs,
   addDoc,
   Timestamp,
   doc,
@@ -8,23 +7,27 @@ import {
   updateDoc,
   query,
   where,
+  onSnapshot,
 } from "firebase/firestore";
 import { db } from "../config/firebase";
 
 // Referencia reutilizada em todas as operacoes da colecao.
 const transacaoCollection = collection(db, "transacoes");
 
-export async function buscarTransacoes(userId) {
-  // Busca somente documentos que pertencem ao usuario autenticado.
+export function observarTransacoes(userId, onDados, onErro) {
   const consulta = query(transacaoCollection, where("userId", "==", userId));
 
-  const snapshot = await getDocs(consulta);
-
-  // O ID fica fora dos dados do documento e precisa ser adicionado ao objeto.
-  return snapshot.docs.map((documento) => ({
-    ...documento.data(),
-    id: documento.id,
-  }));
+  return onSnapshot(
+    consulta,
+    (snapshot) => {
+      const transacoes = snapshot.docs.map((documento) => ({
+        ...documento.data(),
+        id: documento.id,
+      }));
+      onDados(transacoes);
+    },
+    onErro,
+  );
 }
 
 export async function criarTransacaoNaApi(transacao, userId) {
