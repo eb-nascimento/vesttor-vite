@@ -11,7 +11,7 @@ function Form({ onAdd, onEdit, transacaoEditando, cancelarEdicao }) {
 
   useEffect(() => {
     if (transacaoEditando) {
-      setData(transacaoEditando.data);
+      setData(transacaoEditando.data.toDate().toISOString().split("T")[0]);
       setDescricao(transacaoEditando.descricao);
       setValor(transacaoEditando.valor);
       setTipo(transacaoEditando.tipo);

@@ -17,10 +17,10 @@ export function filtrarTransacoes(transacoes, filtro) {
 export function ordenarTransacoes(transacoes, ordenacao) {
   return [...transacoes].sort((a, b) => {
     if (ordenacao === "data-crescente") {
-      return new Date(a.data) - new Date(b.data);
+      return a.data.toMillis() - b.data.toMillis();
     }
     if (ordenacao === "data-decrescente") {
-      return new Date(b.data) - new Date(a.data);
+      return b.data.toMillis() - a.data.toMillis();
     }
     if (ordenacao === "valor-crescente") {
       return a.valor - b.valor;

@@ -3,7 +3,7 @@ function ItemTransacao({ item, onEditar, onExcluir }) {
     <div className={`transacao ${item.tipo}`}>
       <hr />
       <div>
-        <p className="data">{item.data.split("-").reverse().join("/")}</p>
+        <p className="data">{item.data.toDate().toLocaleDateString("pt-BR")}</p>
         <p>{item.descricao}</p>
         <span style={{ color: item.tipo === "receita" ? "green" : "red" }}>
           {item.valor.toLocaleString("pt-BR", {

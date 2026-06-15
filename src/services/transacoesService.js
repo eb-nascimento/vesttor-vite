@@ -1,8 +1,15 @@
-import { collection, getDocs } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  addDoc,
+  Timestamp,
+  doc,
+  deleteDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "../config/firebase";
 
 const transacaoCollection = collection(db, "transacoes");
-const API_URL = "http://localhost:3000/transacoes";
 
 export async function buscarTransacoes() {
   const snapshot = await getDocs(transacaoCollection);
@@ -13,40 +20,34 @@ export async function buscarTransacoes() {
 }
 
 export async function criarTransacaoNaApi(transacao) {
-  const resposta = await fetch(API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(transacao),
-  });
+  const dados = {
+    ...transacao,
+    data: Timestamp.fromDate(new Date(`${transacao.data}T12:00:00`)),
+  };
 
-  if (!resposta.ok) {
-    throw new Error("Não foi possível adicionar a transação");
-  }
-  return resposta.json();
+  const documento = await addDoc(transacaoCollection, dados);
+
+  return {
+    ...dados,
+    id: documento.id,
+  };
 }
 
 export async function excluirTransacaoNaApi(id) {
-  const resposta = await fetch(`${API_URL}/${id}`, {
-    method: "DELETE",
-  });
-  if (!resposta.ok) {
-    throw new Error("Não foi possível excluir a transação");
-  }
+  const referencia = doc(db, "transacoes", id);
+  await deleteDoc(referencia);
 }
 
 export async function editarTransacaoNaApi(id, novosDados) {
-  const resposta = await fetch(`${API_URL}/${id}`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(novosDados),
-  });
+  const referencia = doc(db, "transacoes", id);
 
-  if (!resposta.ok) {
-    throw new Error("Não foi possível editar a transação.");
-  }
-  return resposta.json();
+  const dados = {
+    ...novosDados,
+    data: Timestamp.fromDate(new Date(`${novosDados.data}T12:00:00`)),
+  };
+  await updateDoc(referencia, dados);
+  return {
+    ...dados,
+    id,
+  };
 }
