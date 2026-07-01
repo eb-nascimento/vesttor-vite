@@ -1,77 +1,38 @@
 import "./App.css";
-import { useTransacoes } from "./hooks/useTransacoes";
-import Header from "./components/Header";
-import ContainerResumo from "./components/ContainerResumo";
-import Form from "./components/Form";
-import ListaTransacoes from "./components/ListaTransacoes";
+import { Routes, Route, Navigate } from "react-router";
 import { useAuth } from "./hooks/useAuth";
-import FormAuth from "./components/FormAuth";
-import { logout } from "./services/authService";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   const { usuario, carregandoAuth } = useAuth();
 
-  // O UID segue para o hook e limita as transacoes ao usuario atual.
-  const {
-    transacoes,
-    carregando,
-    erro,
-    adicionarTransacao,
-    excluirTransacao,
-    editarTransacao,
-    iniciarEdicao,
-    transacaoEditando,
-    cancelarEdicao,
-    saldo,
-    receitas,
-    despesas,
-  } = useTransacoes(usuario?.uid);
-
-  // Evita mostrar o login antes de o Firebase restaurar uma sessao existente.
+  // Aguarda o Firebase confirmar se existe uma sessao salva no navegador.
   if (carregandoAuth) {
     return <p>Verificando sessão...</p>;
   }
 
-  // Sem sessao autenticada, somente o formulario de acesso e exibido.
-  if (!usuario) {
-    return <FormAuth />;
-  }
-
   return (
-    <>
-      <Header />
-      <main>
-        <ContainerResumo
-          saldo={saldo}
-          receitas={receitas}
-          despesas={despesas}
-        />
-        <Form
-          onAdd={adicionarTransacao}
-          onEdit={editarTransacao}
-          transacaoEditando={transacaoEditando}
-          cancelarEdicao={cancelarEdicao}
-        />
-
-        {carregando && <p>Carregando transações...</p>}
-
-        {erro && <p className="erro-msg">{erro}</p>}
-
-        {!carregando && (
-          <ListaTransacoes
-            transacoes={transacoes}
-            onExcluir={excluirTransacao}
-            onEditar={iniciarEdicao}
-          />
-        )}
-
-        <p>{usuario.email}</p>
-        <button type="button" onClick={logout}>
-          Sair
-        </button>
-      </main>
-    </>
+    <Routes>
+      <Route
+        path="/login"
+        element={
+          usuario ? <Navigate to="/dashboard" /> : <Login />
+        }
+      />
+      <Route
+        path="/dashboard"
+        element={
+          usuario ? <Dashboard usuario={usuario} /> : <Navigate to="/login" />
+        }
+      />
+      <Route
+        path="*"
+        element={<Navigate to={usuario ? "/dashboard" : "/login"} />}
+      />
+    </Routes>
   );
 }
 
 export default App;
+

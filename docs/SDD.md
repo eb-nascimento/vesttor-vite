@@ -1,83 +1,191 @@
 # Software Design Document - Vesttor
 
-## 1. Informacoes do documento
+## 1. Informações do documento
 
-- Projeto: Vesttor - Gestor Financeiro
-- Tipo: aplicacao web de controle financeiro pessoal
-- Stack principal: React, Vite, Firebase Authentication e Cloud Firestore
-- Estado documentado em: 15 de junho de 2026
-- Status: desenvolvimento e aprendizado
+- **Projeto:** Vesttor - Gestor Financeiro
+- **Tipo:** Aplicação web de controle e planejamento financeiro pessoal
+- **Responsável:** Eduardo Bernardo do Nascimento
+- **Curso:** Análise e Desenvolvimento de Sistemas
+- **Disciplina:** Engenharia de Software A
+- **Stack principal:** React, Vite, Firebase Authentication e Cloud Firestore
+- **Status:** Desenvolvimento e aprendizado
+- **Objetivo técnico:** Documentar a estrutura atual do sistema e orientar sua evolução
 
-## 2. Objetivo
+---
 
-O Vesttor permite que uma pessoa autenticada cadastre e acompanhe suas
-transacoes financeiras pessoais.
+## 2. Visão geral
 
-O sistema oferece:
+O Vesttor é uma aplicação web voltada ao controle e planejamento financeiro pessoal. O sistema permite que uma pessoa autenticada cadastre, edite, exclua e acompanhe suas transações financeiras pessoais, separando receitas e despesas.
 
-- cadastro e login com email e senha;
-- encerramento de sessao;
-- cadastro de receitas e despesas;
-- edicao e exclusao de transacoes;
-- calculo de receitas, despesas e saldo;
-- filtro por tipo;
-- ordenacao por data ou valor;
-- persistencia no Cloud Firestore;
-- separacao das transacoes por usuario.
+A versão atual do sistema já possui autenticação com Firebase Authentication, persistência de transações no Cloud Firestore, CRUD completo de transações, resumo financeiro, filtros, ordenação, estados de carregamento e tratamento básico de erros.
 
-## 3. Escopo atual
+O objetivo final do projeto é evoluir o Vesttor para uma solução mais completa de planejamento financeiro, incluindo categorias, métodos de pagamento, relatórios e principalmente orçamento mensal por categoria. Esse orçamento será o principal diferencial do sistema, permitindo que o usuário defina limites mensais para cada área de gasto e acompanhe quanto já utilizou ao longo do mês.
 
-### 3.1 Incluido
+---
 
-- autenticacao com Firebase Authentication;
-- persistencia de transacoes no Firestore;
-- CRUD completo de transacoes;
-- validacao do formulario;
-- estados de carregamento e erro;
-- resumo financeiro;
-- filtros e ordenacao;
-- mensagem de lista vazia;
-- conversao entre data do formulario e `Timestamp` do Firestore.
+## 3. Problema
 
-### 3.2 Fora do escopo atual
+Muitas pessoas realizam o controle financeiro pessoal de forma manual, utilizando planilhas, anotações ou aplicativos genéricos. Apesar de úteis, essas alternativas nem sempre oferecem uma visão clara sobre o planejamento financeiro mensal.
 
-- recuperacao de senha;
-- verificacao de email;
-- login social;
-- categorias;
-- transacoes recorrentes;
-- orcamentos;
-- paginacao;
-- sincronizacao em tempo real com `onSnapshot`;
-- testes automatizados;
-- interface visual final;
-- deploy de producao;
-- observabilidade e monitoramento.
+Os principais problemas identificados são:
 
-## 4. Arquitetura
+- Falta de organização das movimentações financeiras;
+- Dificuldade em visualizar receitas, despesas e saldo;
+- Dificuldade em entender para onde o dinheiro está indo;
+- Ausência de planejamento mensal por categoria;
+- Dificuldade em saber quanto ainda pode ser gasto em cada área;
+- Falta de relatórios simples para análise financeira;
+- Dependência de controles manuais pouco práticos.
 
-A aplicacao usa uma arquitetura em camadas simples:
+---
+
+## 4. Objetivo do produto
+
+Desenvolver uma aplicação web simples, moderna e responsiva para controle e planejamento financeiro pessoal.
+
+O sistema deve permitir que o usuário:
+
+- Crie uma conta e acesse suas informações com segurança;
+- Cadastre receitas e despesas;
+- Edite e exclua transações;
+- Visualize saldo, receitas e despesas;
+- Organize transações por categoria;
+- Organize transações por método de pagamento;
+- Defina orçamento mensal por categoria;
+- Acompanhe o consumo do orçamento ao longo do mês;
+- Filtre movimentações;
+- Consulte relatórios financeiros;
+- Identifique categorias com orçamento próximo do limite ou ultrapassado.
+
+---
+
+## 5. Estado atual do sistema
+
+A versão atual do Vesttor contempla:
+
+- Cadastro e login com e-mail e senha;
+- Encerramento de sessão;
+- Persistência de transações no Cloud Firestore;
+- Separação das transações por usuário autenticado;
+- CRUD completo de transações;
+- Validação do formulário de transações;
+- Estados de carregamento e erro;
+- Resumo financeiro com receitas, despesas e saldo;
+- Filtro por tipo: todas, receitas ou despesas;
+- Ordenação por data ou valor;
+- Mensagem de lista vazia;
+- Conversão entre data do formulário e `Timestamp` do Firestore.
+
+---
+
+## 6. Escopo
+
+### 6.1. Escopo atual implementado
+
+Faz parte do sistema atualmente:
+
+- Firebase Authentication;
+- Cloud Firestore;
+- CRUD de transações;
+- Separação de dados por usuário;
+- Resumo financeiro;
+- Filtro por tipo;
+- Ordenação;
+- Validação de formulário;
+- Tratamento básico de erros;
+- Conversão de datas para `Timestamp`;
+- Interface inicial funcional.
+
+### 6.2. Escopo alvo do projeto
+
+Faz parte do objetivo final do Vesttor:
+
+- Cadastro e gerenciamento de categorias;
+- Cadastro e gerenciamento de métodos de pagamento;
+- Associação de transações com categoria;
+- Associação de transações com método de pagamento;
+- Definição de orçamento mensal por categoria;
+- Cálculo de orçamento utilizado;
+- Cálculo de orçamento restante;
+- Percentual de consumo do orçamento;
+- Alertas visuais de orçamento próximo do limite ou ultrapassado;
+- Filtros por período, tipo, categoria e método de pagamento;
+- Relatórios financeiros;
+- Relatório mensal;
+- Relatório por categoria;
+- Relatório por método de pagamento;
+- Relatório de orçamento por categoria;
+- Interface visual final;
+- Deploy de produção.
+
+### 6.3. Fora do escopo inicial
+
+Não fazem parte da versão inicial:
+
+- Integração automática com bancos;
+- Leitura automática de extratos bancários;
+- Integração com Open Finance;
+- Emissão de relatórios fiscais;
+- Aplicativo mobile nativo;
+- Controle financeiro empresarial;
+- Múltiplos usuários compartilhando a mesma conta;
+- Funcionalidades contábeis;
+- Login social;
+- Observabilidade e monitoramento avançado.
+
+---
+
+## 7. Arquitetura
+
+A aplicação utiliza uma arquitetura em camadas simples, separando interface, estado, serviços, regras de negócio e dados.
 
 ```mermaid
 flowchart TD
     UI["Componentes React"] --> Hooks["Hooks de estado e fluxo"]
     Hooks --> Services["Services Firebase"]
-    Hooks --> Utils["Funcoes puras em utils"]
+    Hooks --> Utils["Funções puras em utils"]
     Services --> Auth["Firebase Authentication"]
     Services --> DB["Cloud Firestore"]
 ```
 
-### 4.1 Responsabilidades
+### 7.1. Responsabilidades por camada
 
-| Camada | Responsabilidade |
-| --- | --- |
-| `components` | Interface, formularios, eventos e renderizacao |
-| `hooks` | Estado, efeitos e coordenacao das operacoes |
-| `services` | Comunicacao com Firebase Auth e Firestore |
-| `utils` | Regras puras de calculo, validacao e transformacao |
-| `config` | Inicializacao e exportacao dos servicos Firebase |
+| Camada       | Responsabilidade                                   |
+| ------------ | -------------------------------------------------- |
+| `components` | Interface, formulários, eventos e renderização     |
+| `hooks`      | Estado, efeitos e coordenação das operações        |
+| `services`   | Comunicação com Firebase Auth e Firestore          |
+| `utils`      | Regras puras de cálculo, validação e transformação |
+| `config`     | Inicialização e exportação dos serviços Firebase   |
 
-## 5. Estrutura relevante
+### 7.2. Arquitetura alvo
+
+Com a evolução do projeto, a arquitetura deverá contemplar também os módulos de categorias, métodos de pagamento, orçamentos e relatórios.
+
+```mermaid
+flowchart TD
+    A["Usuário autenticado"] --> B["Aplicação React + Vite"]
+
+    B --> C["Módulo de Transações"]
+    B --> D["Módulo de Categorias"]
+    B --> E["Módulo de Métodos de Pagamento"]
+    B --> F["Módulo de Orçamentos"]
+    B --> G["Módulo de Relatórios"]
+
+    C --> H["Regras de cálculo financeiro"]
+    D --> H
+    E --> H
+    F --> H
+    G --> H
+
+    H --> I["Services Firebase"]
+    I --> J["Firebase Authentication"]
+    I --> K["Cloud Firestore"]
+```
+
+---
+
+## 8. Estrutura atual do projeto
 
 ```text
 src/
@@ -105,42 +213,97 @@ src/
 `-- main.jsx
 ```
 
-`PainelTransacoes.jsx` ainda existe no repositorio, mas nao faz parte do fluxo
-atual e pode ser removido depois de confirmar que nao possui uso.
+O arquivo `PainelTransacoes.jsx` ainda existe no repositório, mas não faz parte do fluxo atual e pode ser removido depois de confirmar que não possui uso.
 
-## 6. Componentes
+---
 
-### 6.1 `App.jsx`
+## 9. Estrutura alvo sugerida
 
-Responsavel por:
+Com a evolução do projeto, a estrutura poderá ser expandida para:
 
-- obter o estado da autenticacao;
-- passar o UID para `useTransacoes`;
-- decidir entre carregamento, login e dashboard;
-- compor resumo, formulario e lista;
-- exibir erros de operacoes;
-- disponibilizar a acao de logout.
+```text
+src/
+|-- components/
+|   |-- Header/
+|   |-- CardResumo/
+|   |-- FormTransacao/
+|   |-- ListaTransacoes/
+|   |-- Filtros/
+|   |-- Relatorios/
+|   |-- OrcamentoCategoria/
+|   `-- FormAuth/
+|
+|-- pages/
+|   |-- Dashboard/
+|   |-- Transacoes/
+|   |-- Categorias/
+|   |-- MetodosPagamento/
+|   |-- Orcamentos/
+|   `-- Relatorios/
+|
+|-- hooks/
+|   |-- useAuth.js
+|   |-- useTransacoes.js
+|   |-- useCategorias.js
+|   |-- useMetodosPagamento.js
+|   `-- useOrcamentos.js
+|
+|-- services/
+|   |-- authService.js
+|   |-- transacoesService.js
+|   |-- categoriasService.js
+|   |-- metodosService.js
+|   `-- orcamentosService.js
+|
+|-- utils/
+|   |-- calculos.js
+|   |-- transacao.js
+|   |-- validacoes.js
+|   `-- formatadores.js
+|
+|-- config/
+|   `-- firebase.js
+|
+|-- App.jsx
+`-- main.jsx
+```
 
-O hook de transacoes e sempre chamado, mesmo antes da verificacao da sessao
-terminar. Isso preserva a regra de ordem dos hooks. Quando ainda nao existe UID,
-`useTransacoes` nao consulta o Firestore.
+---
 
-### 6.2 `FormAuth.jsx`
+## 10. Componentes atuais
 
-Formulario controlado com:
+### 10.1. `App.jsx`
 
-- email;
-- senha;
-- acao de login;
-- acao de cadastro;
-- mensagem de erro.
+Responsável por:
 
-O Firebase autentica automaticamente o usuario depois de um cadastro bem
-sucedido. A mudanca de sessao e observada por `useAuth`.
+- Obter o estado da autenticação;
+- Passar o UID para `useTransacoes`;
+- Decidir entre carregamento, login e dashboard;
+- Compor resumo, formulário e lista;
+- Exibir erros de operações;
+- Disponibilizar a ação de logout.
 
-### 6.3 `Form.jsx`
+O hook de transações é sempre chamado, mesmo antes da verificação da sessão terminar. Isso preserva a regra de ordem dos hooks. Quando ainda não existe UID, `useTransacoes` não consulta o Firestore.
 
-Formulario controlado para criacao e edicao.
+---
+
+### 10.2. `FormAuth.jsx`
+
+Formulário controlado com:
+
+- E-mail;
+- Senha;
+- Ação de login;
+- Ação de cadastro;
+- Mensagem de erro.
+
+O Firebase autentica automaticamente o usuário depois de um cadastro bem-sucedido. A mudança de sessão é observada por `useAuth`.
+
+---
+
+### 10.3. `Form.jsx`
+
+Formulário controlado para criação e edição de transações.
 
 Estados locais:
 
@@ -152,59 +315,67 @@ Estados locais:
 
 Modos:
 
-- sem `transacaoEditando`: cria uma transacao;
-- com `transacaoEditando`: atualiza a transacao selecionada.
+- Sem `transacaoEditando`: cria uma transação;
+- Com `transacaoEditando`: atualiza a transação selecionada.
 
-O campo HTML `type="date"` trabalha com texto `YYYY-MM-DD`. Ao editar, o
-`Timestamp` recebido do Firestore e convertido para esse formato.
+O campo HTML `type="date"` trabalha com texto no formato `YYYY-MM-DD`. Ao editar, o `Timestamp` recebido do Firestore é convertido para esse formato.
 
-### 6.4 `ListaTransacoes.jsx`
+---
 
-Responsavel pelo estado visual da lista:
+### 10.4. `ListaTransacoes.jsx`
 
-- filtro selecionado;
-- ordenacao selecionada;
-- mensagem de lista vazia;
-- composicao de controles e itens.
+Responsável pelo estado visual da lista:
 
-Filtro e ordenacao nao alteram os dados persistidos.
+- Filtro selecionado;
+- Ordenação selecionada;
+- Mensagem de lista vazia;
+- Composição de controles e itens.
 
-### 6.5 `ControlesTransacoes.jsx`
+Filtro e ordenação não alteram os dados persistidos.
+
+---
+
+### 10.5. `ControlesTransacoes.jsx`
 
 Componente controlado que recebe os valores atuais e callbacks para:
 
-- filtro: todas, receitas ou despesas;
-- ordenacao: data ou valor, crescente ou decrescente.
+- Filtro: todas, receitas ou despesas;
+- Ordenação: data ou valor, crescente ou decrescente.
 
-### 6.6 `ItemTransacao.jsx`
+---
 
-Renderiza uma transacao e oferece as acoes:
+### 10.6. `ItemTransacao.jsx`
 
-- iniciar edicao;
-- excluir.
+Renderiza uma transação e oferece as ações:
 
-A data e exibida convertendo o `Timestamp` com `toDate()`.
+- Iniciar edição;
+- Excluir.
 
-### 6.7 Resumo financeiro
+A data é exibida convertendo o `Timestamp` com `toDate()`.
 
-`ContainerResumo` recebe os valores calculados e compoe tres `CardResumo`:
+---
 
-- receitas;
-- despesas;
-- saldo total.
+### 10.7. Resumo financeiro
 
-## 7. Hooks
+`ContainerResumo` recebe os valores calculados e compõe três `CardResumo`:
 
-### 7.1 `useAuth`
+- Receitas;
+- Despesas;
+- Saldo total.
 
-Usa `onAuthStateChanged` para observar a sessao.
+---
+
+## 11. Hooks
+
+### 11.1. `useAuth`
+
+Usa `onAuthStateChanged` para observar a sessão.
 
 Retorna:
 
 ```js
 {
-  usuario,
-  carregandoAuth
+  (usuario, carregandoAuth);
 }
 ```
 
@@ -218,32 +389,36 @@ sequenceDiagram
 
     App->>Hook: inicializa
     Hook->>Auth: onAuthStateChanged
-    Auth-->>Hook: usuario ou null
+    Auth-->>Hook: usuário ou null
     Hook-->>App: usuario + carregandoAuth=false
 ```
 
-### 7.2 `useTransacoes`
+---
+
+### 11.2. `useTransacoes`
 
 Recebe:
 
 ```js
-useTransacoes(userId)
+useTransacoes(userId);
 ```
 
-Responsavel por:
+Responsável por:
 
-- manter a lista no estado;
-- carregar transacoes do usuario;
-- adicionar, editar e excluir;
-- controlar a transacao em edicao;
-- armazenar estado de carregamento e erro;
-- calcular saldo, receitas e despesas.
+- Manter a lista no estado;
+- Carregar transações do usuário;
+- Adicionar, editar e excluir;
+- Controlar a transação em edição;
+- Armazenar estado de carregamento e erro;
+- Calcular saldo, receitas e despesas.
 
-As alteracoes locais acontecem somente depois da confirmacao do Firestore.
+As alterações locais acontecem somente depois da confirmação do Firestore.
 
-## 8. Services
+---
 
-### 8.1 `authService.js`
+## 12. Services
+
+### 12.1. `authService.js`
 
 Encapsula:
 
@@ -251,56 +426,127 @@ Encapsula:
 - `signInWithEmailAndPassword`;
 - `signOut`.
 
-Os componentes nao importam diretamente essas funcoes do Firebase.
+Os componentes não importam diretamente essas funções do Firebase.
 
-### 8.2 `transacoesService.js`
+---
 
-Encapsula o CRUD do Firestore:
+### 12.2. `transacoesService.js`
 
-| Funcao | Operacao |
-| --- | --- |
-| `buscarTransacoes(userId)` | consulta documentos pelo `userId` |
-| `criarTransacaoNaApi(transacao, userId)` | cria documento com UID |
-| `editarTransacaoNaApi(id, dados)` | atualiza documento |
-| `excluirTransacaoNaApi(id)` | exclui documento |
+Encapsula o CRUD do Firestore.
 
-Apesar do sufixo `NaApi`, o service atualmente usa o SDK do Firestore, nao uma
-API HTTP propria. O nome pode ser simplificado futuramente.
+| Função                                   | Operação                          |
+| ---------------------------------------- | --------------------------------- |
+| `buscarTransacoes(userId)`               | Consulta documentos pelo `userId` |
+| `criarTransacaoNaApi(transacao, userId)` | Cria documento com UID            |
+| `editarTransacaoNaApi(id, dados)`        | Atualiza documento                |
+| `excluirTransacaoNaApi(id)`              | Exclui documento                  |
 
-## 9. Modelo de dados
+Apesar do sufixo `NaApi`, o service atualmente usa o SDK do Firestore, não uma API HTTP própria. O nome pode ser simplificado futuramente.
 
-### 9.1 Colecao
+---
+
+## 13. Modelo de dados atual
+
+### 13.1. Coleção
 
 ```text
 transacoes
 ```
 
-### 9.2 Documento
+### 13.2. Documento de transação atual
 
 ```js
 {
   id: "ID gerado pelo Firestore",
   userId: "UID do Firebase Authentication",
   data: Timestamp,
-  descricao: "Salario",
+  descricao: "Salário",
   valor: 3500,
   tipo: "receita"
 }
 ```
 
-### 9.3 Regras de dominio
+### 13.3. Regras de domínio atuais
 
 - `tipo` deve ser `receita` ou `despesa`;
-- `valor` deve ser numerico e maior que zero;
-- `descricao` e obrigatoria;
-- `data` e obrigatoria;
-- cada nova transacao recebe o UID do usuario autenticado;
-- o ID e gerado pelo Firestore;
-- datas persistidas usam `Timestamp`.
+- `valor` deve ser numérico e maior que zero;
+- `descricao` é obrigatória;
+- `data` é obrigatória;
+- Cada nova transação recebe o UID do usuário autenticado;
+- O ID é gerado pelo Firestore;
+- Datas persistidas usam `Timestamp`.
 
-## 10. Fluxos principais
+---
 
-### 10.1 Carregamento
+## 14. Modelo de dados alvo
+
+### 14.1. Transação
+
+```js
+{
+  id: string,
+  userId: string,
+  descricao: string,
+  valor: number,
+  data: Timestamp,
+  tipo: "receita" | "despesa",
+  categoriaId: string,
+  metodoPagamentoId: string,
+  observacao?: string,
+  criadoEm: Timestamp,
+  atualizadoEm?: Timestamp
+}
+```
+
+### 14.2. Categoria
+
+```js
+{
+  id: string,
+  userId: string,
+  nome: string,
+  tipo: "receita" | "despesa" | "ambos",
+  cor?: string,
+  ativo: boolean,
+  criadoEm: Timestamp,
+  atualizadoEm?: Timestamp
+}
+```
+
+### 14.3. Método de pagamento
+
+```js
+{
+  id: string,
+  userId: string,
+  nome: string,
+  tipo?: "dinheiro" | "pix" | "debito" | "credito" | "transferencia" | "outro",
+  ativo: boolean,
+  criadoEm: Timestamp,
+  atualizadoEm?: Timestamp
+}
+```
+
+### 14.4. Orçamento mensal
+
+```js
+{
+  id: string,
+  userId: string,
+  categoriaId: string,
+  mes: number,
+  ano: number,
+  valorPlanejado: number,
+  criadoEm: Timestamp,
+  atualizadoEm?: Timestamp
+}
+```
+
+---
+
+## 15. Fluxos principais atuais
+
+### 15.1. Carregamento das transações
 
 ```mermaid
 sequenceDiagram
@@ -317,73 +563,182 @@ sequenceDiagram
     Hook-->>App: estado atualizado
 ```
 
-### 10.2 Criacao
+---
+
+### 15.2. Criação de transação
 
 1. `Form` valida os campos.
 2. `criarTransacao` normaliza o valor.
-3. `useTransacoes` envia a transacao e o UID ao service.
+3. `useTransacoes` envia a transação e o UID ao service.
 4. O service converte a data para `Timestamp`.
 5. O Firestore cria o documento e gera o ID.
 6. O hook adiciona o documento retornado ao estado.
 
-### 10.3 Edicao
+---
+
+### 15.3. Edição de transação
 
 1. A lista envia o item para `iniciarEdicao`.
-2. O formulario recebe os dados e converte o `Timestamp`.
-3. O usuario salva os novos dados.
+2. O formulário recebe os dados e converte o `Timestamp`.
+3. O usuário salva os novos dados.
 4. O service reconverte a data para `Timestamp`.
 5. `updateDoc` atualiza o documento.
 6. O hook substitui apenas o item de mesmo ID.
 
-### 10.4 Exclusao
+---
+
+### 15.4. Exclusão de transação
 
 1. `ItemTransacao` envia o ID.
-2. O service cria uma referencia com `doc`.
+2. O service cria uma referência com `doc`.
 3. `deleteDoc` remove o documento.
-4. O hook remove o item do estado apos a confirmacao.
+4. O hook remove o item do estado após a confirmação.
 
-## 11. Calculos e transformacoes
+---
 
-### 11.1 Resumo
+## 16. Regras de negócio
 
-As funcoes de `utils/calculos.js` sao puras:
+### RN01 - Receitas aumentam o saldo
+
+Toda transação classificada como receita deve somar ao saldo total.
+
+---
+
+### RN02 - Despesas reduzem o saldo
+
+Toda transação classificada como despesa deve subtrair do saldo total.
+
+---
+
+### RN03 - Apenas despesas impactam o orçamento
+
+O orçamento por categoria deve ser afetado apenas por transações do tipo despesa.
+
+Receitas não devem consumir orçamento.
+
+---
+
+### RN04 - Orçamento é mensal
+
+O orçamento definido para cada categoria deve ser considerado dentro de um mês de referência.
+
+Exemplo:
+
+- Orçamento de alimentação para junho;
+- Orçamento de alimentação para julho;
+- Orçamento de alimentação para agosto.
+
+---
+
+### RN05 - Despesa deve possuir categoria
+
+Toda despesa deve estar vinculada a uma categoria para que o sistema consiga calcular o orçamento utilizado.
+
+---
+
+### RN06 - Transação deve possuir método de pagamento
+
+Toda transação deve possuir um método de pagamento vinculado.
+
+---
+
+### RN07 - Orçamento próximo do limite
+
+O sistema deve indicar visualmente quando uma categoria estiver próxima do limite definido.
+
+Regra sugerida:
+
+- Até 79% utilizado: dentro do orçamento;
+- De 80% a 99% utilizado: próximo do limite;
+- A partir de 100% utilizado: orçamento ultrapassado.
+
+---
+
+### RN08 - Exclusão de categoria com transações
+
+O sistema não deve permitir excluir uma categoria vinculada a transações existentes, a menos que exista uma regra de substituição ou confirmação específica.
+
+---
+
+### RN09 - Exclusão de método com transações
+
+O sistema não deve permitir excluir um método de pagamento vinculado a transações existentes, a menos que exista uma regra de substituição ou confirmação específica.
+
+---
+
+### RN10 - Alterações atualizam indicadores
+
+Sempre que uma transação, categoria, método de pagamento ou orçamento for alterado, o sistema deve atualizar os indicadores financeiros automaticamente.
+
+---
+
+## 17. Cálculos e transformações
+
+### 17.1. Resumo financeiro atual
+
+As funções de `utils/calculos.js` são puras:
 
 - `calcularSaldo`;
 - `calcularReceitas`;
 - `calcularDespesas`.
 
-### 11.2 Filtro e ordenacao
+### 17.2. Filtro e ordenação
 
-As funcoes de `utils/transacao.js`:
+As funções de `utils/transacao.js`:
 
-- nao alteram o estado React;
-- filtram por `tipo`;
-- criam uma copia antes de usar `sort`;
-- comparam datas por `Timestamp.toMillis()`;
-- comparam valores numericamente.
+- Não alteram o estado React;
+- Filtram por `tipo`;
+- Criam uma cópia antes de usar `sort`;
+- Comparam datas por `Timestamp.toMillis()`;
+- Comparam valores numericamente.
 
-## 12. Firebase
+### 17.3. Cálculos planejados para orçamento
 
-### 12.1 Inicializacao
+Funções futuras sugeridas:
 
-`config/firebase.js` inicializa uma unica instancia e exporta:
+- `calcularOrcamentoUtilizado`;
+- `calcularOrcamentoRestante`;
+- `calcularPercentualOrcamento`;
+- `verificarStatusOrcamento`.
 
-- `db`: instancia do Firestore;
-- `auth`: instancia do Firebase Authentication.
+Exemplo de status:
 
-### 12.2 Seguranca
+```js
+{
+  categoriaId: "alimentacao",
+  valorPlanejado: 600,
+  valorUtilizado: 420,
+  valorRestante: 180,
+  percentualUtilizado: 70,
+  status: "dentro"
+}
+```
 
-A consulta no frontend usa `where("userId", "==", userId)`, mas isso nao
-substitui regras de seguranca.
+---
 
-As regras da colecao `transacoes` devem exigir:
+## 18. Firebase
 
-- usuario autenticado;
-- leitura apenas de documentos com o mesmo UID;
-- criacao apenas quando `request.resource.data.userId` corresponde ao UID;
-- alteracao e exclusao apenas pelo proprietario.
+### 18.1. Inicialização
 
-Regra-alvo:
+`config/firebase.js` inicializa uma única instância e exporta:
+
+- `db`: instância do Firestore;
+- `auth`: instância do Firebase Authentication.
+
+---
+
+### 18.2. Segurança
+
+A consulta no frontend usa `where("userId", "==", userId)`, mas isso não substitui regras de segurança.
+
+As regras da coleção `transacoes` devem exigir:
+
+- Usuário autenticado;
+- Leitura apenas de documentos com o mesmo UID;
+- Criação apenas quando `request.resource.data.userId` corresponde ao UID;
+- Alteração e exclusão apenas pelo proprietário.
+
+Regra-alvo para transações:
 
 ```text
 match /transacoes/{transactionId} {
@@ -402,77 +757,308 @@ match /transacoes/{transactionId} {
 }
 ```
 
-O bloco deve ser acrescentado ou ajustado no conjunto de regras existente do
-projeto Firebase, sem remover regras de outras colecoes.
+No futuro, regras semelhantes deverão ser criadas para:
 
-## 13. Tratamento de erros
+- `categorias`;
+- `metodosPagamento`;
+- `orcamentos`.
 
-- erros do Firebase sao capturados nos hooks ou formularios;
-- `useTransacoes` expoe uma mensagem para `App`;
-- formularios exibem erros de validacao ou autenticacao;
-- a lista local nao e alterada quando uma operacao remota falha.
+---
 
-Limitacao atual: o mesmo estado `erro` e usado para carregamento e operacoes de
-CRUD. Futuramente pode ser separado em `erroCarregamento` e `erroOperacao`.
+## 19. Tratamento de erros
 
-## 14. Decisoes tecnicas
+- Erros do Firebase são capturados nos hooks ou formulários;
+- `useTransacoes` expõe uma mensagem para `App`;
+- Formulários exibem erros de validação ou autenticação;
+- A lista local não é alterada quando uma operação remota falha.
 
-### 14.1 Firestore no lugar de localStorage
+Limitação atual:
 
-Permite persistencia remota, acesso em diferentes dispositivos e separacao por
-usuario.
+O mesmo estado `erro` é usado para carregamento e operações de CRUD. Futuramente, pode ser separado em:
 
-### 14.2 Service isolado
+- `erroCarregamento`;
+- `erroOperacao`;
+- `erroAutenticacao`;
+- `erroValidacao`.
 
-Evita chamadas Firebase dentro dos componentes e facilita trocar ou testar a
-camada de dados.
+---
 
-### 14.3 Timestamp como formato oficial
+## 20. Decisões técnicas
 
-O Firestore armazena datas como `Timestamp`. A conversao para texto ocorre
-somente nas fronteiras da interface.
+### 20.1. Firestore no lugar de localStorage
 
-### 14.4 Estado derivado sem `useState`
+O Firestore permite persistência remota, acesso em diferentes dispositivos e separação por usuário autenticado.
 
-Saldo, receitas e despesas sao recalculados a partir de `transacoes`, evitando
-sincronizacao duplicada.
+---
 
-## 15. Pendencias e proximos passos
+### 20.2. Service isolado
 
-### Prioridade alta
+Evita chamadas Firebase diretamente nos componentes e facilita trocar ou testar a camada de dados.
+
+---
+
+### 20.3. Timestamp como formato oficial
+
+O Firestore armazena datas como `Timestamp`. A conversão para texto ocorre somente nas fronteiras da interface.
+
+---
+
+### 20.4. Estado derivado sem `useState`
+
+Saldo, receitas e despesas são recalculados a partir de `transacoes`, evitando sincronização duplicada.
+
+---
+
+### 20.5. Orçamento por categoria como diferencial
+
+O orçamento por categoria será tratado como módulo central do sistema, pois representa o principal diferencial do Vesttor em relação a um simples cadastro de transações.
+
+---
+
+## 21. Telas previstas
+
+### 21.1. Tela de autenticação
+
+Deve permitir:
+
+- Criar conta;
+- Fazer login;
+- Exibir erros de autenticação.
+
+---
+
+### 21.2. Dashboard
+
+Deve exibir:
+
+- Saldo atual;
+- Total de receitas;
+- Total de despesas;
+- Resumo do orçamento mensal;
+- Categorias com maior consumo;
+- Alertas de orçamento excedido;
+- Atalho para nova transação.
+
+---
+
+### 21.3. Tela de transações
+
+Deve permitir:
+
+- Cadastrar transação;
+- Editar transação;
+- Excluir transação;
+- Listar transações;
+- Filtrar transações;
+- Ordenar transações.
+
+---
+
+### 21.4. Tela de categorias
+
+Deve permitir:
+
+- Cadastrar categoria;
+- Editar categoria;
+- Excluir categoria;
+- Listar categorias.
+
+---
+
+### 21.5. Tela de métodos de pagamento
+
+Deve permitir:
+
+- Cadastrar método de pagamento;
+- Editar método de pagamento;
+- Excluir método de pagamento;
+- Listar métodos.
+
+---
+
+### 21.6. Tela de orçamentos
+
+Deve permitir:
+
+- Definir orçamento mensal por categoria;
+- Editar orçamento;
+- Visualizar valor utilizado;
+- Visualizar valor restante;
+- Visualizar percentual utilizado;
+- Identificar orçamento próximo do limite ou ultrapassado.
+
+---
+
+### 21.7. Tela de relatórios
+
+Deve apresentar:
+
+- Relatório mensal;
+- Relatório por categoria;
+- Relatório por método de pagamento;
+- Relatório de orçamento.
+
+---
+
+## 22. Critérios de aceite do estado atual
+
+- Usuário consegue criar conta e entrar;
+- Sessão permanece após recarregar;
+- Usuário consegue sair;
+- Apenas transações consultadas pelo UID atual aparecem;
+- Nova transação recebe `userId`;
+- CRUD persiste após recarregar;
+- Datas são armazenadas como `Timestamp`;
+- Filtros e ordenação funcionam sem alterar os dados;
+- Resumo acompanha as transações carregadas;
+- Falhas do Firebase geram mensagem de erro.
+
+---
+
+## 23. Critérios de aceite do escopo alvo
+
+### CA01 - Cadastro de categoria
+
+Dado que o usuário está autenticado,
+quando cadastrar uma categoria válida,
+então ela deve ser salva e exibida na lista de categorias do usuário.
+
+---
+
+### CA02 - Cadastro de método de pagamento
+
+Dado que o usuário está autenticado,
+quando cadastrar um método de pagamento válido,
+então ele deve ser salvo e disponibilizado no cadastro de transações.
+
+---
+
+### CA03 - Transação com categoria e método
+
+Dado que existem categorias e métodos cadastrados,
+quando o usuário cadastrar uma transação,
+então deverá informar categoria e método de pagamento.
+
+---
+
+### CA04 - Orçamento por categoria
+
+Dado que o usuário definiu um orçamento para uma categoria,
+quando cadastrar uma despesa nessa categoria,
+então o sistema deve atualizar o valor utilizado e o valor restante.
+
+---
+
+### CA05 - Alerta de orçamento excedido
+
+Dado que os gastos de uma categoria ultrapassaram o orçamento definido,
+quando o usuário visualizar o resumo de orçamento,
+então o sistema deve indicar visualmente que o orçamento foi excedido.
+
+---
+
+### CA06 - Filtros avançados
+
+Dado que existem transações cadastradas,
+quando o usuário aplicar filtros por período, tipo, categoria ou método de pagamento,
+então o sistema deve exibir apenas as transações correspondentes.
+
+---
+
+### CA07 - Relatórios
+
+Dado que existem movimentações cadastradas,
+quando o usuário acessar a tela de relatórios,
+então o sistema deve apresentar informações consolidadas sobre receitas, despesas e orçamento.
+
+---
+
+## 24. Pendências e próximos passos
+
+### 24.1. Prioridade alta
 
 1. Publicar regras seguras para `transacoes`.
 2. Confirmar isolamento usando duas contas diferentes.
 3. Migrar ou excluir documentos antigos sem `userId`.
-4. Traduzir mensagens tecnicas do Firebase para mensagens amigaveis.
+4. Traduzir mensagens técnicas do Firebase para mensagens amigáveis.
+5. Adicionar categorias.
+6. Adicionar métodos de pagamento.
+7. Associar transações com categoria e método.
 
-### Prioridade media
+---
 
-1. Adicionar estado de processamento para evitar cliques repetidos.
-2. Separar erro inicial de erro de operacao.
-3. Implementar recuperacao de senha.
-4. Adicionar verificacao de email.
-5. Remover `PainelTransacoes.jsx` se continuar sem uso.
-6. Renomear funcoes com sufixo `NaApi` para nomes ligados ao Firestore.
+### 24.2. Prioridade média
 
-### Qualidade
+1. Implementar orçamento mensal por categoria.
+2. Implementar cálculo de orçamento utilizado.
+3. Implementar alertas visuais de orçamento.
+4. Adicionar estado de processamento para evitar cliques repetidos.
+5. Separar erro inicial de erro de operação.
+6. Implementar recuperação de senha.
+7. Adicionar verificação de e-mail.
+8. Remover `PainelTransacoes.jsx` se continuar sem uso.
+9. Renomear funções com sufixo `NaApi` para nomes ligados ao Firestore.
 
-1. Criar testes para utils.
-2. Criar testes dos hooks e formularios.
+---
+
+### 24.3. Qualidade
+
+1. Criar testes para `utils`.
+2. Criar testes dos hooks e formulários.
 3. Revisar acessibilidade de labels, foco e mensagens.
-4. Revisar codificacao UTF-8 dos textos.
-5. Mover configuracao Firebase para variaveis de ambiente do Vite.
+4. Revisar codificação UTF-8 dos textos.
+5. Mover configuração Firebase para variáveis de ambiente do Vite.
+6. Revisar interface visual final.
+7. Preparar deploy de produção.
 
-## 16. Criterios de aceite do estado atual
+---
 
-- usuario consegue criar conta e entrar;
-- sessao permanece apos recarregar;
-- usuario consegue sair;
-- apenas transacoes consultadas pelo UID atual aparecem;
-- nova transacao recebe `userId`;
-- CRUD persiste apos recarregar;
-- datas sao armazenadas como `Timestamp`;
-- filtros e ordenacao funcionam sem alterar os dados;
-- resumo acompanha as transacoes carregadas;
-- falhas do Firebase geram mensagem de erro.
+## 25. Resultado esperado
 
+Ao final do desenvolvimento, o Vesttor deverá permitir que o usuário controle suas finanças pessoais de forma clara e organizada, visualizando suas receitas, despesas e principalmente o andamento do orçamento mensal por categoria.
+
+O sistema deve apoiar o usuário no planejamento financeiro, ajudando-o a identificar excessos, acompanhar limites definidos e tomar decisões melhores ao longo do mês.
+---
+
+## 26. Atualizacao tecnica - React Router e tempo real
+
+### 26.1. React Router
+
+A aplicacao agora usa `BrowserRouter` em `main.jsx` e define as rotas em `App.jsx` com `Routes`, `Route` e `Navigate`.
+
+Rotas atuais:
+
+- `/login`: exibe `Login` quando nao ha usuario autenticado;
+- `/dashboard`: exibe `Dashboard` somente para usuario autenticado;
+- `*`: redireciona qualquer rota desconhecida para `/dashboard` ou `/login`, conforme a sessao.
+
+`App.jsx` ficou responsavel pela decisao de acesso e redirecionamento. A tela autenticada foi movida para `pages/Dashboard.jsx`, e a tela de autenticacao foi movida para `pages/Login.jsx`.
+
+### 26.2. Rotas protegidas
+
+A protecao atual e feita no cliente:
+
+```jsx
+usuario ? <Dashboard usuario={usuario} /> : <Navigate to="/login" />
+```
+
+Essa protecao melhora a navegacao da interface, mas nao substitui as regras de seguranca do Firestore. A seguranca real dos dados continua dependendo das regras publicadas no Firebase.
+
+### 26.3. Leitura em tempo real
+
+A leitura de transacoes deixou de depender de busca unica com `getDocs` e passou a usar `onSnapshot`.
+
+Fluxo atual:
+
+1. `Dashboard` envia `usuario.uid` para `useTransacoes`.
+2. `useTransacoes` chama `observarTransacoes`.
+3. `transacoesService` cria uma query filtrada por `userId`.
+4. `onSnapshot` mantem uma assinatura ativa no Firestore.
+5. Qualquer criacao, edicao ou exclusao atualiza a lista automaticamente.
+6. O cleanup do `useEffect` cancela a assinatura quando o usuario muda ou o componente desmonta.
+
+Com isso, adicionar, editar e excluir nao fazem mais `setTransacoes` manual. O Firestore e a fonte principal da lista, e o `onSnapshot` sincroniza todas as abas.
+
+### 26.4. Proximo ajuste recomendado no SDD
+
+As secoes antigas que citam `buscarTransacoes` e atualizacao manual do estado devem ser revisadas em uma limpeza futura para refletir apenas o fluxo em tempo real.
