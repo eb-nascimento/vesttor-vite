@@ -2,8 +2,10 @@
 
 ## Documentacao do projeto
 
-O desenho atual da aplicacao esta documentado em
-[`docs/SDD.md`](docs/SDD.md).
+A documentacao do projeto foi separada em:
+
+- [`docs/requisitos.md`](docs/requisitos.md): requisitos, escopo, regras de negocio e criterios de aceite;
+- [`docs/arquitetura.md`](docs/arquitetura.md): arquitetura, implementacao, rotas, hooks, Firebase e decisoes tecnicas.
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 

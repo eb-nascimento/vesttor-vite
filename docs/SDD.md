@@ -1062,3 +1062,176 @@ Com isso, adicionar, editar e excluir nao fazem mais `setTransacoes` manual. O F
 ### 26.4. Proximo ajuste recomendado no SDD
 
 As secoes antigas que citam `buscarTransacoes` e atualizacao manual do estado devem ser revisadas em uma limpeza futura para refletir apenas o fluxo em tempo real.
+
+---
+
+## 27. Atualizacao tecnica - Rotas protegidas e layout compartilhado
+
+### 27.1. Objetivo do bloco
+
+Este bloco de estudo evoluiu a estrutura de rotas para reduzir repeticao, separar responsabilidades e preparar a aplicacao para novas paginas autenticadas.
+
+Antes, a protecao das rotas estava escrita diretamente em `App.jsx` com expressoes condicionais. Agora, a regra de acesso foi extraida para componentes especificos de rota.
+
+### 27.2. Estrutura adicionada
+
+Foram adicionadas as pastas:
+
+```text
+src/
+|-- routes/
+|   |-- PrivateRoute.jsx
+|   `-- PublicRoute.jsx
+|
+|-- layouts/
+|   `-- AppLayout.jsx
+```
+
+Responsabilidades:
+
+| Arquivo | Responsabilidade |
+| ------- | ---------------- |
+| `routes/PrivateRoute.jsx` | Permitir acesso somente a usuarios autenticados |
+| `routes/PublicRoute.jsx` | Impedir que usuarios ja autenticados acessem telas publicas como login |
+| `layouts/AppLayout.jsx` | Centralizar a estrutura comum da area autenticada |
+
+### 27.3. `PrivateRoute`
+
+`PrivateRoute` recebe `usuario` e `children`.
+
+Regra:
+
+- Se nao houver usuario autenticado, redireciona para `/login`;
+- Se houver usuario autenticado, renderiza a tela filha.
+
+Conceito estudado:
+
+```jsx
+<PrivateRoute usuario={usuario}>
+  <Dashboard usuario={usuario} />
+</PrivateRoute>
+```
+
+Nesse exemplo, `Dashboard` e o `children` de `PrivateRoute`.
+
+### 27.4. `PublicRoute`
+
+`PublicRoute` representa o caso inverso de `PrivateRoute`.
+
+Regra:
+
+- Se ja houver usuario autenticado, redireciona para `/dashboard`;
+- Se nao houver usuario autenticado, renderiza a tela publica.
+
+Uso atual:
+
+```jsx
+<PublicRoute usuario={usuario}>
+  <Login />
+</PublicRoute>
+```
+
+Essa regra evita que um usuario logado volte para a tela de login.
+
+### 27.5. `AppLayout` e `Outlet`
+
+`AppLayout` centraliza elementos que pertencem a area autenticada da aplicacao.
+
+Atualmente, ele renderiza:
+
+- `Header`;
+- `main`;
+- `Outlet`.
+
+O `Outlet` marca o ponto onde a rota filha sera renderizada.
+
+Estrutura conceitual:
+
+```text
+PrivateRoute
+`-- AppLayout
+    |-- Header
+    `-- main
+        `-- Outlet
+            `-- Dashboard
+```
+
+Com isso, paginas privadas futuras poderao reutilizar o mesmo layout sem repetir `Header` e estrutura principal.
+
+### 27.6. Estrutura atual das rotas
+
+`App.jsx` agora organiza as rotas assim:
+
+```jsx
+<Routes>
+  <Route
+    element={
+      <PrivateRoute usuario={usuario}>
+        <AppLayout />
+      </PrivateRoute>
+    }
+  >
+    <Route path="/dashboard" element={<Dashboard usuario={usuario} />} />
+  </Route>
+
+  <Route
+    path="/login"
+    element={
+      <PublicRoute usuario={usuario}>
+        <Login />
+      </PublicRoute>
+    }
+  />
+
+  <Route
+    path="*"
+    element={<Navigate to={usuario ? "/dashboard" : "/login"} />}
+  />
+</Routes>
+```
+
+Pontos importantes:
+
+- A rota pai protegida nao precisa de `path`;
+- A rota pai serve como casca de protecao e layout;
+- `/dashboard` e uma rota filha;
+- O conteudo de `/dashboard` aparece dentro do `Outlet`;
+- A rota `*` redireciona para um caminho valido conforme o estado da sessao.
+
+### 27.7. Ajuste no `Dashboard`
+
+Com a criacao de `AppLayout`, o `Dashboard` deixa de ser responsavel por renderizar `Header` e estrutura principal da pagina.
+
+Responsabilidade atual do `Dashboard`:
+
+- Buscar transacoes do usuario autenticado via `useTransacoes`;
+- Renderizar resumo financeiro;
+- Renderizar formulario de transacao;
+- Renderizar lista de transacoes;
+- Exibir carregamento, erro, email do usuario e acao de logout.
+
+Responsabilidade do layout:
+
+- Renderizar a estrutura compartilhada da area autenticada;
+- Renderizar o `Header`;
+- Definir o espaco principal onde as paginas filhas aparecem.
+
+### 27.8. Conceitos estudados neste bloco
+
+- `children`;
+- rotas privadas;
+- rotas publicas;
+- componentes de rota;
+- `Navigate`;
+- rota pai sem `path`;
+- rota filha;
+- `Outlet`;
+- layout compartilhado;
+- separacao entre estrutura da aplicacao e conteudo da pagina.
+
+### 27.9. Proximos passos recomendados
+
+1. Criar uma segunda pagina privada, como `/transacoes`.
+2. Registrar essa pagina como rota filha do mesmo `AppLayout`.
+3. Adicionar navegacao entre paginas privadas usando `NavLink`.
+4. Depois, mover gradualmente o conteudo de transacoes para a pagina propria, evitando repetir CRUD apenas por repeticao.

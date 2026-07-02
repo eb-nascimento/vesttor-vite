@@ -1,9 +1,8 @@
-import Header from "../components/Header";
+import { logout } from "../services/authService";
+import { useTransacoes } from "../hooks/useTransacoes";
 import ContainerResumo from "../components/ContainerResumo";
 import Form from "../components/Form";
 import ListaTransacoes from "../components/ListaTransacoes";
-import { logout } from "../services/authService";
-import { useTransacoes } from "../hooks/useTransacoes";
 
 function Dashboard({ usuario }) {
   // O dashboard so e renderizado para usuarios autenticados.
@@ -25,41 +24,33 @@ function Dashboard({ usuario }) {
 
   return (
     <>
-      <Header usuario={usuario} onLogout={logout} />
-      <main>
-        <ContainerResumo
-          saldo={saldo}
-          receitas={receitas}
-          despesas={despesas}
+      <ContainerResumo saldo={saldo} receitas={receitas} despesas={despesas} />
+      <Form
+        onAdd={adicionarTransacao}
+        onEdit={editarTransacao}
+        transacaoEditando={transacaoEditando}
+        cancelarEdicao={cancelarEdicao}
+      />
+
+      {carregando && <p>Carregando transações...</p>}
+
+      {erro && <p className="erro-msg">{erro}</p>}
+
+      {!carregando && (
+        <ListaTransacoes
+          transacoes={transacoes}
+          onExcluir={excluirTransacao}
+          onEditar={iniciarEdicao}
         />
-        <Form
-          onAdd={adicionarTransacao}
-          onEdit={editarTransacao}
-          transacaoEditando={transacaoEditando}
-          cancelarEdicao={cancelarEdicao}
-        />
+      )}
 
-        {carregando && <p>Carregando transações...</p>}
-
-        {erro && <p className="erro-msg">{erro}</p>}
-
-        {!carregando && (
-          <ListaTransacoes
-            transacoes={transacoes}
-            onExcluir={excluirTransacao}
-            onEditar={iniciarEdicao}
-          />
-        )}
-
-        {/* Controle simples de sessao enquanto nao existe layout/nav dedicado. */}
-        <p>{usuario.email}</p>
-        <button type="button" onClick={logout}>
-          Sair
-        </button>
-      </main>
+      {/* Controle simples de sessao enquanto nao existe layout/nav dedicado. */}
+      <p>{usuario.email}</p>
+      <button type="button" onClick={logout}>
+        Sair
+      </button>
     </>
   );
 }
 
 export default Dashboard;
-
