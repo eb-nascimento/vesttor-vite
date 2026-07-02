@@ -1,3 +1,5 @@
+import "./ControlesTransacoes.css";
+
 function ControlesTransacoes({
   filtro,
   onFiltroChange,

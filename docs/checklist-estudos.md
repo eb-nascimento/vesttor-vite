@@ -2,6 +2,12 @@
 
 Este checklist registra o que ja foi estudado/implementado no projeto e o que ainda falta fazer. A ideia e evitar repetir CRUD simples e manter o foco em conceitos novos.
 
+## Diretriz de estudo
+
+O estudo deve priorizar conceitos novos antes de replicar padroes ja aprendidos em outras telas. Depois que um conceito estiver entendido e aplicado uma primeira vez, ele pode ser replicado no restante do projeto.
+
+Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, seguranca, rotas, estado via URL e deploy. Ao fechar um bloco de estudo, este documento deve registrar o que foi aprendido e o que ainda ficou pendente.
+
 ## Concluido
 
 ### Base do projeto
@@ -92,18 +98,18 @@ Este checklist registra o que ja foi estudado/implementado no projeto e o que ai
 
 ## Ajustes pendentes pequenos
 
-- [ ] Remover import nao usado de `Navigate` em `Header.jsx`.
-- [ ] Remover imports de logos que nao forem ficar definitivamente no `Header` depois da escolha visual.
+- [x] Remover import nao usado de `Navigate` em `Header.jsx`.
+- [x] Remover imports de logos que nao forem ficar definitivamente no `Header` depois da escolha visual.
 - [ ] Revisar texto com acentos quebrados em alguns componentes.
-- [ ] Revisar `Header.css` e decidir o estilo final do menu ativo.
-- [ ] Decidir qual logo sera a oficial no `Header`.
-- [ ] Decidir se o favicon fica como esta ou se sera ajustado manualmente depois.
+- [x] Revisar `Header.css` e decidir o estilo final do menu ativo.
+- [x] Decidir qual logo sera a oficial no `Header`.
+- [x] Decidir se o favicon fica como esta ou se sera ajustado manualmente depois.
 
 ## Proximos estudos recomendados
 
 ### React Router
 
-- [ ] Criar rota `/home` ou remover o link para `/home` se ela nao for existir.
+- [x] Criar rota `/home` ou remover o link para `/home` se ela nao for existir.
 - [ ] Entender diferenca entre `Link`, `NavLink` e `Navigate`.
 - [ ] Melhorar menu ativo com CSS.
 - [ ] Criar rotas privadas futuras: `/orcamentos`, `/relatorios`, `/categorias`.
@@ -142,6 +148,29 @@ Este checklist registra o que ja foi estudado/implementado no projeto e o que ai
 - [ ] Mover configuracao Firebase para variaveis de ambiente do Vite.
 - [ ] Traduzir mensagens tecnicas do Firebase para mensagens amigaveis.
 
+### Firebase Authentication - proximos passos
+
+- [ ] Estudar provedores de login social no Firebase Authentication.
+- [ ] Configurar login com Google no Firebase Console.
+- [ ] Implementar autenticacao com Google usando `GoogleAuthProvider`.
+- [ ] Decidir se o login com Google sera por popup ou redirecionamento.
+- [ ] Tratar erros especificos do login com Google.
+- [ ] Garantir que usuario criado via Google continue usando o mesmo fluxo de `useAuth`.
+- [ ] Testar login, logout e persistencia de sessao com conta Google.
+
+### Firebase Hosting e deploy
+
+- [ ] Estudar diferenca entre ambiente local, build e deploy.
+- [ ] Instalar e configurar Firebase CLI.
+- [ ] Fazer login na Firebase CLI.
+- [ ] Inicializar Firebase Hosting no projeto.
+- [ ] Configurar Hosting para servir o build do Vite em `dist`.
+- [ ] Garantir fallback de rotas para SPA com React Router.
+- [ ] Rodar `npm run build` antes do deploy.
+- [ ] Publicar primeira versao com Firebase Hosting.
+- [ ] Testar login, rotas privadas e leitura do Firestore no site publicado.
+- [ ] Documentar comandos de build e deploy no `README.md`.
+
 ### Qualidade
 
 - [ ] Criar testes para funcoes de `utils`.
@@ -155,6 +184,7 @@ Este checklist registra o que ja foi estudado/implementado no projeto e o que ai
 
 - Nao focar em repetir CRUD simples.
 - Priorizar conceitos novos.
+- Primeiro estudar novidades; depois replicar o que ja foi aprendido em outras telas.
 - Codigo da aplicacao so deve ser alterado pelo assistente quando o usuario pedir explicitamente.
 - Documentacao pode ser atualizada pelo assistente ao fechar blocos de estudo.
 - `requisitos.md` registra produto, escopo e regras.

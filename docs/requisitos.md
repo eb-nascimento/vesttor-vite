@@ -75,8 +75,9 @@ Faz parte do objetivo final do Vesttor:
 - Relatorio por categoria;
 - Relatorio por metodo de pagamento;
 - Relatorio de orcamento por categoria;
+- Autenticacao com Google;
 - Interface visual final;
-- Deploy de producao.
+- Deploy de producao com Firebase Hosting.
 
 ## 6. Fora do escopo inicial
 
@@ -90,7 +91,6 @@ Nao fazem parte da versao inicial:
 - Controle financeiro empresarial;
 - Multiplos usuarios compartilhando a mesma conta;
 - Funcionalidades contabeis;
-- Login social;
 - Observabilidade e monitoramento avancado.
 
 ## 7. Regras de negocio
@@ -335,9 +335,11 @@ Dado que existem movimentacoes cadastradas, quando o usuario acessar a tela de r
 2. Confirmar isolamento usando duas contas diferentes.
 3. Migrar ou excluir documentos antigos sem `userId`.
 4. Traduzir mensagens tecnicas do Firebase para mensagens amigaveis.
-5. Adicionar categorias.
-6. Adicionar metodos de pagamento.
-7. Associar transacoes com categoria e metodo.
+5. Adicionar autenticacao com Google.
+6. Preparar deploy com Firebase Hosting.
+7. Adicionar categorias.
+8. Adicionar metodos de pagamento.
+9. Associar transacoes com categoria e metodo.
 
 ### 12.2. Media prioridade
 

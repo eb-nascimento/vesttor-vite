@@ -1,8 +1,5 @@
 import "./Header.css";
-import { Navigate, NavLink } from "react-router";
-import Logo from "./Logo.jsx";
-import LogoVertical from "./LogoVertical.jsx";
-import LogoHorizontal from "./LogoHorizontal.jsx";
+import { NavLink } from "react-router";
 import LogoGrafia from "./LogoGrafia.jsx";
 
 import { logout } from "../services/authService";
@@ -12,7 +9,7 @@ function Header() {
     <header>
       <nav>
         <NavLink
-          to="/home"
+          to="/"
           className={({ isActive }) => (isActive ? "active" : "")}
         >
           <LogoGrafia />
@@ -29,10 +26,10 @@ function Header() {
         >
           Transacoes
         </NavLink>
-        <button type="button" onClick={logout}>
-          Sair
-        </button>
       </nav>
+      <button type="button" onClick={logout}>
+        Sair
+      </button>
     </header>
   );
 }

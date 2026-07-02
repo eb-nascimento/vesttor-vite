@@ -1,32 +1,37 @@
 .card {
-  padding: 16px;
-  border-radius: 12px;
-  color: black;
-  font-family: Arial;
+  flex: 1;
+  min-width: 0;
+  padding: 20px;
+  border-radius: 8px;
+  color: #ffffff;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
 }
 
 .card h2 {
   margin: 0;
-  font-size: 16px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  opacity: 0.9;
 }
 
 .card p {
   margin: 8px 0 0;
-  font-size: 22px;
+  font-size: 1.55rem;
   font-weight: bold;
 }
 
 /* RECEITAS */
 .card.receita {
-  background-color: #2ecc71;
+  background-color: #16a34a;
 }
 
 /* DESPESAS */
 .card.despesa {
-  background-color: #e74c3c;
+  background-color: #dc2626;
 }
 
 /* SALDO */
 .card.saldo {
-  background-color: #3498db;
+  background-color: #2563eb;
 }

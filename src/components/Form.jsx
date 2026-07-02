@@ -1,3 +1,4 @@
+import "./Form.css";
 import { useEffect, useState } from "react";
 import { criarTransacao, validarTransacao } from "../utils/transacao";
 

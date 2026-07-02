@@ -1,0 +1,28 @@
+.painel-transacoes {
+  display: flex;
+  flex-direction: row;
+  gap: 0.8rem;
+  margin-bottom: 16px;
+}
+
+.painel-transacoes select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  color: #111827;
+  background: #ffffff;
+  font: inherit;
+}
+
+.painel-transacoes select:focus {
+  border-color: #2563eb;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+@media (max-width: 640px) {
+  .painel-transacoes {
+    flex-direction: column;
+  }
+}

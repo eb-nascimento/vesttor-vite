@@ -1,3 +1,5 @@
+import "./ListaTransacoes.css";
+
 import { useState } from "react";
 import { filtrarTransacoes, ordenarTransacoes } from "../utils/transacao";
 import ItemTransacao from "./ItemTransacao";
