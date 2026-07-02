@@ -1,3 +1,4 @@
+import "./Header.css";
 import { Navigate, NavLink } from "react-router";
 import Logo from "./Logo.jsx";
 import LogoVertical from "./LogoVertical.jsx";
@@ -10,11 +11,24 @@ function Header() {
   return (
     <header>
       <nav>
-        <NavLink to="/">
+        <NavLink
+          to="/home"
+          className={({ isActive }) => (isActive ? "active" : "")}
+        >
           <LogoGrafia />
         </NavLink>
-        <NavLink to="/dashboard">Dashboard</NavLink>
-        <NavLink to="/transacoes">Transacoes</NavLink>
+        <NavLink
+          to="/dashboard"
+          className={({ isActive }) => (isActive ? "active" : "")}
+        >
+          Dashboard
+        </NavLink>
+        <NavLink
+          to="/transacoes"
+          className={({ isActive }) => (isActive ? "active" : "")}
+        >
+          Transacoes
+        </NavLink>
         <button type="button" onClick={logout}>
           Sair
         </button>
