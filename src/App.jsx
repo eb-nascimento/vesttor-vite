@@ -1,6 +1,8 @@
 import "./App.css";
 import { Routes, Route, Navigate } from "react-router";
 import { useAuth } from "./hooks/useAuth";
+import PrivateRoute from "./routes/PrivateRoute";
+import PublicRoute from "./routes/PublicRoute";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 
@@ -15,15 +17,19 @@ function App() {
   return (
     <Routes>
       <Route
-        path="/login"
+        path="/dashboard"
         element={
-          usuario ? <Navigate to="/dashboard" /> : <Login />
+          <PrivateRoute usuario={usuario}>
+            <Dashboard usuario={usuario} />
+          </PrivateRoute>
         }
       />
       <Route
-        path="/dashboard"
+        path="/login"
         element={
-          usuario ? <Dashboard usuario={usuario} /> : <Navigate to="/login" />
+          <PublicRoute usuario={usuario}>
+            <Login />
+          </PublicRoute>
         }
       />
       <Route
@@ -35,4 +41,3 @@ function App() {
 }
 
 export default App;
-
