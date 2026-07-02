@@ -7,6 +7,7 @@ import AppLayout from "./layouts/AppLayout";
 
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import Transacoes from "./pages/Transacoes";
 
 function App() {
   const { usuario, carregandoAuth } = useAuth();
@@ -24,6 +25,7 @@ function App() {
         }
       >
         <Route path="/dashboard" element={<Dashboard usuario={usuario} />} />
+        <Route path="/transacoes" element={<Transacoes />} />
       </Route>
 
       <Route

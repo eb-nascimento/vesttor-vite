@@ -43,12 +43,6 @@ function Dashboard({ usuario }) {
           onEditar={iniciarEdicao}
         />
       )}
-
-      {/* Controle simples de sessao enquanto nao existe layout/nav dedicado. */}
-      <p>{usuario.email}</p>
-      <button type="button" onClick={logout}>
-        Sair
-      </button>
     </>
   );
 }
