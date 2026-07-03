@@ -1,14 +1,29 @@
 import "./ListaTransacoes.css";
 
-import { useState } from "react";
+import { useSearchParams } from "react-router";
 import { filtrarTransacoes, ordenarTransacoes } from "../utils/transacao";
 import ItemTransacao from "./ItemTransacao";
 import ControlesTransacoes from "./ControlesTransacoes";
 
 function ListaTransacoes({ transacoes, onExcluir, onEditar }) {
   // Filtro e ordenacao alteram somente a exibicao, nao os dados no Firestore.
-  const [ordenacao, setOrdenacao] = useState("data-decrescente");
-  const [filtro, setFiltro] = useState("todas");
+  const [searchParams, setsearchParams] = useSearchParams();
+  const filtro = searchParams.get("filtro") || "todas";
+  const ordenacao = searchParams.get("ordenacao") || "data-decrescente";
+
+  function setFiltro(novoFiltro) {
+    setsearchParams({
+      filtro: novoFiltro,
+      ordenacao: ordenacao,
+    });
+  }
+
+  function setOrdenacao(novaOrdenacao) {
+    setsearchParams({
+      filtro: filtro,
+      ordenacao: novaOrdenacao,
+    });
+  }
 
   // Fluxo de exibicao: lista original -> filtro -> ordenacao -> renderizacao.
   const transacoesFiltradas = filtrarTransacoes(transacoes, filtro);

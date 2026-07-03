@@ -15,16 +15,16 @@ function Header() {
           <LogoGrafia />
         </NavLink>
         <NavLink
-          to="/dashboard"
+          to="/home"
           className={({ isActive }) => (isActive ? "active" : "")}
         >
-          Dashboard
+          Home
         </NavLink>
         <NavLink
           to="/transacoes"
           className={({ isActive }) => (isActive ? "active" : "")}
         >
-          Transacoes
+          Transações
         </NavLink>
       </nav>
       <button type="button" onClick={logout}>

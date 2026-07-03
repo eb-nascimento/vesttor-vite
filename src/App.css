@@ -1,6 +1,3 @@
-.resumo-container {
-  display: flex;
-  gap: 20px;
-  padding-inline: 20px;
-  justify-content: center;
+body {
+  margin: 0;
 }

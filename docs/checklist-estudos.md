@@ -54,9 +54,9 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 - [x] Rotas declaradas com `Routes` e `Route`.
 - [x] Redirecionamentos com `Navigate`.
 - [x] Pagina `/login`.
-- [x] Pagina `/dashboard`.
+- [x] Pagina `/home`.
 - [x] Pagina `/transacoes` criada como segunda rota privada.
-- [x] Rota `*` redirecionando para `/dashboard` ou `/login` conforme a sessao.
+- [x] Rota `*` redirecionando para `/home` ou `/login` conforme a sessao.
 - [x] `PrivateRoute` em `src/routes/PrivateRoute.jsx`.
 - [x] `PublicRoute` em `src/routes/PublicRoute.jsx`.
 - [x] Pasta `src/routes` criada para componentes ligados a navegacao.
@@ -68,12 +68,12 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 - [x] Uso de `Outlet` para renderizar rotas filhas.
 - [x] Rotas privadas agrupadas dentro de uma rota pai sem `path`.
 - [x] `Header` movido para o layout compartilhado.
-- [x] `Dashboard` deixou de ser responsavel pela estrutura comum da aplicacao.
+- [x] `Home` deixou de ser responsavel pela estrutura comum da aplicacao.
 
 ### Navegacao
 
 - [x] `NavLink` usado no `Header`.
-- [x] Links para `/dashboard` e `/transacoes`.
+- [x] Links para `/home` e `/transacoes`.
 - [x] Classe ativa configurada com `isActive`.
 - [x] Botao de logout no `Header`.
 
@@ -110,23 +110,23 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 ### React Router
 
 - [x] Criar rota `/home` ou remover o link para `/home` se ela nao for existir.
-- [ ] Entender diferenca entre `Link`, `NavLink` e `Navigate`.
-- [ ] Melhorar menu ativo com CSS.
+- [x] Entender diferenca entre `Link`, `NavLink` e `Navigate`.
+- [x] Melhorar menu ativo com CSS.
 - [ ] Criar rotas privadas futuras: `/orcamentos`, `/relatorios`, `/categorias`.
 - [ ] Entender rotas aninhadas com mais de uma pagina filha.
 
 ### URL como estado
 
-- [ ] Migrar filtro de transacoes para URL com `useSearchParams`.
-- [ ] Colocar ordenacao na URL.
-- [ ] Aprender valores padrao quando query params nao existem.
-- [ ] Permitir compartilhar link com filtros aplicados.
+- [x] Migrar filtro de transacoes para URL com `useSearchParams`.
+- [x] Colocar ordenacao na URL.
+- [x] Aprender valores padrao quando query params nao existem.
+- [x] Permitir compartilhar link com filtros aplicados.
 
 ### Organizacao de paginas
 
-- [ ] Separar melhor `Dashboard` e `Transacoes`.
+- [ ] Separar melhor `Home` e `Transacoes`.
 - [ ] Mover lista/formulario de transacoes para a pagina `Transacoes` quando fizer sentido.
-- [ ] Deixar `Dashboard` mais focado em resumo e indicadores.
+- [ ] Deixar `Home` mais focado em resumo e indicadores.
 
 ### Produto financeiro
 

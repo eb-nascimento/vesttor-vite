@@ -6,7 +6,7 @@ import PublicRoute from "./routes/PublicRoute";
 import AppLayout from "./layouts/AppLayout";
 
 import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
+import Home from "./pages/Home";
 import Transacoes from "./pages/Transacoes";
 
 function App() {
@@ -24,7 +24,7 @@ function App() {
           </PrivateRoute>
         }
       >
-        <Route path="/dashboard" element={<Dashboard usuario={usuario} />} />
+        <Route path="/home" element={<Home usuario={usuario} />} />
         <Route path="/transacoes" element={<Transacoes />} />
       </Route>
 
@@ -38,7 +38,7 @@ function App() {
       />
       <Route
         path="*"
-        element={<Navigate to={usuario ? "/dashboard" : "/login"} />}
+        element={<Navigate to={usuario ? "/home" : "/login"} />}
       />
     </Routes>
   );

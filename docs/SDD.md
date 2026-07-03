@@ -234,7 +234,7 @@ src/
 |   `-- FormAuth/
 |
 |-- pages/
-|   |-- Dashboard/
+|   |-- Home/
 |   |-- Transacoes/
 |   |-- Categorias/
 |   |-- MetodosPagamento/
@@ -278,7 +278,7 @@ Responsável por:
 
 - Obter o estado da autenticação;
 - Passar o UID para `useTransacoes`;
-- Decidir entre carregamento, login e dashboard;
+- Decidir entre carregamento, login e home;
 - Compor resumo, formulário e lista;
 - Exibir erros de operações;
 - Disponibilizar a ação de logout.
@@ -827,7 +827,7 @@ Deve permitir:
 
 ---
 
-### 21.2. Dashboard
+### 21.2. Home
 
 Deve exibir:
 
@@ -1017,8 +1017,7 @@ então o sistema deve apresentar informações consolidadas sobre receitas, desp
 
 Ao final do desenvolvimento, o Vesttor deverá permitir que o usuário controle suas finanças pessoais de forma clara e organizada, visualizando suas receitas, despesas e principalmente o andamento do orçamento mensal por categoria.
 
-O sistema deve apoiar o usuário no planejamento financeiro, ajudando-o a identificar excessos, acompanhar limites definidos e tomar decisões melhores ao longo do mês.
----
+## O sistema deve apoiar o usuário no planejamento financeiro, ajudando-o a identificar excessos, acompanhar limites definidos e tomar decisões melhores ao longo do mês.
 
 ## 26. Atualizacao tecnica - React Router e tempo real
 
@@ -1029,17 +1028,17 @@ A aplicacao agora usa `BrowserRouter` em `main.jsx` e define as rotas em `App.js
 Rotas atuais:
 
 - `/login`: exibe `Login` quando nao ha usuario autenticado;
-- `/dashboard`: exibe `Dashboard` somente para usuario autenticado;
-- `*`: redireciona qualquer rota desconhecida para `/dashboard` ou `/login`, conforme a sessao.
+- `/home`: exibe `Home` somente para usuario autenticado;
+- `*`: redireciona qualquer rota desconhecida para `/home` ou `/login`, conforme a sessao.
 
-`App.jsx` ficou responsavel pela decisao de acesso e redirecionamento. A tela autenticada foi movida para `pages/Dashboard.jsx`, e a tela de autenticacao foi movida para `pages/Login.jsx`.
+`App.jsx` ficou responsavel pela decisao de acesso e redirecionamento. A tela autenticada foi movida para `pages/Home.jsx`, e a tela de autenticacao foi movida para `pages/Login.jsx`.
 
 ### 26.2. Rotas protegidas
 
 A protecao atual e feita no cliente:
 
 ```jsx
-usuario ? <Dashboard usuario={usuario} /> : <Navigate to="/login" />
+usuario ? <Home usuario={usuario} /> : <Navigate to="/login" />;
 ```
 
 Essa protecao melhora a navegacao da interface, mas nao substitui as regras de seguranca do Firestore. A seguranca real dos dados continua dependendo das regras publicadas no Firebase.
@@ -1050,7 +1049,7 @@ A leitura de transacoes deixou de depender de busca unica com `getDocs` e passou
 
 Fluxo atual:
 
-1. `Dashboard` envia `usuario.uid` para `useTransacoes`.
+1. `Home` envia `usuario.uid` para `useTransacoes`.
 2. `useTransacoes` chama `observarTransacoes`.
 3. `transacoesService` cria uma query filtrada por `userId`.
 4. `onSnapshot` mantem uma assinatura ativa no Firestore.
@@ -1089,11 +1088,11 @@ src/
 
 Responsabilidades:
 
-| Arquivo | Responsabilidade |
-| ------- | ---------------- |
-| `routes/PrivateRoute.jsx` | Permitir acesso somente a usuarios autenticados |
-| `routes/PublicRoute.jsx` | Impedir que usuarios ja autenticados acessem telas publicas como login |
-| `layouts/AppLayout.jsx` | Centralizar a estrutura comum da area autenticada |
+| Arquivo                   | Responsabilidade                                                       |
+| ------------------------- | ---------------------------------------------------------------------- |
+| `routes/PrivateRoute.jsx` | Permitir acesso somente a usuarios autenticados                        |
+| `routes/PublicRoute.jsx`  | Impedir que usuarios ja autenticados acessem telas publicas como login |
+| `layouts/AppLayout.jsx`   | Centralizar a estrutura comum da area autenticada                      |
 
 ### 27.3. `PrivateRoute`
 
@@ -1108,11 +1107,11 @@ Conceito estudado:
 
 ```jsx
 <PrivateRoute usuario={usuario}>
-  <Dashboard usuario={usuario} />
+  <Home usuario={usuario} />
 </PrivateRoute>
 ```
 
-Nesse exemplo, `Dashboard` e o `children` de `PrivateRoute`.
+Nesse exemplo, `Home` e o `children` de `PrivateRoute`.
 
 ### 27.4. `PublicRoute`
 
@@ -1120,7 +1119,7 @@ Nesse exemplo, `Dashboard` e o `children` de `PrivateRoute`.
 
 Regra:
 
-- Se ja houver usuario autenticado, redireciona para `/dashboard`;
+- Se ja houver usuario autenticado, redireciona para `/home`;
 - Se nao houver usuario autenticado, renderiza a tela publica.
 
 Uso atual:
@@ -1153,7 +1152,7 @@ PrivateRoute
     |-- Header
     `-- main
         `-- Outlet
-            `-- Dashboard
+            `-- Home
 ```
 
 Com isso, paginas privadas futuras poderao reutilizar o mesmo layout sem repetir `Header` e estrutura principal.
@@ -1171,7 +1170,7 @@ Com isso, paginas privadas futuras poderao reutilizar o mesmo layout sem repetir
       </PrivateRoute>
     }
   >
-    <Route path="/dashboard" element={<Dashboard usuario={usuario} />} />
+    <Route path="/home" element={<Home usuario={usuario} />} />
   </Route>
 
   <Route
@@ -1183,10 +1182,7 @@ Com isso, paginas privadas futuras poderao reutilizar o mesmo layout sem repetir
     }
   />
 
-  <Route
-    path="*"
-    element={<Navigate to={usuario ? "/dashboard" : "/login"} />}
-  />
+  <Route path="*" element={<Navigate to={usuario ? "/home" : "/login"} />} />
 </Routes>
 ```
 
@@ -1194,15 +1190,15 @@ Pontos importantes:
 
 - A rota pai protegida nao precisa de `path`;
 - A rota pai serve como casca de protecao e layout;
-- `/dashboard` e uma rota filha;
-- O conteudo de `/dashboard` aparece dentro do `Outlet`;
+- `/home` e uma rota filha;
+- O conteudo de `/home` aparece dentro do `Outlet`;
 - A rota `*` redireciona para um caminho valido conforme o estado da sessao.
 
-### 27.7. Ajuste no `Dashboard`
+### 27.7. Ajuste no `Home`
 
-Com a criacao de `AppLayout`, o `Dashboard` deixa de ser responsavel por renderizar `Header` e estrutura principal da pagina.
+Com a criacao de `AppLayout`, o `Home` deixa de ser responsavel por renderizar `Header` e estrutura principal da pagina.
 
-Responsabilidade atual do `Dashboard`:
+Responsabilidade atual do `Home`:
 
 - Buscar transacoes do usuario autenticado via `useTransacoes`;
 - Renderizar resumo financeiro;

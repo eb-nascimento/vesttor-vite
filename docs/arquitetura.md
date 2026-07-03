@@ -1,4 +1,4 @@
-﻿# Vesttor - Arquitetura e Implementacao
+# Vesttor - Arquitetura e Implementacao
 
 ## 1. Visao tecnica
 
@@ -74,7 +74,7 @@ src/
 |   `-- AppLayout.jsx
 |
 |-- pages/
-|   |-- Dashboard.jsx
+|   |-- Home.jsx
 |   `-- Login.jsx
 |
 |-- routes/
@@ -119,11 +119,11 @@ main.jsx
 
 Rotas atuais:
 
-| Rota         | Tipo     | Comportamento                                               |
-| ------------ | -------- | ----------------------------------------------------------- |
-| `/login`     | Publica  | Exibe login apenas para usuario nao autenticado             |
-| `/dashboard` | Privada  | Exibe dashboard apenas para usuario autenticado             |
-| `*`          | Fallback | Redireciona para `/dashboard` ou `/login` conforme a sessao |
+| Rota     | Tipo     | Comportamento                                          |
+| -------- | -------- | ------------------------------------------------------ |
+| `/login` | Publica  | Exibe login apenas para usuario nao autenticado        |
+| `/home`  | Privada  | Exibe home apenas para usuario autenticado             |
+| `*`      | Fallback | Redireciona para `/home` ou `/login` conforme a sessao |
 
 ### 6.2. Estrutura atual em `App.jsx`
 
@@ -136,7 +136,7 @@ Rotas atuais:
       </PrivateRoute>
     }
   >
-    <Route path="/dashboard" element={<Dashboard usuario={usuario} />} />
+    <Route path="/home" element={<Home usuario={usuario} />} />
   </Route>
 
   <Route
@@ -148,10 +148,7 @@ Rotas atuais:
     }
   />
 
-  <Route
-    path="*"
-    element={<Navigate to={usuario ? "/dashboard" : "/login"} />}
-  />
+  <Route path="*" element={<Navigate to={usuario ? "/home" : "/login"} />} />
 </Routes>
 ```
 
@@ -159,7 +156,7 @@ Pontos importantes:
 
 - A rota pai protegida nao possui `path`;
 - Ela serve como casca para protecao e layout;
-- `/dashboard` e uma rota filha;
+- `/home` e uma rota filha;
 - A rota filha aparece dentro do `Outlet` de `AppLayout`;
 - A rota `*` trata enderecos desconhecidos.
 
@@ -178,7 +175,7 @@ Uso conceitual:
 
 ```jsx
 <PrivateRoute usuario={usuario}>
-  <Dashboard usuario={usuario} />
+  <Home usuario={usuario} />
 </PrivateRoute>
 ```
 
@@ -188,7 +185,7 @@ Uso conceitual:
 
 Regra:
 
-- Com usuario: redireciona para `/dashboard`;
+- Com usuario: redireciona para `/home`;
 - Sem usuario: renderiza `children`.
 
 Uso conceitual:
@@ -234,7 +231,7 @@ PrivateRoute
     |-- Header
     `-- main
         `-- Outlet
-            `-- Dashboard
+            `-- Home
 ```
 
 O `Outlet` marca onde a rota filha sera renderizada.
@@ -249,7 +246,7 @@ Responsabilidade:
 - Renderizar `FormAuth`;
 - Deixar a regra de redirecionamento em `PublicRoute`.
 
-### 9.2. `Dashboard.jsx`
+### 9.2. `Home.jsx`
 
 Responsabilidade atual:
 
@@ -261,7 +258,7 @@ Responsabilidade atual:
 - Exibir email do usuario;
 - Disponibilizar logout.
 
-Com a criacao de `AppLayout`, `Dashboard` nao deve mais renderizar `Header` nem criar outro `main`. A estrutura comum pertence ao layout.
+Com a criacao de `AppLayout`, `Home` nao deve mais renderizar `Header` nem criar outro `main`. A estrutura comum pertence ao layout.
 
 ## 10. Autenticacao
 
@@ -342,7 +339,7 @@ A leitura usa tempo real com `onSnapshot`.
 Fluxo:
 
 ```text
-Dashboard
+Home
 `-- useTransacoes(usuario.uid)
     `-- observarTransacoes(userId)
         `-- query transacoes where userId == uid
@@ -484,13 +481,24 @@ Conceitos praticados:
 - `Outlet`;
 - Layout compartilhado.
 
+### 16.4. URL como estado
+
+Conceitos praticados:
+
+- `useSearchParams` para ler e escrever query params;
+- filtro de transacoes persistido na URL;
+- ordenacao de transacoes persistida na URL;
+- valores padrao quando parametros nao existem;
+- preservacao de um parametro ao alterar outro;
+- possibilidade de recarregar ou compartilhar a pagina mantendo filtros aplicados.
+
 ## 17. Proximos passos tecnicos
 
 1. Criar uma segunda pagina privada, como `/transacoes`.
 2. Registrar essa pagina como rota filha do mesmo `AppLayout`.
 3. Adicionar navegacao entre paginas privadas usando `NavLink`.
-4. Migrar filtros locais para URL com `useSearchParams`.
-5. Separar gradualmente `Dashboard` e `Transacoes`.
+4. Migrar filtros locais para URL com `useSearchParams`. (concluido)
+5. Separar gradualmente `Home` e `Transacoes`.
 6. Revisar mensagens de erro do Firebase para textos amigaveis.
 7. Separar erros de carregamento, operacao, autenticacao e validacao.
 8. Revisar codificacao UTF-8 dos textos exibidos.

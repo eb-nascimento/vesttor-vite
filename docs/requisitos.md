@@ -54,7 +54,7 @@ A versao atual contempla:
 - Ordenacao por data ou valor;
 - Mensagem de lista vazia;
 - Conversao entre data do formulario e `Timestamp` do Firestore;
-- Rotas de login e dashboard;
+- Rotas de login e home;
 - Protecao basica de paginas autenticadas no cliente.
 
 ## 5. Escopo alvo
@@ -221,7 +221,7 @@ Deve permitir:
 - Fazer login;
 - Exibir erros de autenticacao.
 
-### 9.2. Dashboard
+### 9.2. Home
 
 Deve exibir:
 
