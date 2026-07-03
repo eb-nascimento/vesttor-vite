@@ -124,9 +124,9 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 
 ### Organizacao de paginas
 
-- [ ] Separar melhor `Home` e `Transacoes`.
+- [x] Separar melhor `Home` e `Transacoes`.
 - [ ] Mover lista/formulario de transacoes para a pagina `Transacoes` quando fizer sentido.
-- [ ] Deixar `Home` mais focado em resumo e indicadores.
+- [x] Deixar `Home` mais focado em resumo e indicadores.
 
 ### Produto financeiro
 
