@@ -94,6 +94,14 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 - [x] Tamanhos fixos aplicados dentro dos componentes, sem exigir props no uso.
 - [x] `Header` exibindo as logos para visualizacao.
 
+
+### Identidade visual
+
+- [x] Criar tokens CSS globais em `App.css`.
+- [x] Definir paleta base da marca.
+- [x] Definir cores de fundo, superficies, textos, bordas e estados.
+- [ ] Aplicar os tokens visuais gradualmente nos componentes existentes.
+- [ ] Revisar contraste e acessibilidade visual depois da aplicacao dos estilos.
 ### Documentacao
 
 - [x] `docs/requisitos.md` criado.
@@ -147,10 +155,10 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 
 ### Firebase e seguranca
 
-- [ ] Publicar regras seguras para `transacoes`.
+- [x] Verificar que regras seguras para `transacoes` ja estavam publicadas.
 - [ ] Testar isolamento com duas contas diferentes.
 - [ ] Migrar ou remover documentos antigos sem `userId`.
-- [ ] Mover configuracao Firebase para variaveis de ambiente do Vite.
+- [x] Mover configuracao Firebase para variaveis de ambiente do Vite.
 - [x] Traduzir mensagens tecnicas do Firebase Authentication para mensagens amigaveis.
 
 ### Firebase Authentication - login com Google
@@ -171,14 +179,24 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 - [x] Testar casos como senha incorreta, e-mail ja cadastrado e popup fechado.
 - [ ] Reutilizar o mesmo padrao futuramente para erros do Firestore.
 
-### Proximo bloco recomendado - seguranca do Firestore
+### Seguranca do Firestore - transacoes
 
-- [ ] Entender por que filtro no frontend nao substitui regras de seguranca.
-- [ ] Escrever regras seguras para a colecao `transacoes`.
-- [ ] Publicar as regras no Firebase Console.
+- [x] Entender por que filtro no frontend nao substitui regras de seguranca.
+- [x] Verificar que as regras seguras para a colecao `transacoes` ja estavam publicadas.
+- [x] Confirmar que `create`, `read`, `update` e `delete` comparam `request.auth.uid` com `userId`.
 - [ ] Testar isolamento com duas contas diferentes.
 - [ ] Validar leitura, criacao, edicao e exclusao apenas pelo dono da transacao.
+- [ ] Registrar decisao sobre regra atual de `categorias`: leitura para usuario autenticado e escrita bloqueada.
 
+### Variaveis de ambiente no Vite
+
+- [x] Estudar uso de `.env` no Vite.
+- [x] Entender o prefixo obrigatorio `VITE_`.
+- [x] Mover configuracao Firebase para variaveis de ambiente.
+- [x] Garantir que `.env` nao seja versionado.
+- [x] Corrigir sintaxe do `.env` para `CHAVE=valor`.
+- [x] Validar login e Firebase apos a mudanca.
+- [ ] Criar `.env.example` para documentar variaveis necessarias sem valores reais.
 ### Firebase Hosting e deploy
 
 - [ ] Estudar diferenca entre ambiente local, build e deploy.
@@ -207,7 +225,8 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 - Priorizar conceitos novos.
 - Primeiro estudar novidades; depois replicar o que ja foi aprendido em outras telas.
 - Codigo da aplicacao nunca deve ser alterado pelo assistente; o assistente deve apenas guiar, explicar, revisar e documentar.
-- Documentacao pode ser atualizada pelo assistente ao fechar blocos de estudo.
+- Documentacao deve ser atualizada pelo assistente ao fechar cada etapa ou bloco de estudo concluido.
+- Apos atualizar a documentacao, o assistente deve indicar os proximos passos recomendados.
 - `requisitos.md` registra produto, escopo e regras.
 - `arquitetura.md` registra implementacao e decisoes tecnicas.
 - Este checklist registra progresso e proximos passos.

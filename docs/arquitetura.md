@@ -509,14 +509,41 @@ Conceitos praticados:
 - preservacao de um parametro ao alterar outro;
 - possibilidade de recarregar ou compartilhar a pagina mantendo filtros aplicados.
 
+
+### 16.5. Variaveis de ambiente no Vite
+
+Conceitos praticados:
+
+- uso de `.env` para separar configuracao de ambiente do codigo fonte;
+- acesso aos valores com `import.meta.env`;
+- prefixo obrigatorio `VITE_` para variaveis expostas ao frontend pelo Vite;
+- sintaxe correta do arquivo `.env` como `CHAVE=valor`;
+- inclusao de `.env` no `.gitignore` para evitar versionar configuracoes locais;
+- validacao do Firebase apos mover a configuracao para variaveis de ambiente.
+
+Pendencia relacionada:
+
+- criar `.env.example` sem valores reais para documentar as variaveis necessarias.
+
+### 16.6. Identidade visual base
+
+Conceitos praticados:
+
+- definicao de tokens CSS globais no `:root` em `App.css`;
+- separacao de cores por responsabilidade: marca, destaque, fundos, textos, bordas e estados;
+- criacao de uma base visual reutilizavel antes de aplicar estilos componente a componente;
+- preparacao para padronizar a interface sem repetir valores hexadecimais espalhados pelo projeto.
+
+Pendencias relacionadas:
+
+- aplicar os tokens nos componentes existentes;
+- revisar contraste, estados de foco e acessibilidade visual;
+- documentar decisoes finais de tipografia e espacamento se forem consolidadas.
 ## 17. Proximos passos tecnicos
 
-1. Criar uma segunda pagina privada, como `/transacoes`.
-2. Registrar essa pagina como rota filha do mesmo `AppLayout`.
-3. Adicionar navegacao entre paginas privadas usando `NavLink`.
-4. Migrar filtros locais para URL com `useSearchParams`. (concluido)
-5. Separar gradualmente `Home` e `Transacoes`.
-6. Revisar mensagens de erro do Firebase para textos amigaveis.
-7. Separar erros de carregamento, operacao, autenticacao e validacao.
-8. Revisar codificacao UTF-8 dos textos exibidos.
-9. Mover configuracao Firebase para variaveis de ambiente do Vite.
+1. Criar `.env.example` sem valores reais.
+2. Aplicar os tokens visuais de `App.css` nos componentes existentes.
+3. Revisar contraste, foco e acessibilidade visual da interface.
+4. Separar erros de carregamento, operacao, autenticacao e validacao.
+5. Revisar codificacao UTF-8 dos textos exibidos.
+6. Estudar build e deploy com Firebase Hosting.

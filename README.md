@@ -6,7 +6,7 @@ Este projeto e conduzido como estudo acompanhado. O assistente deve atuar como g
 
 O assistente nao deve implementar codigo da aplicacao, criar arquivos de codigo, editar componentes, services, hooks, rotas, estilos ou configuracoes do projeto. As alteracoes de codigo devem ser feitas pelo estudante.
 
-A unica excecao permitida e a atualizacao de documentacao do projeto quando isso for solicitado ou quando um bloco de estudo for encerrado.
+A unica excecao permitida e a atualizacao de documentacao do projeto quando isso for solicitado ou quando uma etapa/bloco de estudo for encerrado. Por padrao, ao final de cada etapa concluida, o assistente deve atualizar os documentos relevantes e indicar os proximos passos de estudo.
 
 ## Documentacao do projeto
 

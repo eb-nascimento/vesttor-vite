@@ -3,15 +3,15 @@
   margin: 80px auto;
   padding: 32px;
   box-sizing: border-box;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--color-surface);
   box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
 }
 
 .form-auth h2 {
   margin: 0 0 24px;
-  color: #111827;
+  color: var(--color-text);
   font-size: 1.6rem;
   text-align: center;
 }
@@ -26,18 +26,18 @@
   width: 100%;
   box-sizing: border-box;
   padding: 12px 14px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
-  color: #111827;
-  background: #f9fafb;
+  color: var(--color-text);
+  background: var(--color-surface-alt);
   font: inherit;
 }
 
 .form-auth input:focus {
-  border-color: #2563eb;
+  border-color: var(--color-accent);
   outline: none;
-  background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  background: var(--color-surface);
+  box-shadow: 0 0 0 3px rgba(27, 167, 255, 0.18);
 }
 
 .form-auth button {
@@ -45,8 +45,8 @@
   padding: 12px 16px;
   border: 0;
   border-radius: 6px;
-  color: #ffffff;
-  background: #2563eb;
+  color: var(--color-text-light);
+  background: var(--color-primary);
   font: inherit;
   font-weight: 700;
   cursor: pointer;
@@ -54,27 +54,27 @@
 }
 
 .form-auth button:hover {
-  background: #1d4ed8;
+  background: var(--color-primary-light);
   transform: translateY(-1px);
 }
 
 .form-auth button[type="button"] {
-  color: #2563eb;
-  border: 1px solid #bfdbfe;
-  background: #eff6ff;
+  color: var(--color-primary);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-alt);
 }
 
 .form-auth button[type="button"]:hover {
-  color: #ffffff;
-  background: #2563eb;
+  color: var(--color-text-light);
+  background: var(--color-primary);
 }
 
 .form-auth .erro-msg {
   margin: 0;
   padding: 10px 12px;
   border-radius: 6px;
-  color: #b91c1c;
-  background: #fee2e2;
+  color: var(--color-error);
+  background: var(--color-surface-alt);
   font-weight: 700;
   font-size: 0.9rem;
 }
@@ -85,3 +85,4 @@
     padding: 24px;
   }
 }
+

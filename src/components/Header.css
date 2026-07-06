@@ -3,7 +3,8 @@ header {
   align-items: center;
   flex: 1;
   padding: 1rem;
-  box-shadow: inset 0 -1px 0 #eaeaea;
+  background: var(--color-surface);
+  box-shadow: inset 0 -1px 0 var(--color-border);
 }
 
 nav {
@@ -14,18 +15,19 @@ nav {
 
 nav a {
   display: flex;
-  color: #3b3b3b;
+  color: var(--color-text-muted);
   text-decoration: none;
   padding: 0.5rem;
 }
 
 nav a.active {
-  background-color: #f0f0f0;
+  color: var(--color-primary);
+  background-color: var(--color-surface-alt);
   border-radius: 4px;
 }
 
 nav a:hover {
-  color: #000000;
+  color: var(--color-primary-dark);
   border-radius: 4px;
 }
 
@@ -33,3 +35,4 @@ nav button {
   display: flex;
   justify-self: flex-end;
 }
+

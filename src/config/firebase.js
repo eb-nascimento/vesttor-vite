@@ -3,13 +3,13 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCdiTGDvCyYTLdP5UTFqml2p-QJLrfakFs",
-  authDomain: "gestor-financeiro-43435.firebaseapp.com",
-  projectId: "gestor-financeiro-43435",
-  storageBucket: "gestor-financeiro-43435.firebasestorage.app",
-  messagingSenderId: "484962553511",
-  appId: "1:484962553511:web:887fc9bbd50dbc2f859582",
-  measurementId: "G-07V5TWV124",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTHDOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECTID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGEBUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGINGSENDERID,
+  appId: import.meta.env.VITE_FIREBASE_APPID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENTID,
 };
 // Inicializa uma unica instancia do Firebase para toda a aplicacao.
 const app = initializeApp(firebaseConfig);

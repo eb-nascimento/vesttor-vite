@@ -1,3 +1,44 @@
+:root {
+  /* Marca */
+  --color-primary: #05213a;
+  --color-primary-dark: #001629;
+  --color-primary-light: #0b3d5c;
+
+  /* Destaque */
+  --color-accent: #1ba7ff;
+  --color-growth: #20c997;
+
+  /* Dashboard */
+  --color-dashboard-income: #16a34a;
+  --color-dashboard-expense: #dc2626;
+  --color-dashboard-balance: #2563eb;
+
+  /* Fundos */
+  --color-bg: #f6f8fb;
+  --color-surface: #ffffff;
+  --color-surface-alt: #eef3f8;
+
+  /* Textos */
+  --color-text: #0f172a;
+  --color-text-muted: #64748b;
+  --color-text-light: #ffffff;
+
+  /* Bordas */
+  --color-border: #e2e8f0;
+
+  /* Estados */
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+}
+
+html {
+  font-family: "Inter", sans-serif;
+}
+
 body {
   margin: 0;
+  color: var(--color-text);
+  background: var(--color-bg);
 }
+

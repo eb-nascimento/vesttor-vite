@@ -8,17 +8,17 @@
 .painel-transacoes select {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
-  color: #111827;
-  background: #ffffff;
+  color: var(--color-text);
+  background: var(--color-surface);
   font: inherit;
 }
 
 .painel-transacoes select:focus {
-  border-color: #2563eb;
+  border-color: var(--color-accent);
   outline: none;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 0 0 3px rgba(27, 167, 255, 0.18);
 }
 
 @media (max-width: 640px) {
@@ -26,3 +26,4 @@
     flex-direction: column;
   }
 }
+
