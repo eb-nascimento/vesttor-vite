@@ -1,6 +1,11 @@
 import { useState } from "react";
 
-import { cadastroUsuario, login, loginGoogle } from "../services/authService";
+import {
+  cadastroUsuario,
+  login,
+  loginGoogle,
+  obterMensagemErroAuth,
+} from "../services/authService";
 import "./FormAuth.css";
 
 function FormAuth() {

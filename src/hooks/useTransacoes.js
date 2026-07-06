@@ -26,12 +26,8 @@ export function useTransacoes(userId) {
 
   useEffect(() => {
     if (!userId) {
-      setTransacoes([]);
-      setCarregando(false);
       return;
     }
-    setCarregando(true);
-    setErro("");
 
     const cancelarObservacao = observarTransacoes(
       userId,
