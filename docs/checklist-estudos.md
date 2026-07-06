@@ -100,8 +100,11 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 - [x] Criar tokens CSS globais em `App.css`.
 - [x] Definir paleta base da marca.
 - [x] Definir cores de fundo, superficies, textos, bordas e estados.
+- [x] Definir tokens especificos para indicadores do dashboard.
+- [x] Aplicar cor de texto e fundo globais no `body`.
 - [ ] Aplicar os tokens visuais gradualmente nos componentes existentes.
-- [ ] Revisar contraste e acessibilidade visual depois da aplicacao dos estilos.
+- [ ] Revisar contraste e acessibilidade visual no acabamento final do projeto.
+
 ### Documentacao
 
 - [x] `docs/requisitos.md` criado.
@@ -196,20 +199,20 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 - [x] Garantir que `.env` nao seja versionado.
 - [x] Corrigir sintaxe do `.env` para `CHAVE=valor`.
 - [x] Validar login e Firebase apos a mudanca.
-- [ ] Criar `.env.example` para documentar variaveis necessarias sem valores reais.
+- [x] Criar `.env.example` para documentar variaveis necessarias sem valores reais.
+
 ### Firebase Hosting e deploy
 
-- [ ] Estudar diferenca entre ambiente local, build e deploy.
-- [ ] Instalar e configurar Firebase CLI.
-- [ ] Fazer login na Firebase CLI.
-- [ ] Inicializar Firebase Hosting no projeto.
-- [ ] Configurar Hosting para servir o build do Vite em `dist`.
-- [ ] Garantir fallback de rotas para SPA com React Router.
-- [ ] Rodar `npm run build` antes do deploy.
-- [ ] Publicar primeira versao com Firebase Hosting.
-- [ ] Testar login, rotas privadas e leitura do Firestore no site publicado.
-- [ ] Documentar comandos de build e deploy no `README.md`.
-
+- [x] Estudar diferenca entre ambiente local, build e deploy.
+- [x] Instalar e configurar Firebase CLI.
+- [x] Fazer login na Firebase CLI.
+- [x] Inicializar Firebase Hosting no projeto.
+- [x] Configurar Hosting para servir o build do Vite em `dist`.
+- [x] Garantir fallback de rotas para SPA com React Router.
+- [x] Rodar `npm run build` antes do deploy.
+- [x] Publicar primeira versao com Firebase Hosting.
+- [x] Testar login, rotas privadas e leitura do Firestore no site publicado.
+- [x] Documentar comandos de build e deploy no `README.md`.
 ### Qualidade
 
 - [ ] Criar testes para funcoes de `utils`.
@@ -217,7 +220,7 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 - [ ] Revisar acessibilidade de formularios.
 - [ ] Revisar labels dos inputs.
 - [ ] Revisar foco, botoes e mensagens de erro.
-- [ ] Rodar build normal quando o `dist` nao estiver travado pelo Windows.
+- [x] Rodar build normal apos configuracao de variaveis de ambiente.
 
 ## Regra de estudo combinada
 

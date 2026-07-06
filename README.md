@@ -8,6 +8,50 @@ O assistente nao deve implementar codigo da aplicacao, criar arquivos de codigo,
 
 A unica excecao permitida e a atualizacao de documentacao do projeto quando isso for solicitado ou quando uma etapa/bloco de estudo for encerrado. Por padrao, ao final de cada etapa concluida, o assistente deve atualizar os documentos relevantes e indicar os proximos passos de estudo.
 
+
+## Ambiente e deploy
+
+### Variaveis de ambiente
+
+A configuracao do Firebase fica em `.env`, que nao deve ser versionado. O arquivo `.env.example` documenta as variaveis necessarias sem valores reais.
+
+As variaveis precisam usar o prefixo `VITE_`, pois a aplicacao roda no frontend com Vite.
+
+### Build de producao
+
+```bash
+npm run build
+```
+
+O build gera os arquivos finais na pasta `dist`.
+
+### Deploy manual com Firebase Hosting
+
+```bash
+firebase deploy
+```
+
+Configuracao atual do Hosting:
+
+- projeto Firebase: `gestor-financeiro-43435`;
+- pasta publica: `dist`;
+- fallback de SPA habilitado para React Router, redirecionando rotas para `/index.html`.
+
+### Deploy automatico com GitHub Actions
+
+O Firebase CLI criou workflows em `.github/workflows`:
+
+- `firebase-hosting-merge.yml`: publica no canal live quando houver push na branch `main`;
+- `firebase-hosting-pull-request.yml`: cria preview de Hosting em pull requests do proprio repositorio.
+
+Os workflows executam:
+
+```bash
+npm ci && npm run build
+```
+
+O deploy usa o secret do GitHub `FIREBASE_SERVICE_ACCOUNT_GESTOR_FINANCEIRO_43435`, criado pelo Firebase CLI. Esse secret fica no GitHub e nao deve ser salvo no codigo.
+
 ## Documentacao do projeto
 
 A documentacao do projeto foi separada em:
