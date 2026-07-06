@@ -1,6 +1,7 @@
 import { useState } from "react";
 
-import { cadastroUsuario, login } from "../services/authService";
+import { cadastroUsuario, login, loginGoogle } from "../services/authService";
+import "./FormAuth.css";
 
 function FormAuth() {
   const [email, setEmail] = useState("");
@@ -17,6 +18,15 @@ function FormAuth() {
       await login(email, senha);
     } catch (erro) {
       setErro(erro.message);
+    }
+  }
+
+  async function loginComGoogle() {
+    try {
+      setErro("");
+      await loginGoogle();
+    } catch (erro) {
+      setErro(obterMensagemErroAuth(erro.code));
     }
   }
 
@@ -49,6 +59,9 @@ function FormAuth() {
         {erro && <p className="erro-msg">{erro}</p>}
 
         <button type="submit">Entrar</button>
+        <button type="button" onClick={loginComGoogle}>
+          Entrar com Google
+        </button>
         <button type="button" onClick={cadastrar}>
           Criar Conta
         </button>

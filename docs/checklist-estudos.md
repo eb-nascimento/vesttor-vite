@@ -25,6 +25,11 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 - [x] Hook `useAuth` usando `onAuthStateChanged`.
 - [x] Estado de carregamento da autenticacao com `carregandoAuth`.
 - [x] Redirecionamento conforme usuario logado ou nao logado.
+- [x] Login com Google usando Firebase Authentication.
+- [x] Entendimento de provedores externos com `GoogleAuthProvider`.
+- [x] Confirmacao de que `useAuth` continua funcionando com diferentes provedores.
+- [x] Mapeamento de erros tecnicos do Firebase Auth para mensagens amigaveis.
+- [x] Uso de `erro.code` nos fluxos de login, cadastro e login com Google.
 
 ### Firestore e transacoes
 
@@ -146,17 +151,33 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 - [ ] Testar isolamento com duas contas diferentes.
 - [ ] Migrar ou remover documentos antigos sem `userId`.
 - [ ] Mover configuracao Firebase para variaveis de ambiente do Vite.
-- [ ] Traduzir mensagens tecnicas do Firebase para mensagens amigaveis.
+- [x] Traduzir mensagens tecnicas do Firebase Authentication para mensagens amigaveis.
 
-### Firebase Authentication - proximos passos
+### Firebase Authentication - login com Google
 
-- [ ] Estudar provedores de login social no Firebase Authentication.
-- [ ] Configurar login com Google no Firebase Console.
-- [ ] Implementar autenticacao com Google usando `GoogleAuthProvider`.
-- [ ] Decidir se o login com Google sera por popup ou redirecionamento.
-- [ ] Tratar erros especificos do login com Google.
-- [ ] Garantir que usuario criado via Google continue usando o mesmo fluxo de `useAuth`.
-- [ ] Testar login, logout e persistencia de sessao com conta Google.
+- [x] Estudar provedores de login social no Firebase Authentication.
+- [x] Configurar login com Google no Firebase Console.
+- [x] Implementar autenticacao com Google usando `GoogleAuthProvider`.
+- [x] Decidir usar login com Google por popup.
+- [x] Garantir que usuario criado via Google continue usando o mesmo fluxo de `useAuth`.
+- [x] Testar login, logout e persistencia de sessao com conta Google.
+- [x] Tratar erros especificos do login com Google com mensagens amigaveis.
+
+### Mensagens amigaveis - Firebase Authentication
+
+- [x] Estudar `erro.code` nos erros do Firebase Authentication.
+- [x] Criar uma funcao para converter codigos tecnicos em mensagens de usuario.
+- [x] Aplicar o mapeamento nos fluxos de login, cadastro e login com Google.
+- [x] Testar casos como senha incorreta, e-mail ja cadastrado e popup fechado.
+- [ ] Reutilizar o mesmo padrao futuramente para erros do Firestore.
+
+### Proximo bloco recomendado - seguranca do Firestore
+
+- [ ] Entender por que filtro no frontend nao substitui regras de seguranca.
+- [ ] Escrever regras seguras para a colecao `transacoes`.
+- [ ] Publicar as regras no Firebase Console.
+- [ ] Testar isolamento com duas contas diferentes.
+- [ ] Validar leitura, criacao, edicao e exclusao apenas pelo dono da transacao.
 
 ### Firebase Hosting e deploy
 
@@ -185,7 +206,7 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 - Nao focar em repetir CRUD simples.
 - Priorizar conceitos novos.
 - Primeiro estudar novidades; depois replicar o que ja foi aprendido em outras telas.
-- Codigo da aplicacao so deve ser alterado pelo assistente quando o usuario pedir explicitamente.
+- Codigo da aplicacao nunca deve ser alterado pelo assistente; o assistente deve apenas guiar, explicar, revisar e documentar.
 - Documentacao pode ser atualizada pelo assistente ao fechar blocos de estudo.
 - `requisitos.md` registra produto, escopo e regras.
 - `arquitetura.md` registra implementacao e decisoes tecnicas.

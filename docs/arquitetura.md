@@ -296,7 +296,24 @@ Encapsula chamadas do Firebase Authentication:
 
 - `createUserWithEmailAndPassword`;
 - `signInWithEmailAndPassword`;
+- `GoogleAuthProvider`;
+- `signInWithPopup`;
 - `signOut`.
+
+
+### 10.3. Login com Google
+
+A autenticacao com Google foi adicionada como provedor externo do Firebase Authentication.
+
+Conceitos registrados neste bloco:
+
+- `GoogleAuthProvider` representa o provedor de login Google;
+- `signInWithPopup` inicia o fluxo em uma janela externa;
+- o Firebase cria ou reutiliza o usuario autenticado;
+- `useAuth` nao precisa conhecer o tipo de login usado, pois `onAuthStateChanged` observa o estado geral da sessao;
+- depois do login, o restante da aplicacao continua usando `usuario.uid` para separar os dados por usuario.
+
+O proximo refinamento recomendado e converter erros tecnicos do Firebase Authentication em mensagens amigaveis para o usuario.
 
 ## 11. Firestore e transacoes
 

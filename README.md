@@ -1,5 +1,13 @@
 # React + Vite
 
+## Modo de acompanhamento com assistente
+
+Este projeto e conduzido como estudo acompanhado. O assistente deve atuar como guia tecnico: explicar conceitos, sugerir caminhos, revisar raciocinios, apontar riscos e atualizar documentacao quando combinado.
+
+O assistente nao deve implementar codigo da aplicacao, criar arquivos de codigo, editar componentes, services, hooks, rotas, estilos ou configuracoes do projeto. As alteracoes de codigo devem ser feitas pelo estudante.
+
+A unica excecao permitida e a atualizacao de documentacao do projeto quando isso for solicitado ou quando um bloco de estudo for encerrado.
+
 ## Documentacao do projeto
 
 A documentacao do projeto foi separada em:
