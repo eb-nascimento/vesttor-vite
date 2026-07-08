@@ -11,8 +11,14 @@ A unica excecao permitida e a atualizacao de documentacao do projeto quando isso
 
 ## Ambiente e deploy
 
-### Variaveis de ambiente
+### Qualidade local
 
+```bash
+npm run lint
+```
+
+O lint usa ESLint com regras recomendadas para JavaScript, React Hooks e Vite. A etapa atual de qualidade considera o lint sem erros como criterio minimo antes de seguir para novos estudos.
+### Variaveis de ambiente
 A configuracao do Firebase fica em `.env`, que nao deve ser versionado. O arquivo `.env.example` documenta as variaveis necessarias sem valores reais.
 
 As variaveis precisam usar o prefixo `VITE_`, pois a aplicacao roda no frontend com Vite.

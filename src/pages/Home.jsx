@@ -33,7 +33,8 @@ function Home({ usuario }) {
 
         <section className="transacoes-section">
           <Form
-            onAdd={adicionarTransacao?.id ?? "nova-transacao"}
+            key={transacaoEditando?.id ?? "nova-transacao"}
+            onAdd={adicionarTransacao}
             onEdit={editarTransacao}
             transacaoEditando={transacaoEditando}
             cancelarEdicao={cancelarEdicao}

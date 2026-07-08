@@ -460,6 +460,24 @@ Saldo, receitas e despesas sao calculados a partir da lista de transacoes, evita
 
 `AppLayout` evita repetir `Header` e estrutura principal em cada pagina privada.
 
+### 15.6. Formulario com estado unico
+
+`Form.jsx` usa um unico objeto de estado para os campos do formulario de transacao.
+
+Essa decisao reduz estados paralelos para `data`, `descricao`, `valor`, `tipo` e `erro`, facilitando reset, validacao e preenchimento em modo de edicao.
+
+O estado inicial e criado a partir de `transacaoEditando` quando existe uma transacao em edicao. Para isso, `Home.jsx` usa uma `key` no componente `Form`, alternando entre o id da transacao editada e `"nova-transacao"`. Quando a `key` muda, o React remonta o formulario e o estado inicial e recalculado.
+
+Com isso, o formulario nao precisa usar `useEffect` para copiar props para estado local.
+
+### 15.7. Efeitos focados em sistemas externos
+
+O projeto passou a evitar `setState` sincronico dentro do corpo de `useEffect` quando esse estado pode ser inicializado ou derivado de outra forma.
+
+No caso de `useTransacoes`, o efeito fica focado em sincronizar o React com um sistema externo: a assinatura do Firestore via `onSnapshot`.
+
+Atualizacoes de estado relacionadas aos dados remotos acontecem dentro dos callbacks do listener, e nao como inicializacao sincronica no corpo do efeito.
+
 ## 16. Blocos de estudo concluidos
 
 ### 16.1. Firebase e Firestore
@@ -557,10 +575,28 @@ Conceitos praticados:
 Registro relacionado:
 
 - comandos de build, deploy manual e deploy automatico documentados no `README.md`.
+
+### 16.8. Qualidade com ESLint
+
+Conceitos praticados:
+
+- execucao de `npm run lint`;
+- leitura de erros do ESLint por arquivo, linha e regra;
+- diferenca entre erro real de codigo e recomendacao de padrao React;
+- correcao de import ausente em `FormAuth.jsx`;
+- refatoracao de formulario para estado unico;
+- uso de `key` para remontar componente quando o contexto muda;
+- entendimento da regra `react-hooks/set-state-in-effect`;
+- ajuste de efeito para sincronizar com o Firestore sem inicializacao sincronica de estado.
+
+Estado atual:
+
+- `npm run lint` executa sem erros.
+
 ## 17. Proximos passos tecnicos
 
-1. Aplicar os tokens visuais de `App.css` nos componentes existentes.
+1. Criar testes para funcoes puras em `utils`.
 2. Separar erros de carregamento, operacao, autenticacao e validacao.
 3. Revisar codificacao UTF-8 dos textos exibidos.
-4. Avancar para um novo modulo de produto quando fizer sentido: categorias, metodos de pagamento ou orcamentos.
-5. Deixar revisao de contraste e acessibilidade visual para o acabamento final da interface.
+4. Aplicar os tokens visuais de `App.css` nos componentes existentes.
+5. Avancar para um novo modulo de produto quando fizer sentido: categorias, metodos de pagamento ou orcamentos.

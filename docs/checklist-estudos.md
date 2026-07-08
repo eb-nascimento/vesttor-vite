@@ -105,6 +105,16 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 - [ ] Aplicar os tokens visuais gradualmente nos componentes existentes.
 - [ ] Revisar contraste e acessibilidade visual no acabamento final do projeto.
 
+### Qualidade de codigo
+
+- [x] Rodar `npm run lint` e interpretar os erros do ESLint.
+- [x] Corrigir import ausente em `FormAuth.jsx`.
+- [x] Refatorar `Form.jsx` para usar um unico estado de formulario.
+- [x] Entender uso de `key` para remontar componente ao alternar entre criacao e edicao.
+- [x] Remover `setState` sincronico em `useEffect` no formulario.
+- [x] Ajustar `useTransacoes` para manter o efeito focado na assinatura externa do Firestore.
+- [x] Validar que `npm run lint` executa sem erros.
+
 ### Documentacao
 
 - [x] `docs/requisitos.md` criado.
@@ -216,6 +226,9 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 ### Qualidade
 
 - [ ] Criar testes para funcoes de `utils`.
+- [x] Rodar `npm run lint`.
+- [x] Corrigir erros apontados pelo ESLint.
+- [x] Entender a regra `react-hooks/set-state-in-effect`.
 - [ ] Separar erro de carregamento, erro de operacao e erro de validacao.
 - [ ] Revisar acessibilidade de formularios.
 - [ ] Revisar labels dos inputs.
