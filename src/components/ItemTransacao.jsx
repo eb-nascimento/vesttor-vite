@@ -1,3 +1,5 @@
+import { Pencil, Trash2 } from "lucide-react";
+
 function ItemTransacao({ item, onEditar, onExcluir }) {
   return (
     <div className={`transacao ${item.tipo}`}>
@@ -14,10 +16,10 @@ function ItemTransacao({ item, onEditar, onExcluir }) {
       </div>
       <span className="buttons">
         <button onClick={() => onEditar(item)}>
-          <img src="/src/assets/edit.svg" alt="Editar" width={20} />
+          <Pencil size={20} aria-hidden="true" />
         </button>
         <button onClick={() => onExcluir(item.id)}>
-          <img src="/src/assets/trash.svg" alt="Excluir" width={20} />
+          <Trash2 size={20} aria-hidden="true" />
         </button>
       </span>
     </div>

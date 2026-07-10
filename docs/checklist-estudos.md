@@ -176,7 +176,7 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 ### Firebase e seguranca
 
 - [x] Verificar que regras seguras para `transacoes` ja estavam publicadas.
-- [ ] Testar isolamento com duas contas diferentes.
+- [x] Testar isolamento com duas contas diferentes.
 - [ ] Migrar ou remover documentos antigos sem `userId`.
 - [x] Mover configuracao Firebase para variaveis de ambiente do Vite.
 - [x] Traduzir mensagens tecnicas do Firebase Authentication para mensagens amigaveis.
@@ -204,7 +204,7 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 - [x] Entender por que filtro no frontend nao substitui regras de seguranca.
 - [x] Verificar que as regras seguras para a colecao `transacoes` ja estavam publicadas.
 - [x] Confirmar que `create`, `read`, `update` e `delete` comparam `request.auth.uid` com `userId`.
-- [ ] Testar isolamento com duas contas diferentes.
+- [x] Testar isolamento com duas contas diferentes.
 - [ ] Validar leitura, criacao, edicao e exclusao apenas pelo dono da transacao.
 - [ ] Registrar decisao sobre regra atual de `categorias`: leitura para usuario autenticado e escrita bloqueada.
 

@@ -1,8 +1,9 @@
 import "./Header.css";
+
+import MenuAccount from "./MenuAccount.jsx";
+
 import { NavLink } from "react-router";
 import LogoGrafia from "./LogoGrafia.jsx";
-
-import { logout } from "../services/authService";
 
 function Header() {
   return (
@@ -26,10 +27,15 @@ function Header() {
         >
           Transações
         </NavLink>
+        <NavLink
+          to="/dashboard"
+          className={({ isActive }) => (isActive ? "active" : "")}
+        >
+          Dashboard
+        </NavLink>
       </nav>
-      <button type="button" onClick={logout}>
-        Sair
-      </button>
+
+      <MenuAccount />
     </header>
   );
 }

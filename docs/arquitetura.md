@@ -615,6 +615,21 @@ O hook `useTransacoes` separa falhas por origem:
 
 `Home.jsx` mostra o erro de leitura no lugar da lista. O erro de operacao e exibido sem ocultar as transacoes que ja foram carregadas. O lint e o build executam sem erros apos a separacao.
 
+### 16.11. Validacao de isolamento entre contas
+
+O isolamento de leitura das transacoes foi validado manualmente com duas contas diferentes. Cada conta visualiza apenas as transacoes associadas ao seu proprio `userId`.
+
+A validacao detalhada de criacao, edicao e exclusao de documentos pertencentes a outra conta continua registrada no checklist como verificacao complementar das regras do Firestore.
+
+### 16.12. Menu da conta
+
+Foi adicionado um menu visual de conta no cabecalho, com icones do `lucide-react` e estilos proprios em `MenuAccount.css`.
+
+- O menu aparece ao passar o cursor ou ao navegar por teclado para dentro do componente.
+- Os botoes de icone possuem rotulos acessiveis.
+- O menu possui foco visivel e utiliza os tokens de cor existentes.
+- As rotas de conta, pagamentos, categorias e configuracoes continuam como proximos modulos; os links atuais apenas preparam a navegacao.
+- `npm run lint` e `npm run build` foram executados sem erros.
 ## 17. Proximos passos tecnicos
 
 1. Criar testes para funcoes puras em `utils`.
