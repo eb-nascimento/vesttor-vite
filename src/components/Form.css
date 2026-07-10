@@ -63,6 +63,11 @@ form {
   font-weight: 700;
 }
 
+.form-container button:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
 @media (max-width: 900px) {
   .form-container {
     width: 100%;
@@ -70,4 +75,3 @@ form {
     box-sizing: border-box;
   }
 }
-

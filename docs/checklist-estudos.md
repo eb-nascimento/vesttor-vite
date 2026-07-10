@@ -8,6 +8,13 @@ O estudo deve priorizar conceitos novos antes de replicar padroes ja aprendidos 
 
 Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, seguranca, rotas, estado via URL e deploy. Ao fechar um bloco de estudo, este documento deve registrar o que foi aprendido e o que ainda ficou pendente.
 
+## Papel do assistente
+
+- Manter este checklist, os SDDs e a documentacao atualizados ao final de cada etapa.
+- Definir a estrategia de qualidade e os cenarios que precisam de teste conforme o risco da alteracao.
+- Orientar, revisar e interpretar os resultados de lint, testes, build e deploy.
+- Nao alterar o codigo da aplicacao: a implementacao continua sendo feita pelo usuario.
+
 ## Concluido
 
 ### Base do projeto
@@ -225,14 +232,16 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 - [x] Documentar comandos de build e deploy no `README.md`.
 ### Qualidade
 
-- [ ] Criar testes para funcoes de `utils`.
+- [x] Criar testes unitarios iniciais para funcoes de `utils`.
+- [x] Registrar estrategia e criterios de teste em `docs/sdd-testes.md`.
+- [ ] Ampliar testes somente quando uma funcionalidade ou correcao de maior risco exigir.
 - [x] Rodar `npm run lint`.
 - [x] Corrigir erros apontados pelo ESLint.
 - [x] Entender a regra `react-hooks/set-state-in-effect`.
-- [ ] Separar erro de carregamento, erro de operacao e erro de validacao.
-- [ ] Revisar acessibilidade de formularios.
-- [ ] Revisar labels dos inputs.
-- [ ] Revisar foco, botoes e mensagens de erro.
+- [x] Separar erro de leitura, erro de operacao e erro de validacao.
+- [x] Revisar acessibilidade de formularios.
+- [x] Associar labels aos inputs com `htmlFor` e `id`.
+- [x] Adicionar foco visivel nos botoes e alertas acessiveis para mensagens de erro.
 - [x] Rodar build normal apos configuracao de variaveis de ambiente.
 
 ## Regra de estudo combinada

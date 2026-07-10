@@ -10,7 +10,8 @@ function Home({ usuario }) {
   const {
     transacoes,
     carregando,
-    erro,
+    erroLeitura,
+    erroOperacao,
     adicionarTransacao,
     excluirTransacao,
     editarTransacao,
@@ -42,9 +43,19 @@ function Home({ usuario }) {
 
           {carregando && <p>Carregando transaÃ§Ãµes...</p>}
 
-          {erro && <p className="erro-msg">{erro}</p>}
+          {erroOperacao && (
+            <p className="erro-msg" role="alert">
+              {erroOperacao}
+            </p>
+          )}
 
-          {!carregando && (
+          {erroLeitura && (
+            <p className="erro-msg" role="alert">
+              {erroLeitura}
+            </p>
+          )}
+
+          {!carregando && !erroLeitura && (
             <ListaTransacoes
               transacoes={transacoes}
               onExcluir={excluirTransacao}

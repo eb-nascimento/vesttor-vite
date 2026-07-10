@@ -50,7 +50,9 @@
   font: inherit;
   font-weight: 700;
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.2s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 
 .form-auth button:hover {
@@ -79,10 +81,14 @@
   font-size: 0.9rem;
 }
 
+.form-auth button:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
 @media (max-width: 520px) {
   .form-auth {
     margin: 32px auto;
     padding: 24px;
   }
 }
-

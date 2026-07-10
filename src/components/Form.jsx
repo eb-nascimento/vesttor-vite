@@ -88,33 +88,47 @@ function Form({ onAdd, onEdit, transacaoEditando, cancelarEdicao }) {
     <section className="form-container">
       <h2>{transacaoEditando ? "Editar Transação" : "Nova Transação"}</h2>
       <form onSubmit={salvar}>
-        <input
-          type="date"
-          placeholder="Data"
-          value={form.data}
-          onChange={(e) => atualizarCampo("data", e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Descrição"
-          value={form.descricao}
-          onChange={(e) => atualizarCampo("descricao", e.target.value)}
-        />
-
-        <input
-          type="number"
-          placeholder="Valor"
-          value={form.valor}
-          onChange={(e) => atualizarCampo("valor", e.target.value)}
-        />
-
-        <select
-          value={form.tipo}
-          onChange={(e) => atualizarCampo("tipo", e.target.value)}
-        >
-          <option value="receita">Receita</option>
-          <option value="despesa">Despesa</option>
-        </select>
+        <div className="form-item">
+          <label htmlFor="data">Data:</label>
+          <input
+            id="data"
+            type="date"
+            placeholder="Data"
+            value={form.data}
+            onChange={(e) => atualizarCampo("data", e.target.value)}
+          />
+        </div>
+        <div className="form-item">
+          <label htmlFor="descricao">Descrição:</label>
+          <input
+            id="descricao"
+            type="text"
+            placeholder="Descrição"
+            value={form.descricao}
+            onChange={(e) => atualizarCampo("descricao", e.target.value)}
+          />
+        </div>
+        <div className="form-item">
+          <label htmlFor="valor">Valor:</label>
+          <input
+            id="valor"
+            type="number"
+            placeholder="Valor"
+            value={form.valor}
+            onChange={(e) => atualizarCampo("valor", e.target.value)}
+          />
+        </div>
+        <div className="form-item">
+          <label htmlFor="tipo">Tipo:</label>
+          <select
+            id="tipo"
+            value={form.tipo}
+            onChange={(e) => atualizarCampo("tipo", e.target.value)}
+          >
+            <option value="receita">Receita</option>
+            <option value="despesa">Despesa</option>
+          </select>
+        </div>
 
         <button
           type="button"
@@ -124,7 +138,11 @@ function Form({ onAdd, onEdit, transacaoEditando, cancelarEdicao }) {
           Cancelar
         </button>
 
-        {form.erro && <p className="erro-msg">{form.erro}</p>}
+        {form.erro && (
+          <p className="erro-msg" role="alert">
+            {form.erro}
+          </p>
+        )}
 
         <button type="submit">
           {transacaoEditando ? "Salvar Alterações" : "Adicionar"}

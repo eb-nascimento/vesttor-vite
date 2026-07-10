@@ -593,6 +593,28 @@ Estado atual:
 
 - `npm run lint` executa sem erros.
 
+### 16.9. Acessibilidade de formularios
+
+Foram revisados os formularios de autenticacao e de transacoes.
+
+- Cada campo possui `label` associado por `htmlFor` e `id`.
+- O formulario de autenticacao informa `autoComplete` para e-mail e senha.
+- Mensagens dinamicas de erro usam `role="alert"` para serem anunciadas por tecnologias assistivas.
+- Botoes possuem foco visivel com `:focus-visible`.
+- `npm run lint` foi executado sem erros apos os ajustes.
+
+Validacao manual recomendada: percorrer os formularios com `Tab` e `Shift + Tab`, confirmando ordem logica e foco visivel.
+
+### 16.10. Estados de erro nas transacoes
+
+O hook `useTransacoes` separa falhas por origem:
+
+- `erroLeitura`: erro da assinatura do Firestore ao carregar ou atualizar a lista;
+- `erroOperacao`: erro ao criar, editar ou excluir uma transacao;
+- `form.erro`: validacao local dos dados no formulario.
+
+`Home.jsx` mostra o erro de leitura no lugar da lista. O erro de operacao e exibido sem ocultar as transacoes que ja foram carregadas. O lint e o build executam sem erros apos a separacao.
+
 ## 17. Proximos passos tecnicos
 
 1. Criar testes para funcoes puras em `utils`.

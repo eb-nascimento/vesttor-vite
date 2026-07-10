@@ -49,19 +49,33 @@ function FormAuth() {
     <section className="form-auth">
       <h2>Acessar conta</h2>
       <form onSubmit={entrar}>
-        <input
-          type="email"
-          placeholder="E-mail"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)}
-        />
+        <div className="form-item">
+          <label htmlFor="email">E-mail:</label>
+          <input
+            id="email"
+            type="email"
+            autoComplete="email"
+            placeholder="E-mail"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+        <div className="form-item">
+          <label htmlFor="senha">Senha:</label>
+          <input
+            id="senha"
+            type="password"
+            autoComplete="current-password"
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
+          />
+        </div>
 
-        {erro && <p className="erro-msg">{erro}</p>}
+        {erro && (
+          <p className="erro-msg" role="alert">
+            {erro}
+          </p>
+        )}
 
         <button type="submit">Entrar</button>
         <button type="button" onClick={loginComGoogle}>

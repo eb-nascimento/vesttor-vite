@@ -17,7 +17,8 @@ export function useTransacoes(userId) {
   const [transacoes, setTransacoes] = useState([]);
   const [transacaoEditando, setTransacaoEditando] = useState(null);
   const [carregando, setCarregando] = useState(true);
-  const [erro, setErro] = useState("");
+  const [erroLeitura, setErroLeitura] = useState("");
+  const [erroOperacao, setErroOperacao] = useState("");
 
   // Estes valores sao calculados a partir da lista e nao precisam de estado proprio.
   const saldo = calcularSaldo(transacoes);
@@ -36,7 +37,7 @@ export function useTransacoes(userId) {
         setCarregando(false);
       },
       (erro) => {
-        setErro(erro.message);
+        setErroLeitura(erro.message);
         setCarregando(false);
       },
     );
@@ -46,19 +47,19 @@ export function useTransacoes(userId) {
 
   async function adicionarTransacao(nova) {
     try {
-      setErro("");
+      setErroOperacao("");
       await criarTransacaoNaApi(nova, userId);
     } catch (erro) {
-      setErro(erro.message);
+      setErroOperacao(erro.message);
     }
   }
 
   async function excluirTransacao(id) {
     try {
-      setErro("");
+      setErroOperacao("");
       await excluirTransacaoNaApi(id);
     } catch (erro) {
-      setErro(erro.message);
+      setErroOperacao(erro.message);
     }
   }
 
@@ -68,10 +69,10 @@ export function useTransacoes(userId) {
 
   async function editarTransacao(id, novosDados) {
     try {
-      setErro("");
+      setErroOperacao("");
       await editarTransacaoNaApi(id, novosDados);
     } catch (erro) {
-      setErro(erro.message);
+      setErroOperacao(erro.message);
     }
   }
 
@@ -82,7 +83,8 @@ export function useTransacoes(userId) {
   return {
     transacoes,
     carregando,
-    erro,
+    erroLeitura,
+    erroOperacao,
     saldo,
     receitas,
     despesas,
