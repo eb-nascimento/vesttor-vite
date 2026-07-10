@@ -8,6 +8,11 @@ import AppLayout from "./layouts/AppLayout";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Transacoes from "./pages/Transacoes";
+import Dashboard from "./pages/Dashboard";
+import Account from "./pages/Account";
+import Payments from "./pages/Payments";
+import Categories from "./pages/Categories";
+import Settings from "./pages/Settings";
 
 function App() {
   const { usuario, carregandoAuth } = useAuth();
@@ -26,6 +31,11 @@ function App() {
       >
         <Route path="/home" element={<Home usuario={usuario} />} />
         <Route path="/transacoes" element={<Transacoes />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/account" element={<Account />} />
+        <Route path="/payments" element={<Payments />} />
+        <Route path="/categories" element={<Categories />} />
+        <Route path="/settings" element={<Settings />} />
       </Route>
 
       <Route

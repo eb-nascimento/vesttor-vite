@@ -145,7 +145,10 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 - [x] Criar rota `/home` ou remover o link para `/home` se ela nao for existir.
 - [x] Entender diferenca entre `Link`, `NavLink` e `Navigate`.
 - [x] Melhorar menu ativo com CSS.
-- [ ] Criar rotas privadas futuras: `/orcamentos`, `/relatorios`, `/categorias`.
+- [x] Criar paginas-base para Dashboard, Conta, Pagamentos, Categorias e Configuracoes.
+- [x] Adicionar links de Dashboard no cabecalho e destinos no menu da conta.
+- [ ] Registrar as rotas privadas de Dashboard, Conta, Pagamentos, Categorias e Configuracoes no `App.jsx`.
+- [ ] Criar rotas privadas futuras: `/orcamentos` e `/relatorios`.
 - [ ] Entender rotas aninhadas com mais de uma pagina filha.
 
 ### URL como estado

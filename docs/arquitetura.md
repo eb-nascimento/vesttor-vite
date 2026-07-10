@@ -630,6 +630,11 @@ Foi adicionado um menu visual de conta no cabecalho, com icones do `lucide-react
 - O menu possui foco visivel e utiliza os tokens de cor existentes.
 - As rotas de conta, pagamentos, categorias e configuracoes continuam como proximos modulos; os links atuais apenas preparam a navegacao.
 - `npm run lint` e `npm run build` foram executados sem erros.
+### 16.13. Estrutura de paginas e navegacao preparada
+
+Foram criados arquivos-base para as paginas `Dashboard`, `Account`, `Payments`, `Categories` e `Settings`. O cabecalho possui um link para Dashboard, e o menu da conta aponta para os demais destinos.
+
+Essas paginas ainda nao possuem conteudo funcional e as rotas correspondentes ainda nao foram registradas no `App.jsx`. Enquanto isso, o redirecionamento curinga da aplicacao leva esses enderecos de volta para `/home`.
 ## 17. Proximos passos tecnicos
 
 1. Criar testes para funcoes puras em `utils`.
