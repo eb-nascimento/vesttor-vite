@@ -15,10 +15,10 @@ function ItemTransacao({ item, onEditar, onExcluir }) {
         </span>
       </div>
       <span className="buttons">
-        <button onClick={() => onEditar(item)}>
+        <button onClick={() => onEditar(item)} aria-label="Editar transação">
           <Pencil size={20} aria-hidden="true" />
         </button>
-        <button onClick={() => onExcluir(item.id)}>
+        <button onClick={() => onExcluir(item.id)} aria-label="Excluir transação">
           <Trash2 size={20} aria-hidden="true" />
         </button>
       </span>

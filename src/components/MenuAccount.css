@@ -40,7 +40,8 @@
   border: 1px solid var(--color-border);
   border-radius: 8px;
   background: var(--color-surface);
-  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.14);
+  /* A sombra elevada agora acompanha o tema ativo. */
+  box-shadow: var(--shadow-card-raised);
 }
 
 .menu-account:hover .menu-account-dropdown,

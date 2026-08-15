@@ -1,0 +1,32 @@
+/*
+ * Tema escuro padrão.
+ * :root aplica este tema mesmo antes de existir uma configuração de preferência.
+ * O seletor data-theme permite selecioná-lo explicitamente no futuro.
+ */
+:root,
+[data-theme="dark"] {
+  /* Também estiliza controles nativos, como o calendário, para fundo escuro. */
+  color-scheme: dark;
+
+  /* Marca: no fundo escuro, o azul de destaque assume o papel de ação principal. */
+  --color-primary: #1ba7ff;
+  --color-primary-dark: #0b3d5c;
+  --color-primary-light: #20c997;
+  --color-logo: #f6f8fb;
+
+  /* Fundos e superfícies extraídos da identidade visual escura. */
+  --color-bg: #050b16;
+  --color-surface: #0b1f33;
+  --color-surface-alt: #20364d;
+
+  /* Textos e bordas próprios para contraste sobre os fundos escuros. */
+  --color-text: #f6f8fb;
+  --color-text-muted: #a9b7c8;
+  --color-text-light: #ffffff;
+  --color-border: #20364d;
+
+  /* Sombras viraram tokens temáticos porque preto e opacidade variam por tema. */
+  --shadow-card: 0 8px 24px rgb(0 0 0 / 24%);
+  --shadow-card-raised: 0 12px 28px rgb(0 0 0 / 32%);
+  --shadow-dialog: 0 16px 40px rgb(0 0 0 / 38%);
+}

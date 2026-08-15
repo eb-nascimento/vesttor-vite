@@ -63,7 +63,8 @@ O deploy usa o secret do GitHub `FIREBASE_SERVICE_ACCOUNT_GESTOR_FINANCEIRO_4343
 A documentacao do projeto foi separada em:
 
 - [`docs/requisitos.md`](docs/requisitos.md): requisitos, escopo, regras de negocio e criterios de aceite;
-- [`docs/arquitetura.md`](docs/arquitetura.md): arquitetura, implementacao, rotas, hooks, Firebase e decisoes tecnicas.
+- [`docs/arquitetura.md`](docs/arquitetura.md): arquitetura, implementacao, rotas, hooks, Firebase e decisoes tecnicas;
+- [`docs/temas.md`](docs/temas.md): temas claro e escuro, tokens CSS, logos, icones, calendario e futura troca de preferencia.
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 

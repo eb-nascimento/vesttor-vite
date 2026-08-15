@@ -104,13 +104,21 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 
 ### Identidade visual
 
-- [x] Criar tokens CSS globais em `App.css`.
+- [x] Separar tokens compartilhados, claros e escuros em `src/styles/themes`.
 - [x] Definir paleta base da marca.
 - [x] Definir cores de fundo, superficies, textos, bordas e estados.
 - [x] Definir tokens especificos para indicadores do dashboard.
 - [x] Aplicar cor de texto e fundo globais no `body`.
-- [ ] Aplicar os tokens visuais gradualmente nos componentes existentes.
-- [ ] Revisar contraste e acessibilidade visual no acabamento final do projeto.
+- [x] Preservar a identidade clara e definir a identidade escura como padrao.
+- [x] Preparar seletores `data-theme` para a futura configuracao de tema.
+- [x] Aplicar tokens visuais nos componentes existentes.
+- [x] Transformar sombras e focos em variaveis tematicas.
+- [x] Adaptar as logos para as cores dos temas.
+- [x] Aplicar cores semanticas aos icones de editar e excluir.
+- [x] Adequar o calendario nativo ao tema com `color-scheme`.
+- [x] Adicionar rotulos acessiveis aos botoes de icones.
+- [ ] Implementar a interface e a persistencia da preferencia de tema.
+- [ ] Realizar uma revisao visual completa de contraste antes da entrega final.
 
 ### Qualidade de codigo
 
@@ -126,6 +134,7 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 
 - [x] `docs/requisitos.md` criado.
 - [x] `docs/arquitetura.md` criado.
+- [x] `docs/temas.md` criado com a arquitetura da identidade visual.
 - [x] `README.md` atualizado para apontar para os documentos novos.
 - [x] `docs/SDD.md` mantido como historico.
 

@@ -6,7 +6,8 @@
   border: 1px solid var(--color-border);
   border-radius: 8px;
   background: var(--color-surface);
-  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
+  /* A sombra mais profunda agora acompanha o tema ativo. */
+  box-shadow: var(--shadow-dialog);
 }
 
 .form-auth h2 {
@@ -37,7 +38,8 @@
   border-color: var(--color-accent);
   outline: none;
   background: var(--color-surface);
-  box-shadow: 0 0 0 3px rgba(27, 167, 255, 0.18);
+  /* O halo de foco foi centralizado em um token compartilhado. */
+  box-shadow: var(--shadow-focus);
 }
 
 .form-auth button {

@@ -85,6 +85,12 @@ src/
 |   |-- authService.js
 |   `-- transacoesService.js
 |
+|-- styles/
+|   `-- themes/
+|       |-- theme-base.css
+|       |-- theme-dark.css
+|       `-- theme-light.css
+|
 |-- utils/
 |   |-- calculos.js
 |   `-- transacao.js
@@ -547,18 +553,24 @@ Registro relacionado:
 
 Conceitos praticados:
 
-- definicao de tokens CSS globais no `:root` em `App.css`;
+- separacao dos tokens em `styles/themes/theme-base.css`, `theme-dark.css` e `theme-light.css`;
+- uso dos mesmos nomes de variaveis nos dois temas para desacoplar componentes da preferencia visual;
+- aplicacao do tema escuro como padrao por meio de `:root`;
+- preparacao da troca futura com os seletores `[data-theme="dark"]` e `[data-theme="light"]`;
 - tokens especificos para indicadores de dashboard, como receitas, despesas e saldo;
 - aplicacao de cor de texto e fundo globais no `body`;
 - separacao de cores por responsabilidade: marca, destaque, fundos, textos, bordas e estados;
-- criacao de uma base visual reutilizavel antes de aplicar estilos componente a componente;
-- preparacao para padronizar a interface sem repetir valores hexadecimais espalhados pelo projeto.
+- conversao de sombras e halos de foco fixos em tokens tematicos;
+- logos SVG incorporadas ao JSX usando `--color-logo`;
+- icones de acao usando tokens semanticos de destaque e perigo;
+- uso de `color-scheme` para adequar controles nativos, como o calendario;
+- manutencao da fonte `Inter` e do layout existente.
 
-Pendencias relacionadas:
+Decisoes relacionadas:
 
-- aplicar os tokens nos componentes existentes de forma consistente;
-- revisar contraste, estados de foco e acessibilidade visual;
-- documentar decisoes finais de tipografia e espacamento se forem consolidadas.
+- a identidade clara anterior permanece disponivel e nao foi sobrescrita;
+- o seletor de preferencia e sua persistencia ainda serao implementados;
+- a documentacao detalhada esta em `docs/temas.md`.
 
 
 ### 16.7. Firebase Hosting e deploy

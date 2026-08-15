@@ -7,7 +7,8 @@
   border: 1px solid var(--color-border);
   border-radius: 8px;
   background: var(--color-surface);
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  /* A sombra agora acompanha o tema ativo. */
+  box-shadow: var(--shadow-card);
 }
 
 .lista-transacoes h2 {
@@ -56,8 +57,14 @@
   place-items: center;
   border: 1px solid var(--color-border);
   border-radius: 6px;
+  /* Ícones de ação deixam de herdar a cor preta padrão do navegador. */
+  color: var(--color-icon-action);
   background: var(--color-surface);
   cursor: pointer;
+}
+
+.buttons button:last-child {
+  color: var(--color-icon-danger);
 }
 
 .buttons button:hover {

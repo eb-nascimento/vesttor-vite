@@ -18,7 +18,8 @@
 .painel-transacoes select:focus {
   border-color: var(--color-accent);
   outline: none;
-  box-shadow: 0 0 0 3px rgba(27, 167, 255, 0.18);
+  /* O halo de foco foi centralizado em um token compartilhado. */
+  box-shadow: var(--shadow-focus);
 }
 
 @media (max-width: 640px) {

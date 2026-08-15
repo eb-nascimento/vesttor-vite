@@ -8,9 +8,10 @@ function LogoVertical() {
       preserveAspectRatio="xMidYMid meet"
       aria-hidden="true"
     >
+      {/* A cor da marca agora vem do tema ativo. */}
       <g
         transform="translate(0.000000,2048.000000) scale(0.100000,-0.100000)"
-        fill="#000"
+        fill="var(--color-logo)"
         stroke="none"
       >
         <path d="M7376 13748 c9 -18 94 -172 189 -343 95 -170 212 -384 260 -475 98 -182 426 -782 525 -957 l63 -112 36 29 c20 15 104 90 186 165 157 144 179 164 446 418 l167 157 -193 423 c-106 232 -224 490 -263 572 l-71 150 -681 3 -681 2 17 -32z" />

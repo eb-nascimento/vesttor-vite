@@ -1,0 +1,30 @@
+/*
+ * Tema claro legado, preservado com os valores que antes estavam no App.css.
+ * Ele poderá ser ativado futuramente definindo data-theme="light" no elemento html.
+ */
+[data-theme="light"] {
+  /* Restaura a aparência clara dos controles nativos neste tema. */
+  color-scheme: light;
+
+  /* Marca */
+  --color-primary: #05213a;
+  --color-primary-dark: #001629;
+  --color-primary-light: #0b3d5c;
+  --color-logo: #05213a;
+
+  /* Fundos */
+  --color-bg: #f6f8fb;
+  --color-surface: #ffffff;
+  --color-surface-alt: #eef3f8;
+
+  /* Textos e bordas */
+  --color-text: #0f172a;
+  --color-text-muted: #64748b;
+  --color-text-light: #ffffff;
+  --color-border: #e2e8f0;
+
+  /* Valores das sombras claras anteriores, agora nomeados para troca de tema. */
+  --shadow-card: 0 8px 24px rgb(15 23 42 / 6%);
+  --shadow-card-raised: 0 12px 28px rgb(15 23 42 / 14%);
+  --shadow-dialog: 0 16px 40px rgb(15 23 42 / 12%);
+}
