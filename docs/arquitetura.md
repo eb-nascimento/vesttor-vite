@@ -8,6 +8,8 @@ Este documento registra como o projeto esta implementado, quais decisoes tecnica
 
 Para requisitos de produto, regras de negocio e escopo funcional, consulte `docs/requisitos.md`.
 
+A implementacao descrita neste documento representa o estado atual. A arquitetura alvo com Cloud Functions, seus contratos e o plano de migracao estao em `docs/cloud-functions.md`.
+
 ## 2. Stack principal
 
 - React;
@@ -443,6 +445,22 @@ No futuro, regras equivalentes deverao ser criadas para:
 - `categorias`;
 - `metodosPagamento`;
 - `orcamentos`.
+
+### 14.1. Arquitetura alvo de seguranca
+
+A arquitetura alvo mantem os dados na mesma base do Cloud Firestore e preserva a leitura em tempo real pelo frontend. Criacao, edicao e exclusao serao migradas para HTTPS callable Cloud Functions.
+
+No backend:
+
+- o UID sera obtido do contexto autenticado, nunca aceito do payload;
+- toda transacao continuara vinculada obrigatoriamente a um `userId`;
+- descricao tera no maximo 100 caracteres;
+- valor devera ser positivo e finito, sem maximo de negocio;
+- datas passadas e futuras serao permitidas;
+- criacao devera ser idempotente para impedir duplicacoes;
+- edicao e exclusao verificarao a propriedade do documento.
+
+Depois da migracao das escritas, as Security Rules deverao manter somente a leitura direta por proprietario e negar escritas diretas do cliente. Esta arquitetura ainda nao esta implementada; detalhes e ordem segura de migracao estao em `docs/cloud-functions.md`.
 
 ## 15. Decisoes tecnicas registradas
 

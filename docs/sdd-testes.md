@@ -69,6 +69,20 @@ Nao e obrigatorio criar teste novo para ajustes exclusivamente visuais, textos e
 - Em testes automatizados, simular apenas o contrato necessario do Firebase.
 - Validar mensagens amigaveis para erros de autenticacao mapeados.
 
+### Cloud Functions e seguranca
+
+- Testar validadores de descricao, valor, data, tipo e campos protegidos.
+- Testar callable sem autenticacao e com payload invalido.
+- Testar criacao, edicao e exclusao apenas pelo proprietario.
+- Testar tentativa de forjar `userId`.
+- Testar retentativas simultaneas e sequenciais com a mesma chave de idempotencia.
+- Testar descricao com 100 e 101 caracteres, valores altos e datas passadas e futuras.
+- Testar Security Rules com proprietario, outro usuario e usuario anonimo.
+- Usar Functions e Firestore Emulators antes de validar no projeto Firebase real.
+- Confirmar que a leitura em tempo real continua restrita ao proprietario.
+
+Esses testes passam a ser obrigatorios para a migracao das escritas. Os testes existentes continuam representando apenas a cobertura atual do frontend.
+
 ## 7. Execucao
 
 Durante o desenvolvimento, usar:

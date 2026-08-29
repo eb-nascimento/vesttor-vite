@@ -1,4 +1,4 @@
-﻿# Vesttor - Requisitos do Projeto
+# Vesttor - Requisitos do Projeto
 
 ## 1. Visao geral
 
@@ -146,6 +146,30 @@ O sistema nao deve permitir excluir um metodo de pagamento vinculado a transacoe
 ### RN10 - Alteracoes atualizam indicadores
 
 Sempre que uma transacao, categoria, metodo de pagamento ou orcamento for alterado, o sistema deve atualizar os indicadores financeiros automaticamente.
+
+### RN11 - Identidade definida pelo backend
+
+Toda transacao deve possuir `userId`. Na arquitetura alvo, o backend deve obter o UID do contexto autenticado e nao deve aceitar que o cliente escolha ou altere esse campo.
+
+### RN12 - Descricao da transacao
+
+A descricao e obrigatoria, deve ser normalizada e pode possuir no maximo 100 caracteres. A referencia de aproximadamente cinco palavras e apenas uma orientacao de uso.
+
+### RN13 - Valor da transacao
+
+O valor deve ser numerico, finito e maior que zero. Nao existe limite maximo de negocio definido.
+
+### RN14 - Datas permitidas
+
+Datas passadas e futuras sao permitidas. Datas futuras poderao representar compras parceladas nos meses seguintes; a geracao automatica e o vinculo entre parcelas dependem de especificacao posterior.
+
+### RN15 - Criacao sem duplicacoes
+
+A criacao de transacoes deve ser idempotente. Repeticoes da mesma intencao, inclusive por duplo clique, timeout ou retentativa de rede, devem produzir uma unica transacao.
+
+### RN16 - Confirmacao de alteracoes
+
+Edicao e exclusao devem exigir confirmacao explicita na interface. A confirmacao visual nao substitui a autorizacao e a verificacao de propriedade no backend.
 
 ## 8. Modelo de dados alvo
 
@@ -327,22 +351,41 @@ Dado que existem transacoes cadastradas, quando o usuario aplicar filtros por pe
 
 Dado que existem movimentacoes cadastradas, quando o usuario acessar a tela de relatorios, entao o sistema deve apresentar informacoes consolidadas sobre receitas, despesas e orcamento.
 
+### CA08 - Identidade confiavel
+
+Dado um usuario autenticado, quando criar uma transacao, entao o documento deve receber o UID obtido pelo backend, independentemente de campos adicionais enviados pelo cliente.
+
+### CA09 - Criacao idempotente
+
+Dadas chamadas simultaneas ou sequenciais com a mesma chave de idempotencia, quando a criacao for processada, entao apenas uma transacao deve existir e as repeticoes devem retornar o mesmo resultado logico.
+
+### CA10 - Validacao dos campos
+
+Dada uma transacao, quando a descricao tiver ate 100 caracteres, o valor for positivo e finito e a data passada ou futura for valida, entao o backend deve aceitar esses campos. Uma descricao com mais de 100 caracteres deve ser rejeitada.
+
+### CA11 - Leitura em tempo real e isolamento
+
+Dado um usuario autenticado, quando suas transacoes forem alteradas, entao a interface deve receber a atualizacao em tempo real sem ler documentos de outros usuarios.
+
+### CA12 - Escritas protegidas
+
+Dado que a migracao para Functions foi concluida, quando o cliente tentar criar, editar ou excluir diretamente no Firestore, entao as Security Rules devem negar a operacao.
+
 ## 12. Prioridades de produto
 
 ### 12.1. Alta prioridade
 
-1. Publicar regras seguras para `transacoes`.
-2. Confirmar isolamento usando duas contas diferentes.
-3. Migrar ou excluir documentos antigos sem `userId`.
-4. Traduzir mensagens tecnicas do Firebase para mensagens amigaveis.
-5. Adicionar autenticacao com Google.
-6. Preparar deploy com Firebase Hosting.
-7. Adicionar categorias.
-8. Adicionar metodos de pagamento.
-9. Associar transacoes com categoria e metodo.
+1. Auditar e tratar documentos antigos sem `userId`.
+2. Confirmar edicao e regiao do Firestore e definir a regiao das Functions.
+3. Inicializar Cloud Functions 2nd gen e emuladores.
+4. Implementar validacao, autorizacao e idempotencia no backend.
+5. Migrar criacao, edicao e exclusao para callable Functions.
+6. Testar isolamento e retentativas com duas contas.
+7. Bloquear escritas diretas somente depois da migracao validada.
+8. Configurar App Check, IAM, logs e alertas.
+9. Adicionar categorias e metodos de pagamento.
 
 ### 12.2. Media prioridade
-
 1. Implementar orcamento mensal por categoria.
 2. Implementar calculo de orcamento utilizado.
 3. Implementar alertas visuais de orcamento.

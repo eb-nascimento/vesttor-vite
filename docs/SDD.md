@@ -21,6 +21,8 @@ A versão atual do sistema já possui autenticação com Firebase Authentication
 
 O objetivo final do projeto é evoluir o Vesttor para uma solução mais completa de planejamento financeiro, incluindo categorias, métodos de pagamento, relatórios e principalmente orçamento mensal por categoria. Esse orçamento será o principal diferencial do sistema, permitindo que o usuário defina limites mensais para cada área de gasto e acompanhe quanto já utilizou ao longo do mês.
 
+O CRUD direto no Firestore descrito neste SDD representa o estado atual. A arquitetura alvo preserva a leitura em tempo real, mas migra criação, edição e exclusão para Cloud Functions. O plano detalhado, os contratos e as decisões confirmadas estão em `docs/cloud-functions.md`.
+
 ---
 
 ## 3. Problema
@@ -765,6 +767,27 @@ No futuro, regras semelhantes deverão ser criadas para:
 
 ---
 
+### 18.3. Arquitetura alvo com Cloud Functions
+
+Os dados permanecem no mesmo projeto Firebase e na mesma base do Cloud Firestore. A leitura em tempo real continua no frontend, protegida por Security Rules que restringem cada documento ao seu proprietario.
+
+Na arquitetura alvo, criacao, edicao e exclusao passam por HTTPS callable Functions. O backend deve:
+
+- obter o UID do contexto autenticado e definir `userId`;
+- rejeitar `userId` e campos protegidos enviados pelo cliente;
+- limitar a descricao a 100 caracteres;
+- aceitar valores positivos e finitos, sem maximo de negocio;
+- aceitar datas passadas e futuras;
+- verificar a propriedade antes de editar ou excluir;
+- garantir idempotencia na criacao para impedir duplicacoes;
+- retornar erros estruturados sem expor detalhes internos.
+
+Depois da migracao validada, as regras devem negar escritas diretas do cliente. App Check, IAM, logs e alertas complementam a protecao, mas nao substituem autenticacao e autorizacao.
+
+Essa arquitetura ainda nao esta implementada. Consulte `docs/cloud-functions.md` para a ordem de migracao, riscos, testes e pendencias.
+
+---
+
 ## 19. Tratamento de erros
 
 - Erros do Firebase são capturados nos hooks ou formulários;
@@ -977,18 +1000,19 @@ então o sistema deve apresentar informações consolidadas sobre receitas, desp
 
 ### 24.1. Prioridade alta
 
-1. Publicar regras seguras para `transacoes`.
-2. Confirmar isolamento usando duas contas diferentes.
-3. Migrar ou excluir documentos antigos sem `userId`.
-4. Traduzir mensagens técnicas do Firebase para mensagens amigáveis.
-5. Adicionar categorias.
-6. Adicionar métodos de pagamento.
-7. Associar transações com categoria e método.
+1. Auditar e tratar documentos antigos sem `userId`.
+2. Confirmar edicao e regiao do Firestore e definir a regiao das Functions.
+3. Inicializar Cloud Functions 2nd gen e emuladores.
+4. Implementar validacao, autorizacao e idempotencia no backend.
+5. Migrar criacao, edicao e exclusao para callable Functions.
+6. Testar isolamento, retentativas e Security Rules com duas contas.
+7. Bloquear escritas diretas somente depois da migracao validada.
+8. Configurar App Check, IAM, logs e alertas.
+9. Adicionar categorias e metodos de pagamento.
 
 ---
 
 ### 24.2. Prioridade média
-
 1. Implementar orçamento mensal por categoria.
 2. Implementar cálculo de orçamento utilizado.
 3. Implementar alertas visuais de orçamento.

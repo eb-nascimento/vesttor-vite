@@ -64,6 +64,7 @@ A documentacao do projeto foi separada em:
 
 - [`docs/requisitos.md`](docs/requisitos.md): requisitos, escopo, regras de negocio e criterios de aceite;
 - [`docs/arquitetura.md`](docs/arquitetura.md): arquitetura, implementacao, rotas, hooks, Firebase e decisoes tecnicas;
+- [`docs/cloud-functions.md`](docs/cloud-functions.md): arquitetura alvo de backend, seguranca, contratos e migracao incremental para Cloud Functions;
 - [`docs/temas.md`](docs/temas.md): temas claro e escuro, tokens CSS, logos, icones, calendario e futura troca de preferencia.
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

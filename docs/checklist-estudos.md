@@ -220,6 +220,26 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 - [ ] Validar leitura, criacao, edicao e exclusao apenas pelo dono da transacao.
 - [ ] Registrar decisao sobre regra atual de `categorias`: leitura para usuario autenticado e escrita bloqueada.
 
+### Cloud Functions - migracao segura de transacoes
+
+- [x] Documentar arquitetura alvo e fronteiras entre frontend, Functions e Firestore.
+- [x] Confirmar permanencia dos dados no mesmo Cloud Firestore.
+- [x] Confirmar leitura em tempo real pelo frontend.
+- [x] Definir descricao com ate 100 caracteres, valor positivo sem maximo e datas passadas ou futuras.
+- [x] Definir `userId` obrigatorio e derivado do contexto autenticado.
+- [x] Definir criacao idempotente sem duplicacoes.
+- [x] Definir confirmacao de edicao e exclusao.
+- [ ] Confirmar edicao e regiao da instancia Firestore.
+- [ ] Definir regiao, memoria, concorrencia e limites das Functions.
+- [ ] Auditar documentos antigos sem `userId`.
+- [ ] Inicializar Functions 2nd gen e emuladores.
+- [ ] Implementar validadores, autenticacao, autorizacao e erros estruturados.
+- [ ] Implementar e testar chave de idempotencia.
+- [ ] Migrar criacao, edicao e exclusao para callable Functions.
+- [ ] Testar isolamento, retentativas e Security Rules.
+- [ ] Negar escritas diretas somente depois da migracao validada.
+- [ ] Configurar App Check, IAM, logs, alertas e custos.
+
 ### Variaveis de ambiente no Vite
 
 - [x] Estudar uso de `.env` no Vite.
