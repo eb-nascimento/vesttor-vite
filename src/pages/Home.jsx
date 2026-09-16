@@ -41,7 +41,7 @@ function Home({ usuario }) {
             cancelarEdicao={cancelarEdicao}
           />
 
-          {carregando && <p>Carregando transaÃ§Ãµes...</p>}
+          {carregando && <p>Carregando transações...</p>}
 
           {erroOperacao && (
             <p className="erro-msg" role="alert">

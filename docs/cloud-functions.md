@@ -104,7 +104,7 @@ Validacoes minimas:
 - identidade obtida exclusivamente do contexto autenticado.
 
 
-Datas futuras atendem ao registro de compras parceladas nos meses seguintes. A geracao automatica e o vinculo entre parcelas ainda dependem de especificacao propria.
+Datas futuras atendem ao registro de compras parceladas nos meses seguintes. A [proposta de interface](parcelamento.md) define os campos e a previa. O contrato de persistencia, a geracao automatica, o vinculo entre parcelas e os testes continuam pendentes; esta definicao nao antecipa a ativacao de Functions/Blaze.
 
 ## Integridade, idempotencia e confirmacoes
 

@@ -4,6 +4,9 @@ import {
   signOut,
   GoogleAuthProvider,
   signInWithPopup,
+  sendPasswordResetEmail,
+  verifyPasswordResetCode,
+  confirmPasswordReset,
 } from "firebase/auth";
 
 import { auth } from "../config/firebase";
@@ -29,6 +32,11 @@ export function loginGoogle() {
   return signInWithPopup(auth, provider);
 }
 
+/**
+ * Traduz os códigos de erro padrão do Firebase para mensagens amigáveis em português.
+ * @param {string} codigo - O código de erro retornado pelo Firebase (ex: 'auth/invalid-credential').
+ * @returns {string} Mensagem de erro traduzida para exibir ao usuário.
+ */
 export function obterMensagemErroAuth(codigo) {
   if (codigo === "auth/invalid-credential") {
     return "E-mail ou senha inválidos.";
@@ -43,4 +51,29 @@ export function obterMensagemErroAuth(codigo) {
   }
 
   return "Não foi possível concluir a autenticação. Tente novamente.";
+}
+
+/**
+ * Envia um e-mail para o usuário contendo um link para redefinição de senha.
+ * @param {string} email - O endereço de e-mail da conta do usuário.
+ */
+export function enviarEmailRedefinicaoSenha(email) {
+  return sendPasswordResetEmail(auth, email);
+}
+
+/**
+ * Verifica se o código de redefinição de senha (oobCode) presente no link é válido e não expirou.
+ * @param {string} codigo - O código criptografado extraído da URL (oobCode).
+ */
+export function verificarCodigoRedefinicaoSenha(codigo) {
+  return verifyPasswordResetCode(auth, codigo);
+}
+
+/**
+ * Conclui o processo de recuperação atualizando a senha do usuário no banco de dados.
+ * @param {string} codigo - O código criptografado extraído da URL (oobCode).
+ * @param {string} novaSenha - A nova senha escolhida pelo usuário.
+ */
+export function redefinirSenha(codigo, novaSenha) {
+  return confirmPasswordReset(auth, codigo, novaSenha);
 }

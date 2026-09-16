@@ -1,0 +1,136 @@
+{
+  "runId": "vesttor",
+  "fileKey": "fDeglPOLWDf4zxIikgYEXv",
+  "fileName": "Vesttor — Design System",
+  "sourceOfTruth": "src/styles/themes",
+  "created": {
+    "pages": [
+      "0:1",
+      "3:2",
+      "3:3",
+      "3:4"
+    ],
+    "collections": [
+      "VariableCollectionId:4:2",
+      "VariableCollectionId:4:3",
+      "VariableCollectionId:4:4",
+      "VariableCollectionId:4:5"
+    ],
+    "variables": [
+      "VariableID:4:6", "VariableID:4:7", "VariableID:4:8", "VariableID:4:9",
+      "VariableID:4:10", "VariableID:4:11", "VariableID:4:12", "VariableID:4:13",
+      "VariableID:4:14", "VariableID:4:15", "VariableID:4:16", "VariableID:4:17",
+      "VariableID:4:18", "VariableID:4:19", "VariableID:4:20", "VariableID:4:21",
+      "VariableID:4:22", "VariableID:4:23", "VariableID:4:24", "VariableID:4:25",
+      "VariableID:4:26", "VariableID:4:27",
+      "VariableID:5:2", "VariableID:5:3", "VariableID:5:4", "VariableID:5:5",
+      "VariableID:5:6", "VariableID:5:7", "VariableID:5:8", "VariableID:5:9",
+      "VariableID:5:10", "VariableID:5:11", "VariableID:5:12", "VariableID:5:13",
+      "VariableID:5:14", "VariableID:5:15", "VariableID:5:16", "VariableID:5:17",
+      "VariableID:5:18", "VariableID:5:19", "VariableID:5:20", "VariableID:5:21",
+      "VariableID:5:22", "VariableID:5:23",
+      "VariableID:7:2", "VariableID:7:3", "VariableID:7:4", "VariableID:7:5",
+      "VariableID:7:6", "VariableID:7:7", "VariableID:7:8", "VariableID:7:9",
+      "VariableID:7:10", "VariableID:7:11", "VariableID:7:12", "VariableID:7:13",
+      "VariableID:7:14", "VariableID:7:15", "VariableID:7:16", "VariableID:7:17",
+      "VariableID:7:18", "VariableID:7:19", "VariableID:7:20", "VariableID:7:21",
+      "VariableID:7:22", "VariableID:7:23", "VariableID:7:24", "VariableID:7:25",
+      "VariableID:7:26", "VariableID:7:27", "VariableID:7:28", "VariableID:7:29",
+      "VariableID:7:30", "VariableID:7:31", "VariableID:7:32",
+      "VariableID:16:2", "VariableID:43:8"
+    ],
+    "textStyles": [
+      "S:708558af6431e6da8de13562aa3d0380adbcf466,",
+      "S:f48ad6d6d8dcc86b3c0ff3dba5e58330b2226077,",
+      "S:3077ceaccae9e36a858fc61e99ce3a97b8542c5d,",
+      "S:563c7a4b4d8335003c6917048299d061d66b88ab,",
+      "S:44273f85da92545fe41e12789a79ae0e80afb887,",
+      "S:473c54871f308b81f8c1b1652b89dc4f1f5fccef,",
+      "S:285da3c57f85fbc7776c69102cd011e72dda6ff4,",
+      "S:7bfa738681f136e3ffecc14122e9f307f3113d80,"
+    ],
+    "effectStyles": [
+      "S:9b15e0bf5f3da1b424ca7239a531be6816b6f0a6,",
+      "S:0c6ddb30a385fc66b36dcb03135cccea5d624ca4,",
+      "S:3db9677e8446f2dad2d15d10600d401470834d3f,",
+      "S:267c53ee8ca0ab1334d98e97fb8304b024de7d85,",
+      "S:683be4e4a13846d2537794985a49212b401933bd,",
+      "S:d65f978fb62804ef0560caee067e1a3a608d63bf,",
+      "S:a44155f95a1913bc41fe6e2517f493a9e474c295,"
+    ],
+    "documentationNodes": [
+      "11:2",
+      "13:2",
+      "13:6",
+      "13:299",
+      "14:2",
+      "14:66",
+      "55:2",
+      "55:3"
+    ],
+    "components": [
+      "17:2",
+      "23:2",
+      "25:50",
+      "26:26",
+      "28:34",
+      "29:11",
+      "30:15",
+      "33:18",
+      "36:26",
+      "38:22"
+    ],
+    "patternNodes": [
+      "62:149",
+      "63:149",
+      "64:149",
+      "82:149",
+      "82:172",
+      "83:177",
+      "83:190",
+      "84:189",
+      "84:200",
+      "85:193",
+      "85:204",
+      "86:197",
+      "86:214",
+      "87:217",
+      "87:236",
+      "91:239",
+      "91:257"
+    ]
+  },
+  "completedPhases": [0, 1, 2, 3, 4],
+  "phase4": {
+    "completed": [
+      "P4.b accessibility audit",
+      "P4.c naming audit",
+      "P4.d bindings audit",
+      "P4.e final screenshots"
+    ],
+    "blocked": [
+      "P4.a Code Connect requires a Dev or Full seat on a Figma Organization or Enterprise plan"
+    ],
+    "deferred": [
+      "Review white text contrast on dark-mode action/accent and bright feedback/dashboard colors"
+    ],
+    "fixes": [
+      "Danger/Disabled button label visibility restored",
+      "NavigationItem and pattern instances now use size/touch-target at 44 px",
+      "size/touch-target documented in Foundations",
+      "Desktop and mobile headers reduced to 60 px with text-only navigation",
+      "Navigation dots and circular account avatars removed from patterns",
+      "NavigationItem source component converted to text-only navigation",
+      "Pattern paddings normalized to 24/20/16 px",
+      "TransactionItem source variants and all pattern instances use 12 px vertical and 16 px horizontal padding",
+      "Mobile flow keeps current balance and summary above the transaction form",
+      "Authentication MVP documented with desktop and mobile patterns for sign-up, password recovery, sent-link confirmation, e-mail verification, login error and login loading"
+    ]
+  },
+  "authFlows": {
+    "section": "81:149",
+    "desktop": ["82:149", "83:177", "84:189", "85:193", "86:197", "87:217", "91:239"],
+    "mobile": ["82:172", "83:190", "84:200", "85:204", "86:214", "87:236", "91:257"],
+    "validated": true
+  }
+}

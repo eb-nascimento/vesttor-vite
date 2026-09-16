@@ -46,6 +46,15 @@ function App() {
           </PublicRoute>
         }
       />
+      <Route path="/recuperar-senha" element={<Navigate to="/login?modo=recuperar" />} />
+      <Route
+        path="/auth/action"
+        element={
+          <PublicRoute usuario={usuario}>
+            <Login />
+          </PublicRoute>
+        }
+      />
       <Route
         path="*"
         element={<Navigate to={usuario ? "/home" : "/login"} />}

@@ -142,7 +142,7 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 
 - [x] Remover import nao usado de `Navigate` em `Header.jsx`.
 - [x] Remover imports de logos que nao forem ficar definitivamente no `Header` depois da escolha visual.
-- [ ] Revisar texto com acentos quebrados em alguns componentes.
+- [x] Revisar texto com acentos quebrados em alguns componentes.
 - [x] Revisar `Header.css` e decidir o estilo final do menu ativo.
 - [x] Decidir qual logo sera a oficial no `Header`.
 - [x] Decidir se o favicon fica como esta ou se sera ajustado manualmente depois.
@@ -156,7 +156,7 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 - [x] Melhorar menu ativo com CSS.
 - [x] Criar paginas-base para Dashboard, Conta, Pagamentos, Categorias e Configuracoes.
 - [x] Adicionar links de Dashboard no cabecalho e destinos no menu da conta.
-- [ ] Registrar as rotas privadas de Dashboard, Conta, Pagamentos, Categorias e Configuracoes no `App.jsx`.
+- [x] Registrar as rotas privadas de Dashboard, Conta, Pagamentos, Categorias e Configuracoes no `App.jsx`.
 - [ ] Criar rotas privadas futuras: `/orcamentos` e `/relatorios`.
 - [ ] Entender rotas aninhadas com mais de uma pagina filha.
 
@@ -220,7 +220,9 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 - [ ] Validar leitura, criacao, edicao e exclusao apenas pelo dono da transacao.
 - [ ] Registrar decisao sobre regra atual de `categorias`: leitura para usuario autenticado e escrita bloqueada.
 
-### Cloud Functions - migracao segura de transacoes
+### Cloud Functions - migracao segura de transacoes (Pos-MVP)
+
+Decisao vigente: manter o MVP no plano Spark. A implementacao, os testes e o deploy de Functions ficam congelados ate a preparacao de producao, sem ativar Blaze nesta etapa.
 
 - [x] Documentar arquitetura alvo e fronteiras entre frontend, Functions e Firestore.
 - [x] Confirmar permanencia dos dados no mesmo Cloud Firestore.
@@ -229,7 +231,7 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 - [x] Definir `userId` obrigatorio e derivado do contexto autenticado.
 - [x] Definir criacao idempotente sem duplicacoes.
 - [x] Definir confirmacao de edicao e exclusao.
-- [ ] Confirmar edicao e regiao da instancia Firestore.
+- [x] Registrar a decisao de confirmar edicao e regiao do Firestore apenas na preparacao de producao.
 - [ ] Definir regiao, memoria, concorrencia e limites das Functions.
 - [ ] Auditar documentos antigos sem `userId`.
 - [ ] Inicializar Functions 2nd gen e emuladores.

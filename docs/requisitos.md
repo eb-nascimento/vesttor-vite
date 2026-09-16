@@ -161,7 +161,7 @@ O valor deve ser numerico, finito e maior que zero. Nao existe limite maximo de 
 
 ### RN14 - Datas permitidas
 
-Datas passadas e futuras sao permitidas. Datas futuras poderao representar compras parceladas nos meses seguintes; a geracao automatica e o vinculo entre parcelas dependem de especificacao posterior.
+Datas passadas e futuras sao permitidas. A proposta visual de compras parceladas esta definida em [Transacao e parcelamento](parcelamento.md). A geracao, o vinculo entre parcelas e os testes de persistencia permanecem pendentes de implementacao.
 
 ### RN15 - Criacao sem duplicacoes
 
@@ -185,7 +185,6 @@ Edicao e exclusao devem exigir confirmacao explicita na interface. A confirmacao
   tipo: "receita" | "despesa",
   categoriaId: string,
   metodoPagamentoId: string,
-  observacao?: string,
   criadoEm: Timestamp,
   atualizadoEm?: Timestamp
 }
@@ -247,7 +246,9 @@ Deve permitir:
 
 ### 9.2. Home
 
-Deve exibir:
+Decisão de produto: a Home existente permanece como primeira tela após o login, com o registro de transação como ação principal, sem reorganização estrutural do layout.
+
+Deve manter o formulário de transação e o resumo financeiro existente. As visões analíticas detalhadas ficam na tela separada de Resumo financeiro:
 
 - Saldo atual;
 - Total de receitas;
@@ -255,7 +256,9 @@ Deve exibir:
 - Resumo do orcamento mensal;
 - Categorias com maior consumo;
 - Alertas de orcamento excedido;
-- Atalho para nova transacao.
+- Atalho para nova transacao, sem substituir a Home como entrada do sistema.
+
+O mapeamento visual e seus limites de validação estão em `docs/auditoria-telas.md`.
 
 ### 9.3. Transacoes
 
@@ -375,26 +378,31 @@ Dado que a migracao para Functions foi concluida, quando o cliente tentar criar,
 
 ### 12.1. Alta prioridade
 
-1. Auditar e tratar documentos antigos sem `userId`.
-2. Confirmar edicao e regiao do Firestore e definir a regiao das Functions.
-3. Inicializar Cloud Functions 2nd gen e emuladores.
-4. Implementar validacao, autorizacao e idempotencia no backend.
-5. Migrar criacao, edicao e exclusao para callable Functions.
-6. Testar isolamento e retentativas com duas contas.
-7. Bloquear escritas diretas somente depois da migracao validada.
-8. Configurar App Check, IAM, logs e alertas.
-9. Adicionar categorias e metodos de pagamento.
+1. Completar os fluxos de cadastro, login, recuperacao de senha e verificacao de e-mail.
+2. Corrigir lint, codificacao UTF-8 e estados de processamento.
+3. Adicionar categorias e metodos de pagamento com isolamento por usuario.
+4. Detalhar as transacoes e concluir a experiencia mobile do nucleo.
+5. Aplicar no React o layout responsivo aprovado no Figma.
+6. Testar Security Rules e regressao com duas contas.
+7. Preparar e entregar os artefatos academicos nas datas definidas.
 
 ### 12.2. Media prioridade
 1. Implementar orcamento mensal por categoria.
 2. Implementar calculo de orcamento utilizado.
 3. Implementar alertas visuais de orcamento.
-4. Adicionar estado de processamento para evitar cliques repetidos.
-5. Separar erro inicial de erro de operacao.
-6. Implementar recuperacao de senha.
-7. Adicionar verificacao de e-mail.
+4. Separar erro inicial de erro de operacao.
+5. Implementar filtros e relatorios financeiros.
+6. Desenhar dashboard, conta e preferencias somente depois do mobile.
 
-### 12.3. Qualidade
+### 12.3. Pos-MVP de producao
+
+1. Confirmar edicao e regiao do Firestore e definir a infraestrutura das Functions.
+2. Implementar validacao, autorizacao e idempotencia no backend.
+3. Migrar criacao, edicao e exclusao para callable Functions.
+4. Configurar App Check, IAM, logs, alertas e protecoes de custo.
+5. Bloquear escritas diretas somente depois da migracao validada e com rollback documentado.
+
+### 12.4. Qualidade
 
 1. Criar testes para `utils`.
 2. Criar testes dos hooks e formularios.

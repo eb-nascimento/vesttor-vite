@@ -664,7 +664,17 @@ Foi adicionado um menu visual de conta no cabecalho, com icones do `lucide-react
 
 Foram criados arquivos-base para as paginas `Dashboard`, `Account`, `Payments`, `Categories` e `Settings`. O cabecalho possui um link para Dashboard, e o menu da conta aponta para os demais destinos.
 
-Essas paginas ainda nao possuem conteudo funcional e as rotas correspondentes ainda nao foram registradas no `App.jsx`. Enquanto isso, o redirecionamento curinga da aplicacao leva esses enderecos de volta para `/home`.
+Essas paginas ainda nao possuem conteudo funcional, mas suas rotas privadas ja estao registradas no `App.jsx`.
+
+### 16.14. Fluxo visual unificado de autenticacao
+
+`FormAuth.jsx` concentra a apresentacao de login, recuperacao, redefinicao e estados de retorno da autenticacao. O modo visual e selecionado pela URL, evitando componentes e estilos duplicados.
+
+- `/login` apresenta o acesso normal;
+- `/login?modo=recuperar` apresenta a solicitacao do link;
+- `/auth/action` e a entrada reservada para o link enviado pelo Firebase;
+- estados como link expirado e senha redefinida reutilizam o mesmo card;
+- envio do e-mail, validacao do codigo e alteracao da senha ainda nao foram implementados.
 ## 17. Proximos passos tecnicos
 
 1. Criar testes para funcoes puras em `utils`.

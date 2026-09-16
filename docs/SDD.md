@@ -132,7 +132,7 @@ Não fazem parte da versão inicial:
 - Controle financeiro empresarial;
 - Múltiplos usuários compartilhando a mesma conta;
 - Funcionalidades contábeis;
-- Login social;
+- Outros provedores de login social além do Google (Google está no escopo alvo);
 - Observabilidade e monitoramento avançado.
 
 ---
@@ -494,7 +494,6 @@ transacoes
   tipo: "receita" | "despesa",
   categoriaId: string,
   metodoPagamentoId: string,
-  observacao?: string,
   criadoEm: Timestamp,
   atualizadoEm?: Timestamp
 }
@@ -852,7 +851,9 @@ Deve permitir:
 
 ### 21.2. Home
 
-Deve exibir:
+Por decisão de produto, a Home existente continua sendo a primeira tela após o login, com o registro de transação como ação principal. Seu layout não será reorganizado para virar um dashboard.
+
+O resumo financeiro existente permanece na Home. A visão analítica detalhada, em uma tela separada de Resumo financeiro, deve exibir:
 
 - Saldo atual;
 - Total de receitas;
@@ -1001,14 +1002,15 @@ então o sistema deve apresentar informações consolidadas sobre receitas, desp
 ### 24.1. Prioridade alta
 
 1. Auditar e tratar documentos antigos sem `userId`.
-2. Confirmar edicao e regiao do Firestore e definir a regiao das Functions.
-3. Inicializar Cloud Functions 2nd gen e emuladores.
-4. Implementar validacao, autorizacao e idempotencia no backend.
-5. Migrar criacao, edicao e exclusao para callable Functions.
-6. Testar isolamento, retentativas e Security Rules com duas contas.
-7. Bloquear escritas diretas somente depois da migracao validada.
-8. Configurar App Check, IAM, logs e alertas.
-9. Adicionar categorias e metodos de pagamento.
+2. Completar cadastro, recuperação de senha, redefinição e verificação de e-mail.
+3. Adicionar categorias e métodos de pagamento.
+4. Detalhar transações e a experiência mobile do núcleo antes das telas analíticas.
+5. Aplicar no React as telas aprovadas, sem confundir protótipo com funcionalidade implementada.
+6. Testar isolamento e Security Rules com duas contas usando os emuladores.
+
+#### Pós-MVP de produção
+
+A ativação do Blaze e o uso de Functions em produção foram adiados por decisão de custo. Permanecem planejados: confirmar edição/região, implementar validação/autorização/idempotência no backend, migrar escritas para callable Functions e configurar App Check, IAM, logs e alertas. Bloquear escritas diretas somente após a migração validada. Não são pré-requisitos para concluir os desenhos do MVP.
 
 ---
 
@@ -1018,8 +1020,8 @@ então o sistema deve apresentar informações consolidadas sobre receitas, desp
 3. Implementar alertas visuais de orçamento.
 4. Adicionar estado de processamento para evitar cliques repetidos.
 5. Separar erro inicial de erro de operação.
-6. Implementar recuperação de senha.
-7. Adicionar verificação de e-mail.
+6. Desenhar dashboard e relatórios depois do núcleo mobile.
+7. Desenhar conta e preferências depois das visões analíticas.
 8. Remover `PainelTransacoes.jsx` se continuar sem uso.
 9. Renomear funções com sufixo `NaApi` para nomes ligados ao Firestore.
 
