@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Transacoes from "./pages/Transacoes";
 import Dashboard from "./pages/Dashboard";
+import Planning from "./pages/Planning";
 import Account from "./pages/Account";
 import Payments from "./pages/Payments";
 import Categories from "./pages/Categories";
@@ -30,12 +31,13 @@ function App() {
         }
       >
         <Route path="/home" element={<Home usuario={usuario} />} />
-        <Route path="/transacoes" element={<Transacoes />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/account" element={<Account />} />
-        <Route path="/payments" element={<Payments />} />
-        <Route path="/categories" element={<Categories />} />
-        <Route path="/settings" element={<Settings />} />
+        <Route path="/transacoes" element={<Transacoes usuario={usuario} />} />
+        <Route path="/dashboard" element={<Dashboard usuario={usuario} />} />
+        <Route path="/account" element={<Account usuario={usuario} />} />
+        <Route path="/payments" element={<Payments usuario={usuario} />} />
+        <Route path="/categories" element={<Categories usuario={usuario} />} />
+        <Route path="/settings" element={<Settings usuario={usuario} />} />
+        <Route path="/planning" element={<Planning usuario={usuario} />} />
       </Route>
 
       <Route
@@ -46,7 +48,10 @@ function App() {
           </PublicRoute>
         }
       />
-      <Route path="/recuperar-senha" element={<Navigate to="/login?modo=recuperar" />} />
+      <Route
+        path="/recuperar-senha"
+        element={<Navigate to="/login?modo=recuperar" />}
+      />
       <Route
         path="/auth/action"
         element={
