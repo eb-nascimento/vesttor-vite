@@ -1,38 +1,68 @@
 .card {
   flex: 1;
   min-width: 0;
-  padding: 20px;
-  border-radius: 8px;
+  padding: 16px 20px;
+  border-radius: 16px;
   color: var(--color-text-light);
-  /* A sombra agora acompanha o tema ativo. */
-  box-shadow: var(--shadow-card-raised);
+  box-shadow: var(--shadow-card);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
 }
 
 .card h2 {
   margin: 0;
-  font-size: 0.95rem;
+  font-family: var(--font-family-base, "Inter", sans-serif);
+  font-size: 11px;
+  font-weight: 600;
+  color: #ddebfb;
+  letter-spacing: 0.2px;
+}
+
+.card .card-valor {
+  margin: 8px 0 4px;
+  font-family: var(--font-family-title, "Montserrat", sans-serif);
+  font-size: 1.45rem;
   font-weight: 700;
+  color: #ffffff;
+  line-height: 1.25;
+}
+
+.card .card-sub {
+  font-family: var(--font-family-base, "Inter", sans-serif);
+  font-size: 11px;
+  font-weight: 500;
+  color: #e7f4ff;
   opacity: 0.9;
 }
 
-.card p {
-  margin: 8px 0 0;
-  font-size: 1.55rem;
-  font-weight: bold;
-}
-
-/* RECEITAS */
+/* RECEITAS (Figma gradient: #087F71 -> #13A36E) */
 .card.receita {
-  background: linear-gradient(135deg, var(--color-dashboard-income), var(--color-growth));
+  background: var(
+    --gradient-income,
+    linear-gradient(90deg, #087f71 0%, #13a36e 100%)
+  );
+  box-shadow: 0px 8px 22px -9px rgba(19, 163, 110, 0.25);
 }
 
-/* DESPESAS */
+/* DESPESAS (Figma gradient: #C33A55 -> #EB4E58) */
 .card.despesa {
-  background: linear-gradient(135deg, var(--color-dashboard-expense), var(--color-error));
+  background: var(
+    --gradient-expense,
+    linear-gradient(90deg, #c33a55 0%, #eb4e58 100%)
+  );
+  box-shadow: 0px 8px 22px -9px rgba(235, 78, 88, 0.25);
 }
 
-/* SALDO */
+/* SALDO TOTAL (Figma gradient: #106CD6 -> #2149C6) */
 .card.saldo {
-  background: linear-gradient(135deg, var(--color-dashboard-balance), var(--color-accent));
+  background: var(
+    --gradient-balance,
+    linear-gradient(90deg, #106cd6 0%, #2149c6 100%)
+  );
+  box-shadow: 0px 8px 22px -9px rgba(33, 73, 198, 0.25);
 }
-

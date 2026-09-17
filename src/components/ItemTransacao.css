@@ -1,0 +1,138 @@
+.transacao-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--color-border, #1e4666);
+  transition: background-color 0.15s ease;
+}
+
+.transacao-item:last-child {
+  border-bottom: 0;
+}
+
+.transacao-esquerda {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* Badge estilizado do Figma (36x36px, cantos 10px, fundo #102A42) */
+.transacao-badge {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  background: var(--color-surface-alt, #102a42);
+  border: 1px solid var(--color-border, #1e4666);
+  border-radius: 10px;
+  font-family: var(--font-family-title, "Montserrat", sans-serif);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.transacao-badge.receita {
+  color: var(--color-growth, #2dd4a4);
+}
+
+.transacao-badge.despesa {
+  color: var(--color-error, #ff5967);
+}
+
+.transacao-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.transacao-descricao {
+  margin: 0;
+  font-family: var(--font-family-base, "Inter", sans-serif);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text, #f6f8fb);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.transacao-meta {
+  font-family: var(--font-family-base, "Inter", sans-serif);
+  font-size: 11px;
+  color: var(--color-text-muted, #9fb0c3);
+}
+
+.transacao-direita {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.transacao-valor {
+  font-family: var(--font-family-base, "Inter", sans-serif);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.transacao-valor.receita {
+  color: var(--color-growth, #2dd4a4);
+}
+
+.transacao-valor.despesa {
+  color: var(--color-error, #ff5967);
+}
+
+.transacao-acoes {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Botões de ação (32x32px, cantos 10px, borda sutil) */
+.btn-acao {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: var(--color-surface, #0b1f33);
+  border: 1px solid var(--color-border, #1e4666);
+  border-radius: 10px;
+  color: var(--color-text-muted, #9fb0c3);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-acao:hover {
+  background: var(--color-surface-alt, #102a42);
+  transform: translateY(-1px);
+}
+
+.btn-acao.btn-editar:hover {
+  color: var(--color-accent, #20aeff);
+  border-color: var(--color-accent, #20aeff);
+}
+
+.btn-acao.btn-excluir:hover {
+  color: var(--color-error, #ff5967);
+  border-color: var(--color-error, #ff5967);
+}
+
+@media (max-width: 480px) {
+  .transacao-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .transacao-direita {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

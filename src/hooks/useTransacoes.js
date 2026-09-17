@@ -5,6 +5,10 @@ import {
   criarTransacaoNaApi,
   excluirTransacaoNaApi,
   editarTransacaoNaApi,
+  criarCompraParceladaNaApi,
+  excluirParcelasFuturasNaApi,
+  atualizarCompraParceladaNaApi,
+  converterParaParceladaNaApi,
 } from "../services/transacoesService";
 
 import {
@@ -20,10 +24,29 @@ export function useTransacoes(userId) {
   const [erroLeitura, setErroLeitura] = useState("");
   const [erroOperacao, setErroOperacao] = useState("");
 
-  // Estes valores sao calculados a partir da lista e nao precisam de estado proprio.
+  // Saldo geral acumulado histórico
   const saldo = calcularSaldo(transacoes);
   const receitas = calcularReceitas(transacoes);
   const despesas = calcularDespesas(transacoes);
+
+  // Saldo do mês corrente (regime de competência para a Home)
+  const agora = new Date();
+  const mesAtual = agora.getMonth();
+  const anoAtual = agora.getFullYear();
+
+  const transacoesMesAtual = transacoes.filter((t) => {
+    if (!t.data) return false;
+    const dataObj = t.data.toDate
+      ? t.data.toDate()
+      : new Date(`${t.data}T12:00:00`);
+    return (
+      dataObj.getMonth() === mesAtual && dataObj.getFullYear() === anoAtual
+    );
+  });
+
+  const saldoMesAtual = calcularSaldo(transacoesMesAtual);
+  const receitasMesAtual = calcularReceitas(transacoesMesAtual);
+  const despesasMesAtual = calcularDespesas(transacoesMesAtual);
 
   useEffect(() => {
     if (!userId) {
@@ -63,6 +86,28 @@ export function useTransacoes(userId) {
     }
   }
 
+  async function adicionarCompraParcelada(parcelas) {
+    try {
+      setErroOperacao("");
+      await criarCompraParceladaNaApi(parcelas, userId);
+    } catch (erro) {
+      setErroOperacao(erro.message);
+    }
+  }
+
+  async function excluirParcelasFuturas(parcelamentoId, numeroParcelaMinimo) {
+    try {
+      setErroOperacao("");
+      await excluirParcelasFuturasNaApi(
+        parcelamentoId,
+        numeroParcelaMinimo,
+        userId,
+      );
+    } catch (erro) {
+      setErroOperacao(erro.message);
+    }
+  }
+
   function iniciarEdicao(transacao) {
     setTransacaoEditando(transacao);
   }
@@ -71,6 +116,24 @@ export function useTransacoes(userId) {
     try {
       setErroOperacao("");
       await editarTransacaoNaApi(id, novosDados);
+    } catch (erro) {
+      setErroOperacao(erro.message);
+    }
+  }
+
+  async function atualizarCompraParcelada(dados) {
+    try {
+      setErroOperacao("");
+      await atualizarCompraParceladaNaApi({ ...dados, userId });
+    } catch (erro) {
+      setErroOperacao(erro.message);
+    }
+  }
+
+  async function converterParaParcelada(transacaoId, novasParcelas) {
+    try {
+      setErroOperacao("");
+      await converterParaParceladaNaApi(transacaoId, novasParcelas, userId);
     } catch (erro) {
       setErroOperacao(erro.message);
     }
@@ -88,9 +151,16 @@ export function useTransacoes(userId) {
     saldo,
     receitas,
     despesas,
+    saldoMesAtual,
+    receitasMesAtual,
+    despesasMesAtual,
     adicionarTransacao,
+    adicionarCompraParcelada,
     excluirTransacao,
+    excluirParcelasFuturas,
     editarTransacao,
+    atualizarCompraParcelada,
+    converterParaParcelada,
     transacaoEditando,
     iniciarEdicao,
     cancelarEdicao,

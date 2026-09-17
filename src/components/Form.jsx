@@ -1,18 +1,104 @@
 import "./Form.css";
-import { useState } from "react";
-import { criarTransacao, validarTransacao } from "../utils/transacao";
+import { useState, useMemo } from "react";
+import DatePicker from "./DatePicker";
+import {
+  criarTransacao,
+  validarTransacao,
+  normalizarInputValor,
+} from "../utils/transacao";
+import { calcularParcelas, gerarSerieTransacoes } from "../utils/parcelamento";
+import {
+  Calendar,
+  DollarSign,
+  Tag,
+  CreditCard,
+  CheckSquare,
+  Square,
+  FileText,
+  Layers,
+} from "lucide-react";
 
 function obterDataAtual() {
   return new Date().toISOString().split("T")[0];
 }
 
+const CATEGORIAS_DESPESA = [
+  "Alimentação",
+  "Moradia",
+  "Transporte",
+  "Lazer",
+  "Saúde",
+  "Educação",
+  "Contas & Serviços",
+  "Outros",
+];
+
+const CATEGORIAS_RECEITA = [
+  "Salário",
+  "Investimentos",
+  "Freelance",
+  "Benefícios",
+  "Reembolso",
+  "Outros",
+];
+
+const METODOS_PAGAMENTO = [
+  { valor: "pix", label: "Pix" },
+  { valor: "cartao_credito", label: "Cartão de crédito" },
+  { valor: "cartao_debito", label: "Cartão de débito" },
+  { valor: "dinheiro", label: "Dinheiro" },
+  { valor: "boleto", label: "Boleto" },
+  { valor: "transferencia", label: "Transferência (TED/DOC)" },
+];
+
+function obterPlaceholderDescricao(categoria, tipo) {
+  if (tipo === "receita") {
+    if (categoria === "Salário") return "Ex: Salário mensal, adiantamento...";
+    if (categoria === "Freelance") return "Ex: Projeto website, consultoria...";
+    if (categoria === "Investimentos")
+      return "Ex: Dividendos, rendimento CDB...";
+    return "Ex: Descrição da receita...";
+  }
+
+  if (categoria === "Alimentação")
+    return "Ex: Mercado da semana, restaurante...";
+  if (categoria === "Transporte") return "Ex: Uber, combustível, recarga...";
+  if (categoria === "Moradia") return "Ex: Aluguel, condomínio, luz...";
+  if (categoria === "Lazer") return "Ex: Cinema, jantar, viagem...";
+  if (categoria === "Saúde") return "Ex: Farmácia, consulta, exame...";
+  return "Ex: Descrição da despesa...";
+}
+
 function criarEstadoInicial(transacaoEditando) {
   if (transacaoEditando) {
+    const isDespesa = transacaoEditando.tipo === "despesa";
+    // Extrai o texto limpo da descrição (remove o sufixo " (X/Y)" se for série de parcelas)
+    const descricaoLimpa = transacaoEditando.descricao
+      ? transacaoEditando.descricao.replace(/\s*\(\d+\/\d+\)$/, "")
+      : "";
+
+    // Se for uma compra parcelada, o valor do formulário deve ser o total da compra
+    const valorInicial = transacaoEditando.valorTotalCompra
+      ? String(transacaoEditando.valorTotalCompra)
+      : transacaoEditando.valor
+        ? String(transacaoEditando.valor)
+        : "";
+
     return {
-      data: transacaoEditando.data.toDate().toISOString().split("T")[0],
-      descricao: transacaoEditando.descricao,
-      valor: transacaoEditando.valor,
-      tipo: transacaoEditando.tipo,
+      data: transacaoEditando.data?.toDate
+        ? transacaoEditando.data.toDate().toISOString().split("T")[0]
+        : transacaoEditando.data || obterDataAtual(),
+      descricao: descricaoLimpa,
+      valor: valorInicial,
+      tipo: transacaoEditando.tipo || "despesa",
+      metodoPagamento: transacaoEditando.metodoPagamento || "pix",
+      categoria:
+        transacaoEditando.categoria || (isDespesa ? "Alimentação" : "Salário"),
+      parcelado: Boolean(
+        transacaoEditando.parcelamentoId || transacaoEditando.parcelado,
+      ),
+      parcelas:
+        transacaoEditando.totalParcelas || transacaoEditando.parcelas || 2,
       erro: "",
     };
   }
@@ -21,25 +107,125 @@ function criarEstadoInicial(transacaoEditando) {
     data: obterDataAtual(),
     descricao: "",
     valor: "",
-    tipo: "receita",
+    tipo: "despesa",
+    metodoPagamento: "pix",
+    categoria: "Alimentação",
+    parcelado: false,
+    parcelas: 2,
     erro: "",
   };
 }
 
-function Form({ onAdd, onEdit, transacaoEditando, cancelarEdicao }) {
+function Form({
+  onAdd,
+  onAddParcelado,
+  onEdit,
+  onEditParcelado,
+  onConverterParaParcelado,
+  transacaoEditando,
+  cancelarEdicao,
+}) {
   const [form, setForm] = useState(() => criarEstadoInicial(transacaoEditando));
 
   function atualizarCampo(campo, valor) {
-    setForm((prev) => ({
-      ...prev,
-      [campo]: valor,
-    }));
+    let valorProcessado = valor;
+
+    if (campo === "valor") {
+      valorProcessado = normalizarInputValor(valor);
+    } else if (campo === "parcelas") {
+      if (typeof valor === "string") {
+        valorProcessado = valor.replace(/\D/g, "");
+      }
+    }
+
+    setForm((prev) => {
+      const atualizado = { ...prev, [campo]: valorProcessado };
+
+      // Se o usuário alternar de despesa para receita, desliga o parcelamento
+      if (campo === "tipo") {
+        if (valor === "receita") {
+          atualizado.parcelado = false;
+          if (!CATEGORIAS_RECEITA.includes(prev.categoria)) {
+            atualizado.categoria = "Salário";
+          }
+        } else {
+          if (!CATEGORIAS_DESPESA.includes(prev.categoria)) {
+            atualizado.categoria = "Alimentação";
+          }
+        }
+      }
+
+      return atualizado;
+    });
   }
 
-  function salvar(e) {
+  const categoriasDisponiveis = useMemo(() => {
+    return form.tipo === "receita" ? CATEGORIAS_RECEITA : CATEGORIAS_DESPESA;
+  }, [form.tipo]);
+
+  // Cálculo da parcela em tempo real com precisão de centavos
+  const calculoParcela = useMemo(() => {
+    const numValor = Number(String(form.valor).replace(",", "."));
+    if (!form.parcelado || !numValor || numValor <= 0) return null;
+    const parcelasParsed = parseInt(form.parcelas, 10);
+    const numParcelas = Math.min(
+      72,
+      Math.max(2, isNaN(parcelasParsed) ? 2 : parcelasParsed),
+    );
+    const calc = calcularParcelas(numValor, numParcelas, "total");
+
+    return {
+      ...calc,
+      valorTotalFormatado: calc.valorTotal.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      }),
+      valorParcelaFormatado: calc.valorParcelaBase.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      }),
+      valorPrimeiraParcelaFormatado: calc.valorPrimeiraParcela.toLocaleString(
+        "pt-BR",
+        {
+          style: "currency",
+          currency: "BRL",
+        },
+      ),
+      temSobra: calc.valorPrimeiraParcela !== calc.valorParcelaBase,
+    };
+  }, [form.valor, form.parcelado, form.parcelas]);
+
+  // Texto amigável no botão CTA principal
+  const textoBotaoPrincipal = useMemo(() => {
+    if (transacaoEditando) {
+      return "Salvar alterações";
+    }
+
+    if (form.parcelado && form.tipo === "despesa" && calculoParcela) {
+      return `+ Adicionar compra parcelada (${calculoParcela.numParcelas}x de ${calculoParcela.valorParcelaFormatado})`;
+    }
+
+    const numValor = Number(String(form.valor).replace(",", "."));
+    if (numValor > 0) {
+      const formatted = numValor.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      });
+      return `+ Adicionar ${form.tipo === "receita" ? "Receita" : "Despesa"} (${formatted})`;
+    }
+
+    return "+ Adicionar transação";
+  }, [
+    transacaoEditando,
+    form.parcelado,
+    form.tipo,
+    calculoParcela,
+    form.valor,
+  ]);
+
+  async function salvar(e) {
     e.preventDefault();
 
-    // A util retorna uma mensagem ou string vazia quando os dados sao validos.
     const mensagemErro = validarTransacao({
       data: form.data,
       descricao: form.descricao,
@@ -54,89 +240,400 @@ function Form({ onAdd, onEdit, transacaoEditando, cancelarEdicao }) {
 
     atualizarCampo("erro", "");
 
+    const valorNumerico = Number(String(form.valor).replace(",", "."));
+    const parcelasParsed = parseInt(form.parcelas, 10);
+    const numParcelasValidas = Math.min(
+      72,
+      Math.max(2, isNaN(parcelasParsed) ? 2 : parcelasParsed),
+    );
+
+    const isParceladoValido =
+      form.tipo === "despesa" && Boolean(form.parcelado);
+
+    const payload = {
+      data: form.data,
+      descricao: form.descricao.trim(),
+      valor: valorNumerico,
+      tipo: form.tipo,
+      categoria: form.categoria,
+      ...(form.tipo === "despesa" && form.metodoPagamento
+        ? { metodoPagamento: form.metodoPagamento }
+        : {}),
+      parcelado: isParceladoValido,
+      ...(isParceladoValido ? { parcelas: numParcelasValidas } : {}),
+    };
+
     if (transacaoEditando) {
-      // A existencia de transacaoEditando define o modo de edicao.
-      onEdit(transacaoEditando.id, {
+      const tinhaParcelamentoId = Boolean(transacaoEditando.parcelamentoId);
+
+      if (tinhaParcelamentoId && onEditParcelado) {
+        if (isParceladoValido) {
+          // Atualiza toda a série recalculada com a nova quantidade de parcelas e valor
+          const novaSerie = gerarSerieTransacoes({
+            data: form.data,
+            descricao: form.descricao,
+            valor: valorNumerico,
+            numParcelas: numParcelasValidas,
+            modo: "total",
+            categoria: form.categoria,
+            metodoPagamento: form.metodoPagamento,
+          });
+          await onEditParcelado({
+            parcelamentoId: transacaoEditando.parcelamentoId,
+            novasParcelas: novaSerie,
+          });
+        } else {
+          // Usuário desmarcou parcelamento: converte a série inteira em transação única
+          const transacaoUnica = criarTransacao(
+            payload.data,
+            payload.descricao,
+            valorNumerico,
+            payload.tipo,
+            payload.categoria,
+            payload.metodoPagamento || "",
+            false,
+            1,
+          );
+          await onEditParcelado({
+            parcelamentoId: transacaoEditando.parcelamentoId,
+            novasParcelas: null,
+            transacaoUnica,
+          });
+        }
+      } else if (
+        !tinhaParcelamentoId &&
+        isParceladoValido &&
+        onConverterParaParcelado
+      ) {
+        // Era transação única e foi convertida para compra parcelada
+        const novaSerie = gerarSerieTransacoes({
+          data: form.data,
+          descricao: form.descricao,
+          valor: valorNumerico,
+          numParcelas: numParcelasValidas,
+          modo: "total",
+          categoria: form.categoria,
+          metodoPagamento: form.metodoPagamento,
+        });
+        await onConverterParaParcelado(transacaoEditando.id, novaSerie);
+      } else {
+        // Edição simples de transação avulsa
+        await onEdit(transacaoEditando.id, payload);
+      }
+
+      cancelarEdicao();
+    } else if (isParceladoValido && onAddParcelado) {
+      const serie = gerarSerieTransacoes({
         data: form.data,
         descricao: form.descricao,
-        valor: Number(form.valor),
-        tipo: form.tipo,
+        valor: valorNumerico,
+        numParcelas: numParcelasValidas,
+        modo: "total",
+        categoria: form.categoria,
+        metodoPagamento: form.metodoPagamento,
       });
-      cancelarEdicao();
+      onAddParcelado(serie);
     } else {
-      // No modo de criacao, o util monta o objeto antes de envia-lo ao hook.
       const nova = criarTransacao(
-        form.data,
-        form.descricao,
-        form.valor,
-        form.tipo,
+        payload.data,
+        payload.descricao,
+        valorNumerico,
+        payload.tipo,
+        payload.categoria,
+        payload.metodoPagamento || "",
+        payload.parcelado,
+        payload.parcelas || 1,
       );
       onAdd(nova);
     }
 
-    // Limpa o formulario depois de uma operacao valida.
+    // Reset para o estado inicial
     setForm({
       data: obterDataAtual(),
       descricao: "",
       valor: "",
-      tipo: "receita",
+      tipo: "despesa",
+      metodoPagamento: "pix",
+      categoria: "Alimentação",
+      parcelado: false,
+      parcelas: 2,
       erro: "",
     });
   }
 
+  const isDespesa = form.tipo === "despesa";
+
   return (
     <section className="form-container">
-      <h2>{transacaoEditando ? "Editar Transação" : "Nova Transação"}</h2>
+      <div className="form-header">
+        <h2>{transacaoEditando ? "Editar transação" : "Nova transação"}</h2>
+        <p className="form-subtitulo">
+          {transacaoEditando
+            ? "Atualize as informações da movimentação selecionada."
+            : "Registre uma receita ou despesa."}
+        </p>
+      </div>
+
       <form onSubmit={salvar}>
+        {/* 1. SELETOR DE TIPO (DESPESA / RECEITA) */}
         <div className="form-item">
-          <label htmlFor="data">Data:</label>
-          <input
-            id="data"
-            type="date"
-            placeholder="Data"
-            value={form.data}
-            onChange={(e) => atualizarCampo("data", e.target.value)}
-          />
-        </div>
-        <div className="form-item">
-          <label htmlFor="descricao">Descrição:</label>
-          <input
-            id="descricao"
-            type="text"
-            placeholder="Descrição"
-            value={form.descricao}
-            onChange={(e) => atualizarCampo("descricao", e.target.value)}
-          />
-        </div>
-        <div className="form-item">
-          <label htmlFor="valor">Valor:</label>
-          <input
-            id="valor"
-            type="number"
-            placeholder="Valor"
-            value={form.valor}
-            onChange={(e) => atualizarCampo("valor", e.target.value)}
-          />
-        </div>
-        <div className="form-item">
-          <label htmlFor="tipo">Tipo:</label>
-          <select
-            id="tipo"
-            value={form.tipo}
-            onChange={(e) => atualizarCampo("tipo", e.target.value)}
+          <label htmlFor="tipo">Tipo</label>
+          <div
+            className="tipo-switcher"
+            role="group"
+            aria-label="Tipo de transação"
           >
-            <option value="receita">Receita</option>
-            <option value="despesa">Despesa</option>
+            <button
+              type="button"
+              className={`tipo-btn ${form.tipo === "despesa" ? "ativo despesa" : ""}`}
+              onClick={() => atualizarCampo("tipo", "despesa")}
+            >
+              Despesa
+            </button>
+            <button
+              type="button"
+              className={`tipo-btn ${form.tipo === "receita" ? "ativo receita" : ""}`}
+              onClick={() => atualizarCampo("tipo", "receita")}
+            >
+              Receita
+            </button>
+          </div>
+        </div>
+
+        {/* 2. DATA */}
+        <div className="form-item">
+          <label htmlFor="data">
+            <Calendar size={13} aria-hidden="true" />
+            Data
+          </label>
+          <DatePicker
+            id="data"
+            value={form.data}
+            onChange={(novaData) => atualizarCampo("data", novaData)}
+          />
+        </div>
+
+        {/* 3. VALOR */}
+        <div className="form-item">
+          <label htmlFor="valor">
+            <DollarSign size={13} aria-hidden="true" />
+            {form.parcelado ? "Valor total da compra" : "Valor"}
+          </label>
+          <div className="input-valor-wrapper">
+            <span className="input-moeda-prefix">R$</span>
+            <input
+              id="valor"
+              type="text"
+              inputMode="decimal"
+              placeholder="0,00"
+              value={form.valor}
+              onChange={(e) => atualizarCampo("valor", e.target.value)}
+              className="input-valor-field"
+              required
+            />
+          </div>
+        </div>
+
+        {/* 4. MÉTODO DE PAGAMENTO (apenas para despesas) */}
+        {isDespesa && (
+          <div className="form-item">
+            <label htmlFor="metodoPagamento">
+              <CreditCard size={13} aria-hidden="true" />
+              Método de pagamento
+            </label>
+            <select
+              id="metodoPagamento"
+              value={form.metodoPagamento}
+              onChange={(e) =>
+                atualizarCampo("metodoPagamento", e.target.value)
+              }
+            >
+              {METODOS_PAGAMENTO.map((metodo) => (
+                <option key={metodo.valor} value={metodo.valor}>
+                  {metodo.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {/* 5. PARCELAMENTO (apenas para despesas) */}
+        {isDespesa && (
+          <div
+            className="box-parcelamento"
+            onClick={() => {
+              atualizarCampo("parcelado", !form.parcelado);
+            }}
+          >
+            <div className="parcelamento-topo">
+              <button
+                type="button"
+                className="checkbox-custom"
+                aria-checked={form.parcelado}
+                role="checkbox"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  atualizarCampo("parcelado", !form.parcelado);
+                }}
+              >
+                {form.parcelado ? (
+                  <CheckSquare size={16} className="check-icon checked" />
+                ) : (
+                  <Square size={16} className="check-icon" />
+                )}
+              </button>
+              <div className="parcelamento-textos">
+                <span className="parcelamento-label">Parcelar esta compra</span>
+                <span className="parcelamento-sub">
+                  Dividir o valor em parcelas mensais
+                </span>
+              </div>
+            </div>
+
+            {/* Seletor expandido de parcelas quando ativado */}
+            {form.parcelado && (
+              <div
+                className="parcelas-seletor"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="parcelas-input-row">
+                  <label htmlFor="numParcelas" className="parcelas-lbl">
+                    <Layers size={12} aria-hidden="true" />
+                    Quantidade de parcelas:
+                  </label>
+                  <div className="parcelas-stepper">
+                    <button
+                      type="button"
+                      className="stepper-btn"
+                      onClick={() => {
+                        const atual = parseInt(form.parcelas, 10) || 2;
+                        atualizarCampo("parcelas", Math.max(2, atual - 1));
+                      }}
+                      disabled={Number(form.parcelas) <= 2}
+                      aria-label="Diminuir uma parcela"
+                    >
+                      −
+                    </button>
+                    <input
+                      id="numParcelas"
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      value={form.parcelas}
+                      onChange={(e) =>
+                        atualizarCampo("parcelas", e.target.value)
+                      }
+                      onBlur={() => {
+                        const num = parseInt(form.parcelas, 10);
+                        if (isNaN(num) || num < 2) {
+                          atualizarCampo("parcelas", 2);
+                        } else if (num > 72) {
+                          atualizarCampo("parcelas", 72);
+                        } else {
+                          atualizarCampo("parcelas", num);
+                        }
+                      }}
+                      className="input-num-parcelas"
+                      aria-label="Quantidade de parcelas"
+                    />
+                    <button
+                      type="button"
+                      className="stepper-btn"
+                      onClick={() => {
+                        const atual = parseInt(form.parcelas, 10) || 2;
+                        atualizarCampo("parcelas", Math.min(72, atual + 1));
+                      }}
+                      disabled={Number(form.parcelas) >= 72}
+                      aria-label="Aumentar uma parcela"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+
+                {/* Atalhos rápidos de parcelas */}
+                <div className="parcelas-atalhos">
+                  {[2, 3, 6, 10, 12, 18, 24].map((n) => (
+                    <button
+                      key={n}
+                      type="button"
+                      className={`atalho-btn ${Number(form.parcelas) === n ? "ativo" : ""}`}
+                      onClick={() => atualizarCampo("parcelas", n)}
+                    >
+                      {n}x
+                    </button>
+                  ))}
+                </div>
+
+                {/* Resumo e prévia de cálculo */}
+                {calculoParcela && (
+                  <div className="resumo-calculo-parcela">
+                    <div>
+                      <strong>{calculoParcela.numParcelas}x</strong> de{" "}
+                      <strong>{calculoParcela.valorParcelaFormatado}</strong> /
+                      mês
+                    </div>
+                    <div
+                      style={{
+                        marginTop: "3px",
+                        fontSize: "11px",
+                        opacity: 0.85,
+                      }}
+                    >
+                      Total da compra:{" "}
+                      <strong>{calculoParcela.valorTotalFormatado}</strong>
+                      {calculoParcela.temSobra && (
+                        <span>
+                          {" "}
+                          (1ª parcela:{" "}
+                          <strong>
+                            {calculoParcela.valorPrimeiraParcelaFormatado}
+                          </strong>{" "}
+                          para ajuste de centavos)
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 6. CATEGORIA */}
+        <div className="form-item">
+          <label htmlFor="categoria">
+            <Tag size={13} aria-hidden="true" />
+            Categoria
+          </label>
+          <select
+            id="categoria"
+            value={form.categoria}
+            onChange={(e) => atualizarCampo("categoria", e.target.value)}
+          >
+            {categoriasDisponiveis.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
           </select>
         </div>
 
-        <button
-          type="button"
-          style={{ display: transacaoEditando ? "block" : "none" }}
-          onClick={cancelarEdicao}
-        >
-          Cancelar
-        </button>
+        {/* 7. DESCRIÇÃO */}
+        <div className="form-item">
+          <label htmlFor="descricao">
+            <FileText size={13} aria-hidden="true" />
+            Descrição
+          </label>
+          <input
+            id="descricao"
+            type="text"
+            placeholder={obterPlaceholderDescricao(form.categoria, form.tipo)}
+            value={form.descricao}
+            onChange={(e) => atualizarCampo("descricao", e.target.value)}
+            required
+          />
+        </div>
 
         {form.erro && (
           <p className="erro-msg" role="alert">
@@ -144,9 +641,27 @@ function Form({ onAdd, onEdit, transacaoEditando, cancelarEdicao }) {
           </p>
         )}
 
-        <button type="submit">
-          {transacaoEditando ? "Salvar Alterações" : "Adicionar"}
-        </button>
+        {/* 8. BOTÕES DE AÇÃO */}
+        <div className="form-acoes">
+          <button type="submit" className="btn-submit">
+            {textoBotaoPrincipal}
+          </button>
+
+          {transacaoEditando && (
+            <button
+              type="button"
+              className="btn-cancelar"
+              onClick={cancelarEdicao}
+            >
+              Cancelar edição
+            </button>
+          )}
+        </div>
+
+        {/* 9. HELPER RODAPÉ DO FIGMA */}
+        <p className="form-helper-rodape">
+          Os saldos e a lista serão atualizados automaticamente.
+        </p>
       </form>
     </section>
   );

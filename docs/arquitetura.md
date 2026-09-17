@@ -308,7 +308,6 @@ Encapsula chamadas do Firebase Authentication:
 - `signInWithPopup`;
 - `signOut`.
 
-
 ### 10.3. Login com Google
 
 A autenticacao com Google foi adicionada como provedor externo do Firebase Authentication.
@@ -551,7 +550,6 @@ Conceitos praticados:
 - preservacao de um parametro ao alterar outro;
 - possibilidade de recarregar ou compartilhar a pagina mantendo filtros aplicados.
 
-
 ### 16.5. Variaveis de ambiente no Vite
 
 Conceitos praticados:
@@ -589,7 +587,6 @@ Decisoes relacionadas:
 - a identidade clara anterior permanece disponivel e nao foi sobrescrita;
 - o seletor de preferencia e sua persistencia ainda serao implementados;
 - a documentacao detalhada esta em `docs/temas.md`.
-
 
 ### 16.7. Firebase Hosting e deploy
 
@@ -660,6 +657,7 @@ Foi adicionado um menu visual de conta no cabecalho, com icones do `lucide-react
 - O menu possui foco visivel e utiliza os tokens de cor existentes.
 - As rotas de conta, pagamentos, categorias e configuracoes continuam como proximos modulos; os links atuais apenas preparam a navegacao.
 - `npm run lint` e `npm run build` foram executados sem erros.
+
 ### 16.13. Estrutura de paginas e navegacao preparada
 
 Foram criados arquivos-base para as paginas `Dashboard`, `Account`, `Payments`, `Categories` e `Settings`. O cabecalho possui um link para Dashboard, e o menu da conta aponta para os demais destinos.
@@ -675,10 +673,51 @@ Essas paginas ainda nao possuem conteudo funcional, mas suas rotas privadas ja e
 - `/auth/action` e a entrada reservada para o link enviado pelo Firebase;
 - estados como link expirado e senha redefinida reutilizam o mesmo card;
 - envio do e-mail, validacao do codigo e alteracao da senha ainda nao foram implementados.
+
+### 16.15. Redesenho da Home V2 e Formulario Condicional
+
+A pagina `Home.jsx` e o formulario de transacoes foram reformulados conforme a especificacao visual do Design System do Figma (Home V2):
+
+- **Grid de duas colunas**: Estrutura em `home-grid` dividida entre a barra lateral (`aside.home-coluna-form`) com o formulario fixado e a area de conteudo (`main.home-coluna-painel`) com os indicadores (`ContainerResumo`) e a listagem recente (`ListaTransacoes`).
+- **Formulario com renderizacao condicional (`Form.jsx`)**:
+  - Switcher de tipo com selecao exclusiva: Despesa a esquerda (padrao) e Receita a direita.
+  - Renderizacao condicional nativa (`{isDespesa && ( ... )}`): Metodo de pagamento e bloco de parcelamento sao exibidos somente para despesas, sumindo imediatamente ao alternar para receita.
+  - Categorias contextuais: a lista de categorias adapta seus itens dinamicamente de acordo com o tipo da transacao.
+  - Calculo de parcelas em tempo real com seletor de parcelas e resumo formatado em BRL.
+  - Higienizacao de payload: receitas nao incluem metodo de pagamento ou dados de parcelamento no envio a camada de dados.
+- **Regras do Firestore (`firestore.rules`)**:
+  - A funcao `isValidTransaction` valida tipos dos campos opcionais (`categoria`, `metodoPagamento`, `parcelado`, `parcelas`) preservando a obrigatoriedade dos campos basicos e o isolamento por usuario.
+- **Controles de exibicao (`ControlesTransacoes.jsx`)**:
+  - Filtros rapidos apresentados em formato de pilulas interativas mantendo o estado sincronizado na URL via query params.
+
+### 16.16. Arquitetura de Parcelamento e Lancamentos por Competencia
+
+Para viabilizar compras parceladas sem distorcer o fluxo de caixa inicial, a arquitetura adota a divisao em lancamentos individuais:
+
+- **Funcoes Puras (`src/utils/parcelamento.js`)**:
+  - `calcularParcelas(valorTotal, numParcelas)`: calcula divisao exata de centavos e atribui o resto a 1ª parcela;
+  - `calcularVencimentos(dataInicial, numParcelas)`: projeta datas mensais ajustando para o ultimo dia util quando o mes seguinte tiver menos dias (ex: 31/01 -> 28/02 -> 31/03);
+  - `gerarSerieTransacoes(compra)`: combina calculos de valor e data para produzir os $N$ objetos prontos para persistencia.
+- **Gravacao e Edicao Atomica no Firestore (`writeBatch`)**:
+  - `criarCompraParceladaNaApi`: persiste todas as parcelas em lote usando `writeBatch(db)`;
+  - `atualizarCompraParceladaNaApi`: substitui atomicamente a série inteira no Firestore ao editar parcelas, valor ou data base, mantendo consistência contábil em um único commit;
+  - `converterParaParceladaNaApi`: converte uma movimentação avulsa em uma série parcelada dividida e vice-versa.
+- **Saldo Mensal e Lista Compacta (`Home.jsx`)**:
+  - O resumo de saldos na Home filtra as transacoes pelo mes/ano corrente antes do calculo (`calcularSaldo(transacoesDoMes)`);
+  - A listagem da Home e limitada aos 5 lancamentos mais recentes e deduplica compras parceladas (`filtrarTransacoesRecentes`), exibindo a parcela do mês vigente e ocultando meses futuros para evitar poluição visual.
+- **Exclusao Parcial da Serie**:
+  - Permite escolher entre remover apenas uma parcela pontual ou apagar em cascata da parcela atual em diante, preservando o historico pago no passado.
+- **DatePicker e Controles Customizados (`DatePicker.jsx`, `Form.jsx`)**:
+  - Componente de calendário nativo em Javascript/React, com navegação de meses em português, botão de atalho "Hoje" e fechamento por clique externo ou Escape;
+  - Normalização monetária impedindo mais de 2 números decimais após a vírgula/ponto com suporte nativo pt-BR;
+  - Controle stepper de parcelas (`[ − ]` e `[ + ]`) com digitação numérica livre (sem bloqueio de Backspace no `onChange`) e clamping seguro (2 a 72) no `onBlur` e submit;
+  - Remoção de spin buttons nativos dos navegadores via CSS.
+- **Segurança e Validação de Esquema (`firestore.rules`)**:
+  - Regras auditadas pela skill `firebase-security-rules-auditor`, assegurando tipagem estrita, limites de tamanho de strings (<= 50/100 chars), intervalo de parcelas (1 a 72), `hasOnly` e autorização por `isOwner`.
+
 ## 17. Proximos passos tecnicos
 
-1. Criar testes para funcoes puras em `utils`.
-2. Separar erros de carregamento, operacao, autenticacao e validacao.
-3. Revisar codificacao UTF-8 dos textos exibidos.
-4. Aplicar os tokens visuais de `App.css` nos componentes existentes.
-5. Avancar para um novo modulo de produto quando fizer sentido: categorias, metodos de pagamento ou orcamentos.
+1. A Home está 100% concluída, testada e homologada.
+2. Avançar para a página completa de `/transacoes` (listagem irrestrita de todos os meses, busca textual, filtros avançados e exportação).
+3. Implementar módulo de gerenciamento de Categorias personalizadas por usuário.
+4. Implementar módulo de Métodos de Pagamento e Orçamentos mensais.

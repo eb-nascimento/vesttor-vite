@@ -16,12 +16,13 @@
   --color-bg: #f6f8fb;
   --color-surface: #ffffff;
   --color-surface-alt: #eef3f8;
+  --color-input-bg: #edf3fa;
 
   /* Textos e bordas */
   --color-text: #0f172a;
   --color-text-muted: #64748b;
   --color-text-light: #ffffff;
-  --color-border: #e2e8f0;
+  --color-border: #ddebfb;
 
   /* Valores das sombras claras anteriores, agora nomeados para troca de tema. */
   --shadow-card: 0 8px 24px rgb(15 23 42 / 6%);

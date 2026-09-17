@@ -1,20 +1,55 @@
 .home-page {
-  width: min(1120px, calc(100% - 32px));
+  width: min(1440px, calc(100% - 48px));
   margin: 0 auto;
-  padding: 32px 0;
+  padding: 32px 0 48px;
+  box-sizing: border-box;
 }
 
-.transacoes-section {
-  display: flex;
-  flex-direction: row;
+.home-grid {
+  display: grid;
+  grid-template-columns: 460px 1fr;
   align-items: flex-start;
-  justify-content: space-between;
-  gap: 24px;
-  margin-top: 2rem;
+  gap: 32px;
 }
 
-@media (max-width: 900px) {
-  .transacoes-section {
-    flex-direction: column;
+.home-coluna-form {
+  position: sticky;
+  top: 24px;
+}
+
+.home-coluna-painel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
+.status-feedback {
+  color: var(--color-text-muted, #9fb0c3);
+  font-family: var(--font-family-base, "Inter", sans-serif);
+  font-size: 13px;
+  margin: 0;
+}
+
+@media (max-width: 1040px) {
+  .home-grid {
+    grid-template-columns: 400px 1fr;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 880px) {
+  .home-page {
+    width: min(100% - 32px);
+    padding: 20px 0 36px;
+  }
+
+  .home-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .home-coluna-form {
+    position: static;
   }
 }

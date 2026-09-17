@@ -55,7 +55,12 @@ A versao atual contempla:
 - Mensagem de lista vazia;
 - Conversao entre data do formulario e `Timestamp` do Firestore;
 - Rotas de login e home;
-- Protecao basica de paginas autenticadas no cliente.
+- Protecao basica de paginas autenticadas no cliente;
+- Redesenho da interface Home (Home V2) com grid responsivo de duas colunas;
+- Formulario com selecao exclusiva Despesa/Receita (Despesa na esquerda por padrao);
+- Renderizacao condicional de metodo de pagamento e parcelamento para despesas;
+- Categorias dinamicas e calculo de parcelas em tempo real;
+- Filtros em formato de pilulas e ordenacao sincronizada na URL.
 
 ## 5. Escopo alvo
 
@@ -171,6 +176,38 @@ A criacao de transacoes deve ser idempotente. Repeticoes da mesma intencao, incl
 
 Edicao e exclusao devem exigir confirmacao explicita na interface. A confirmacao visual nao substitui a autorizacao e a verificacao de propriedade no backend.
 
+### RN17 - Parcelamento de despesas em regime de competencia mensal
+
+Compras parceladas geram lancamentos mensais individuais vinculados por um `parcelamentoId`. Cada parcela afeta exclusivamente o fluxo de caixa e saldo do seu respectivo mes de vencimento, impedindo que o valor global de uma compra comprometa indevidamente o saldo do mes inicial.
+
+### RN18 - Arredondamento bancario de centavos na primeira parcela
+
+O valor de compras parceladas e calculado com precisao de centavos inteiros. O residuo da divisao nao exata e somado integralmente a primeira parcela, garantindo que a soma de todas as parcelas coincida com o valor total da compra.
+
+### RN19 - Calendario e vencimentos de parcelas em meses menores
+
+Ao projetar os vencimentos mensais futuros, o dia base da compra e mantido. Se o mes subsequente nao possuir aquele dia (ex: 31 de janeiro em relacao a fevereiro), a data e ajustada para o ultimo dia valido do mes correspondente.
+
+### RN20 - Saldo da Home e limite de exibicao
+
+Os indicadores de saldo, receitas e despesas na pagina inicial refletem estritamente o mes e ano corrente. A lista recente na Home exibe no maximo as 5 ultimas movimentacoes para preservar a proporcao visual com o formulario, direcionando a consulta completa para `/transacoes`.
+
+### RN21 - Exclusao de serie parcelada
+
+Ao solicitar a exclusao de um lancamento parcelado, o usuario deve poder escolher entre excluir apenas a parcela pontual selecionada ou excluir aquela e todas as parcelas futuras da serie, preservando as parcelas anteriores ja pagas.
+
+### RN22 - Deduplicacao e escopo temporal nas transacoes recentes da Home
+
+Na lista de transacoes recentes da Home, movimentacoes com vencimento em meses futuros sao ocultadas para nao poluir o extrato imediato. Alem disso, cada compra parcelada vinculada por `parcelamentoId` aparece no maximo uma unica vez entre as movimentacoes recentes, exibindo a parcela ativa mais recente do periodo (ex: `1/24` em setembro, virando `2/24` em outubro), garantindo que as vagas da Home fiquem livres para outras movimentacoes.
+
+### RN23 - Edicao atomica de serie parcelada e conversao
+
+Ao editar uma compra parcelada, o formulario preenche o valor total da compra e limpa sufixos de parcela na descricao. Alteracoes no total da compra, na quantidade de parcelas (ex: de 10x para 5x) ou na data base recalculam e regravam todas as parcelas da serie atomicamente via `writeBatch` no Firestore. Se o usuario desmarcar o parcelamento, a serie e substituida por uma transacao pontual unica. Se uma transacao pontual for editada e marcada como parcelada, ela e convertida em uma serie de parcelas.
+
+### RN24 - Validacao e controles de entrada do formulario
+
+O campo de valor normaliza entradas em moeda corrente impedindo mais de 2 digitos apos a virgula ou ponto. O campo de parcelas suporta digitacao numerica direta, botoes de incremento/decremento (`[ - ]` e `[ + ]`), atalhos rapidos (`2x` ate `24x`) e clamping seguro entre 2 e 72 parcelas. O seletor de data utiliza componente React dedicado (`DatePicker.jsx`) com navegacao mensal em portugues e selecao intuitiva.
+
 ## 8. Modelo de dados alvo
 
 ### 8.1. Transacao
@@ -183,8 +220,11 @@ Edicao e exclusao devem exigir confirmacao explicita na interface. A confirmacao
   valor: number,
   data: Timestamp,
   tipo: "receita" | "despesa",
-  categoriaId: string,
-  metodoPagamentoId: string,
+  categoriaId?: string,
+  metodoPagamentoId?: string,
+  parcelamentoId?: string,
+  numeroParcela?: number,
+  totalParcelas?: number,
   criadoEm: Timestamp,
   atualizadoEm?: Timestamp
 }
@@ -387,6 +427,7 @@ Dado que a migracao para Functions foi concluida, quando o cliente tentar criar,
 7. Preparar e entregar os artefatos academicos nas datas definidas.
 
 ### 12.2. Media prioridade
+
 1. Implementar orcamento mensal por categoria.
 2. Implementar calculo de orcamento utilizado.
 3. Implementar alertas visuais de orcamento.

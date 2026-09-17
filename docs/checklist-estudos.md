@@ -101,7 +101,6 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 - [x] Tamanhos fixos aplicados dentro dos componentes, sem exigir props no uso.
 - [x] `Header` exibindo as logos para visualizacao.
 
-
 ### Identidade visual
 
 - [x] Separar tokens compartilhados, claros e escuros em `src/styles/themes`.
@@ -264,6 +263,7 @@ Decisao vigente: manter o MVP no plano Spark. A implementacao, os testes e o dep
 - [x] Publicar primeira versao com Firebase Hosting.
 - [x] Testar login, rotas privadas e leitura do Firestore no site publicado.
 - [x] Documentar comandos de build e deploy no `README.md`.
+
 ### Qualidade
 
 - [x] Criar testes unitarios iniciais para funcoes de `utils`.
@@ -277,6 +277,57 @@ Decisao vigente: manter o MVP no plano Spark. A implementacao, os testes e o dep
 - [x] Associar labels aos inputs com `htmlFor` e `id`.
 - [x] Adicionar foco visivel nos botoes e alertas acessiveis para mensagens de erro.
 - [x] Rodar build normal apos configuracao de variaveis de ambiente.
+
+### Redesenho da Home e Formulario Avancado (Figma Home V2)
+
+- [x] Implementar layout em grid de duas colunas na Home (sidebar de formulario e painel de resumo e transacoes).
+- [x] Atualizar tokens de cores, gradientes e bordas em `theme-base.css` e temas claro/escuro alinhados ao Figma.
+- [x] Criar switcher de tipo de transacao exclusivo no formulario com Despesa a esquerda e selecionada por padrao.
+- [x] Formatar input de valor monetario com prefixo de moeda visual.
+- [x] Aplicar renderizacao condicional idiomatica no React para exibir Metodo de Pagamento e Parcelamento exclusivamente quando o tipo for Despesa.
+- [x] Configurar categorias dinamicas que se adaptam automaticamente ao tipo de movimentacao (Despesa vs Receita).
+- [x] Implementar calculo visual e interativo de parcelamento com selecao de parcelas em tempo real.
+- [x] Atualizar controles de transacoes com pills de filtro e seletor de ordenacao estilizado.
+- [x] Adicionar subtitulos informativos e rodape de historico aos cards e a lista de movimentacoes.
+- [x] Atualizar `firestore.rules` com validacao tipada para campos opcionais (`categoria`, `metodoPagamento`, `parcelado`, `parcelas`).
+- [x] Garantir higienizacao de codigo: 0 erros de ESLint, 0 regras CSS orfas e 100% de testes Vitest aprovados.
+
+### Planejamento e Especificação de Parcelamento
+
+- [x] Conduzir sessão de refinamento de domínio (grilling) para modelagem de compras parceladas.
+- [x] Definir regime de competência contábil mensal (sem distorção de saldo inicial negativo).
+- [x] Especificar persistência granular em múltiplos documentos vinculados por `parcelamentoId`.
+- [x] Definir regra de arredondamento bancário de centavos na 1ª parcela.
+- [x] Definir algoritmo de calendário para meses irregulares (clamp ao último dia do mês).
+- [x] Especificar alternância flexível entre Valor Total e Valor da Parcela, com quantidade aberta de parcelas no formulário.
+- [x] Definir cálculo de saldo restrito ao mês corrente e limite de 5 itens recentes na Home.
+- [x] Definir modal de exclusão com opção de apagar apenas uma parcela ou a série futura.
+- [x] Consolidar documentação em `docs/parcelamento.md`, `docs/requisitos.md` e `docs/arquitetura.md`.
+
+### Implementação e Finalização 100% da Home e Compras Parceladas
+
+- [x] Criar utilitários matemáticos de divisão de centavos e projeção de calendário em `src/utils/parcelamento.js`.
+- [x] Criar suíte de testes unitários com Vitest em `src/utils/parcelamento.test.js` (9 testes cobrindo divisão, restos, alternância de modos e clamping de meses bissextos/curtos).
+- [x] Atualizar `firestore.rules` com validação de esquema estrito (`hasOnly`) para campos `parcelamentoId`, `numeroParcela`, `totalParcelas`, `valorTotalCompra`.
+- [x] Implementar funções em lote (`writeBatch`) em `src/services/transacoesService.js` (`criarCompraParceladaNaApi` e `excluirParcelasFuturasNaApi`).
+- [x] Integrar `useTransacoes` com cálculo em tempo real do mês atual (`saldoMesAtual`, `receitasMesAtual`, `despesasMesAtual`) e operações parceladas.
+- [x] Integrar `Form.jsx` com switcher de modo ("Valor total" vs "Valor por parcela"), input numérico aberto, atalhos em botões (pills) e resumo de cálculo em tempo real com sobra de centavos.
+- [x] Criar componente modal acessível `ModalExclusaoParcelamento.jsx` e estilos correspondentes em `ModalExclusaoParcelamento.css`.
+- [x] Atualizar `ItemTransacao.jsx` para indicar número da parcela e acionar confirmação seletiva de exclusão.
+- [x] Atualizar `ListaTransacoes.jsx` com paginação visual (`maxItens={5}`), integração com o modal de exclusão de série e subtítulo dinâmico.
+- [x] Atualizar `ContainerResumo.jsx` com indicação visual dinâmica do mês corrente (ex: "Saldos do mês atual (Março)").
+- [x] Conectar 100% da Home (`src/pages/Home.jsx`) ao novo fluxo de compras parceladas, limites de tamanho e métricas mensais.
+- [x] Implementar filtro temporal de competência e deduplicação de compras parceladas na Home em `src/utils/transacao.js` (máximo 1 parcela por compra recente, suprimindo poluição de meses futuros).
+- [x] Criar componente `DatePicker` personalizado em JavaScript (React) em `src/components/DatePicker.jsx` e `DatePicker.css` com navegação mensal, botão "Hoje", fechamento ao clicar fora/Escape e formatação amigável pt-BR.
+- [x] Remover setinhas nativas (spin buttons) de inputs numéricos em `Form.css` (`-webkit-appearance` e `moz-appearance: textfield`).
+- [x] Bloquear digitação de mais de 2 números após a vírgula ou ponto em `normalizarInputValor` e `validarTransacao` (`Form.jsx`), com suporte nativo à digitação em formato brasileiro (`inputMode="decimal"`).
+- [x] Ampliar suíte de testes unitários com novos testes de validação de casas decimais e normalização monetária em `src/utils/transacao.test.js` (27/27 testes aprovados no Vitest).
+- [x] Simplificar o formulário de parcelas: campo de valor padronizado como valor total da compra, com label contextual `Valor total da compra`, divisão automática transparente e remoção do seletor confuso "Valor por parcela".
+- [x] Desbloquear a digitação no campo de parcelas: permitir apagar e digitar livremente sem interferência do `onChange`, aplicando validação e clamping seguro (2 a 72) no `onBlur` e no envio.
+- [x] Implementar controle stepper visual `[ − ]` e `[ + ]` integrado ao campo de parcelas para incremento/decremento intuitivo.
+- [x] Implementar edição atômica de séries de parcelamento (`atualizarCompraParceladaNaApi` e `converterParaParceladaNaApi`) via `writeBatch` no Firestore, com higienização de descrição e carregamento do valor global da compra.
+- [x] Realizar auditoria de regras de segurança com a skill `firebase-security-rules-auditor`, adicionando limites estritos de tamanho de string e intervalos numéricos (1 a 72) em `firestore.rules`.
+- [x] Validar compilação de produção (`npm run build`), testes unitários (29/29 aprovados no Vitest) e conformidade no linter (`npm run lint` 0 erros).
 
 ## Regra de estudo combinada
 

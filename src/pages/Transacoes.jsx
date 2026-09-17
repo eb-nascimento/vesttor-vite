@@ -9,6 +9,7 @@ function Transacoes({ usuario }) {
     erroLeitura,
     transacoes,
     excluirTransacao,
+    excluirParcelasFuturas,
     iniciarEdicao,
   } = useTransacoes(usuario?.uid);
 
@@ -33,6 +34,7 @@ function Transacoes({ usuario }) {
         <ListaTransacoes
           transacoes={transacoes}
           onExcluir={excluirTransacao}
+          onExcluirSerie={excluirParcelasFuturas}
           onEditar={iniciarEdicao}
         />
       )}

@@ -16,3 +16,6 @@ body {
   background: var(--color-bg);
 }
 
+main {
+  margin-inline: 3.6rem;
+}

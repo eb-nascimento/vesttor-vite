@@ -1,12 +1,29 @@
-.resumo-container {
+.secao-saldos {
   display: flex;
-  gap: 16px;
-  margin: 0;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
 }
 
-@media (max-width: 720px) {
+.saldos-titulo {
+  margin: 0;
+  font-family: var(--font-family-title, "Montserrat", sans-serif);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-text, #f6f8fb);
+  letter-spacing: -0.2px;
+}
+
+.resumo-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 0;
+  width: 100%;
+}
+
+@media (max-width: 900px) {
   .resumo-container {
-    flex-direction: column;
+    grid-template-columns: 1fr;
   }
 }

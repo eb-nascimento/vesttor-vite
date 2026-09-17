@@ -8,26 +8,47 @@ function ControlesTransacoes({
 }) {
   return (
     <section className="painel-transacoes">
-      <select
-        value={filtro}
-        onChange={(e) => onFiltroChange(e.target.value)}
-        className="filtros"
+      <div
+        className="filtro-pills"
+        role="group"
+        aria-label="Filtro de transações"
       >
-        <option value="todas">Todas</option>
-        <option value="receita">Receitas</option>
-        <option value="despesa">Despesas</option>
-      </select>
+        <button
+          type="button"
+          className={`pill-btn ${filtro === "todas" ? "ativo" : ""}`}
+          onClick={() => onFiltroChange("todas")}
+        >
+          Todas
+        </button>
+        <button
+          type="button"
+          className={`pill-btn ${filtro === "receita" ? "ativo" : ""}`}
+          onClick={() => onFiltroChange("receita")}
+        >
+          Receitas
+        </button>
+        <button
+          type="button"
+          className={`pill-btn ${filtro === "despesa" ? "ativo" : ""}`}
+          onClick={() => onFiltroChange("despesa")}
+        >
+          Despesas
+        </button>
+      </div>
 
-      <select
-        value={ordenacao}
-        onChange={(e) => onOrdenacaoChange(e.target.value)}
-        className="ordenacao"
-      >
-        <option value="data-crescente">Data Crescente</option>
-        <option value="data-decrescente">Data Decrescente</option>
-        <option value="valor-crescente">Valor Crescente</option>
-        <option value="valor-decrescente">Valor Decrescente</option>
-      </select>
+      <div className="ordenacao-wrapper">
+        <select
+          value={ordenacao}
+          onChange={(e) => onOrdenacaoChange(e.target.value)}
+          className="ordenacao-select"
+          aria-label="Ordenar transações"
+        >
+          <option value="data-decrescente">Mais recentes ▾</option>
+          <option value="data-crescente">Mais antigas ▴</option>
+          <option value="valor-decrescente">Maior valor</option>
+          <option value="valor-crescente">Menor valor</option>
+        </select>
+      </div>
     </section>
   );
 }

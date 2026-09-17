@@ -8,6 +8,8 @@ import {
   query,
   where,
   onSnapshot,
+  writeBatch,
+  getDocs,
 } from "firebase/firestore";
 import { db } from "../config/firebase";
 
@@ -68,4 +70,115 @@ export async function editarTransacaoNaApi(id, novosDados) {
     ...dados,
     id,
   };
+}
+
+export async function criarCompraParceladaNaApi(parcelas, userId) {
+  const batch = writeBatch(db);
+  const transacoesCriadas = [];
+
+  for (const parcela of parcelas) {
+    const docRef = doc(transacaoCollection);
+    const dados = {
+      ...parcela,
+      userId,
+      data: Timestamp.fromDate(new Date(`${parcela.data}T12:00:00`)),
+    };
+    batch.set(docRef, dados);
+    transacoesCriadas.push({ ...dados, id: docRef.id });
+  }
+
+  await batch.commit();
+  return transacoesCriadas;
+}
+
+export async function excluirParcelasFuturasNaApi(
+  parcelamentoId,
+  numeroParcelaMinimo,
+  userId,
+) {
+  const consulta = query(
+    transacaoCollection,
+    where("userId", "==", userId),
+    where("parcelamentoId", "==", parcelamentoId),
+  );
+
+  const snapshot = await getDocs(consulta);
+  const batch = writeBatch(db);
+  let totalExcluidos = 0;
+
+  snapshot.docs.forEach((documento) => {
+    const dados = documento.data();
+    if (Number(dados.numeroParcela) >= Number(numeroParcelaMinimo)) {
+      batch.delete(documento.ref);
+      totalExcluidos++;
+    }
+  });
+
+  if (totalExcluidos > 0) {
+    await batch.commit();
+  }
+}
+
+export async function atualizarCompraParceladaNaApi({
+  parcelamentoId,
+  novasParcelas,
+  transacaoUnica,
+  userId,
+}) {
+  const consulta = query(
+    transacaoCollection,
+    where("userId", "==", userId),
+    where("parcelamentoId", "==", parcelamentoId),
+  );
+
+  const snapshot = await getDocs(consulta);
+  const batch = writeBatch(db);
+
+  // Exclui todas as parcelas anteriores da série
+  snapshot.docs.forEach((docSnap) => {
+    batch.delete(docSnap.ref);
+  });
+
+  // Se continua parcelada, insere a nova série recalculada
+  if (novasParcelas && novasParcelas.length > 0) {
+    for (const parcela of novasParcelas) {
+      const docRef = doc(transacaoCollection);
+      batch.set(docRef, {
+        ...parcela,
+        userId,
+        data: Timestamp.fromDate(new Date(`${parcela.data}T12:00:00`)),
+      });
+    }
+  } else if (transacaoUnica) {
+    // Se o usuário desmarcou parcelamento, grava como transação única
+    const docRef = doc(transacaoCollection);
+    batch.set(docRef, {
+      ...transacaoUnica,
+      userId,
+      data: Timestamp.fromDate(new Date(`${transacaoUnica.data}T12:00:00`)),
+    });
+  }
+
+  await batch.commit();
+}
+
+export async function converterParaParceladaNaApi(
+  transacaoId,
+  novasParcelas,
+  userId,
+) {
+  const batch = writeBatch(db);
+  const refOriginal = doc(db, "transacoes", transacaoId);
+  batch.delete(refOriginal);
+
+  for (const parcela of novasParcelas) {
+    const docRef = doc(transacaoCollection);
+    batch.set(docRef, {
+      ...parcela,
+      userId,
+      data: Timestamp.fromDate(new Date(`${parcela.data}T12:00:00`)),
+    });
+  }
+
+  await batch.commit();
 }

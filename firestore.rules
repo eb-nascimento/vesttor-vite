@@ -38,7 +38,15 @@ service cloud.firestore {
           'data',
           'descricao',
           'valor',
-          'tipo'
+          'tipo',
+          'categoria',
+          'metodoPagamento',
+          'parcelado',
+          'parcelas',
+          'parcelamentoId',
+          'numeroParcela',
+          'totalParcelas',
+          'valorTotalCompra'
         ])
         && data.userId is string
         && data.userId.size() > 0
@@ -49,7 +57,15 @@ service cloud.firestore {
         && data.descricao.size() <= 100
         && data.valor is number
         && data.valor > 0
-        && data.tipo in ['receita', 'despesa'];
+        && data.tipo in ['receita', 'despesa']
+        && (!('categoria' in data) || (data.categoria is string && data.categoria.size() <= 50))
+        && (!('metodoPagamento' in data) || (data.metodoPagamento is string && data.metodoPagamento.size() <= 50))
+        && (!('parcelado' in data) || data.parcelado is bool)
+        && (!('parcelas' in data) || (data.parcelas is number && data.parcelas >= 1 && data.parcelas <= 72))
+        && (!('parcelamentoId' in data) || (data.parcelamentoId is string && data.parcelamentoId.size() <= 100))
+        && (!('numeroParcela' in data) || (data.numeroParcela is number && data.numeroParcela >= 1 && data.numeroParcela <= 72))
+        && (!('totalParcelas' in data) || (data.totalParcelas is number && data.totalParcelas >= 2 && data.totalParcelas <= 72))
+        && (!('valorTotalCompra' in data) || (data.valorTotalCompra is number && data.valorTotalCompra > 0));
     }
 
     match /transacoes/{transactionId} {
