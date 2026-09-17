@@ -715,9 +715,29 @@ Para viabilizar compras parceladas sem distorcer o fluxo de caixa inicial, a arq
 - **Segurança e Validação de Esquema (`firestore.rules`)**:
   - Regras auditadas pela skill `firebase-security-rules-auditor`, assegurando tipagem estrita, limites de tamanho de strings (<= 50/100 chars), intervalo de parcelas (1 a 72), `hasOnly` e autorização por `isOwner`.
 
+### 16.17. Arquitetura da Página Transações V2 (Extrato Completo)
+
+A página `/transacoes` implementa a arquitetura de extrato financeiro detalhado conforme o Figma Node `222:2`:
+
+- **Funções Puras de Filtragem e Paginação (`src/utils/transacao.js`)**:
+  - `aplicarFiltrosAvancados(transacoes, filtros)`: executa busca textual insensível a maiúsculas/minúsculas, filtragem combinada por tipo (Receita vs Despesa), competência mensal (`YYYY-MM`), categoria e método de pagamento, finalizando com a ordenação especificada;
+  - `paginarTransacoes(itens, paginaAtual, itensPorPagina)`: calcula fatias de array puras com metadados de intervalo (`de`, `ate`), controle de páginas válidas e sinalizadores de navegação (`temAnterior`, `temProxima`).
+- **Estado Reativo e Métricas Dinâmicas (`Transacoes.jsx`)**:
+  - O hook `useTransacoes` fornece a coleção bruta de transações do usuário via listener Firestore em tempo real;
+  - Um `useMemo` aplica os filtros ativos para produzir a lista filtrada;
+  - As 4 métricas do card `ResumoPeriodo` (Saldo, Receitas, Despesas, Quantidade de registros) derivam instantaneamente da lista filtrada;
+  - Um segundo `useMemo` aplica a paginação sobre a lista filtrada para renderizar os 10 itens da visualização Desktop ou 8 itens da visualização Mobile.
+- **Responsividade Semântica (Desktop vs Mobile)**:
+  - `TabelaTransacoes.jsx`: layout em tabela com grid de 7 colunas (Data, Descrição com subtítulo `À vista`/`Parcela X/Y`, Categoria, Método, Tipo com pill badge, Valor com sinal e botões de Ações);
+  - `CardTransacaoMobile.jsx`: cartões verticais contendo ícone da categoria, valor no topo, linha meta com data e botões de ação na base;
+  - `Paginacao.jsx`: barra de navegação com indicador textual de faixa e botões numéricos com destaque na página ativa.
+- **Gestão de Modais (`ModalFormTransacao.jsx` e `ModalExclusaoParcelamento.jsx`)**:
+  - Modal flutuante que encapsula o formulário para criação e edição sem perda de contexto da página;
+  - Isolamento de scroll do fundo e fechamento acessível por clique no backdrop ou tecla Escape.
+
 ## 17. Proximos passos tecnicos
 
 1. A Home está 100% concluída, testada e homologada.
-2. Avançar para a página completa de `/transacoes` (listagem irrestrita de todos os meses, busca textual, filtros avançados e exportação).
-3. Implementar módulo de gerenciamento de Categorias personalizadas por usuário.
-4. Implementar módulo de Métodos de Pagamento e Orçamentos mensais.
+2. A documentação técnica e de produto de `Transações V2` está 100% formalizada em `requisitos.md`, `arquitetura.md` e `transacoes-v2.md`.
+3. Iniciar o desenvolvimento dos componentes de interface de `Transações V2` (`ResumoPeriodo`, `FiltrosTransacoes`, `TabelaTransacoes`, `CardTransacaoMobile`, `Paginacao`, `ModalFormTransacao`).
+4. Implementar os módulos de Gestão de Categorias e Orçamentos Mensais.

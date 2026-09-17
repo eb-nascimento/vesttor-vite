@@ -208,6 +208,26 @@ Ao editar uma compra parcelada, o formulario preenche o valor total da compra e 
 
 O campo de valor normaliza entradas em moeda corrente impedindo mais de 2 digitos apos a virgula ou ponto. O campo de parcelas suporta digitacao numerica direta, botoes de incremento/decremento (`[ - ]` e `[ + ]`), atalhos rapidos (`2x` ate `24x`) e clamping seguro entre 2 e 72 parcelas. O seletor de data utiliza componente React dedicado (`DatePicker.jsx`) com navegacao mensal em portugues e selecao intuitiva.
 
+### RN25 - Extrato completo de Transacoes (Figma Transacoes V2)
+
+A rota `/transacoes` exibe o extrato financeiro completo do usuario. Diferente da Home, a tela de Transacoes nao restringe o numero de lancamentos a 5 e exibe as movimentacoes de acordo com os filtros de competencia selecionados. O card superior "Resumo do periodo" calcula dinamicamente 4 metricas (Saldo no periodo, Receitas, Despesas e Quantidade de registros) estritamente sobre a lista de movimentacoes filtradas.
+
+### RN26 - Criacao e edicao modal no extrato
+
+O botao `+ Nova transacao` na tela de Transacoes abre um Modal flutuante contendo o formulario completo de transacoes com suporte a parcelamento, validacoes e calendario visual. A edicao de transacoes avulsas ou series parceladas a partir da tabela/card tambem e realizada em modal, mantendo o usuario no contexto do extrato.
+
+### RN27 - Painel retratil de filtros e busca
+
+A tela de Transacoes disponibiliza um botao de acao `Abrir filtros` que expande/recolhe um painel retratil contendo: campo de busca textual em tempo real por descricao, filtro por tipo (Todas, Receitas, Despesas), seletor de mes/ano, selecao de categoria, selecao de metodo de pagamento, opcoes de ordenacao e botao para limpar todos os filtros aplicados.
+
+### RN28 - Apresentacao contextual de subtitulos
+
+Na tabela desktop e nos cards mobile, cada lancamento de despesa deve informar explicitamente na segunda linha da descricao se foi realizado `A vista` ou se e `Parcelado (ex: Parcela 1/10)`. Para receitas, nenhum subtitulo adicional e exibido, mantendo o layout limpo.
+
+### RN29 - Paginacao no extrato
+
+A listagem de transacoes aplica paginacao para otimizar desempenho e usabilidade: 10 itens por pagina em visualizacao desktop e 8 itens por pagina em telas mobile. A interface de paginacao exibe indicador de intervalo (`X–Y de Z transacoes`) e botoes de navegacao (`<`, paginas numericas com a atual em destaque, e `>`).
+
 ## 8. Modelo de dados alvo
 
 ### 8.1. Transacao
