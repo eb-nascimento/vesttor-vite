@@ -1,0 +1,152 @@
+.filtros-transacoes-container {
+  background: var(--color-surface, #0b1f33);
+  border: 1px solid var(--color-border, #1e4666);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.filtros-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn-toggle-filtros {
+  background: none;
+  border: none;
+  color: var(--color-text-muted, #9fb0c3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 0;
+}
+
+.btn-toggle-filtros:hover {
+  color: var(--color-primary, #20aeff);
+}
+
+.filtros-panel {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border, #1e4666);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tipo-pills {
+  display: flex;
+  gap: 8px;
+}
+
+.tipo-pills .pill {
+  background: var(--color-input-bg, #17324a);
+  border: 1px solid var(--color-border, #1e4666);
+  color: var(--color-text-muted, #9fb0c3);
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tipo-pills .pill.ativo {
+  background: var(--color-primary, #20aeff);
+  color: var(--color-bg, #050b16);
+  border-color: var(--color-primary, #20aeff);
+  font-weight: 600;
+}
+
+.busca-wrapper {
+  position: relative;
+}
+
+.busca-wrapper .busca-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-muted, #9fb0c3);
+}
+
+.busca-wrapper input {
+  width: 100%;
+  background: var(--color-input-bg, #17324a);
+  border: 1px solid var(--color-border, #1e4666);
+  color: var(--color-text, #f6f8fb);
+  padding: 10px 12px 10px 36px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.busca-wrapper input:focus {
+  outline: none;
+  border-color: var(--color-primary, #20aeff);
+}
+
+.filtros-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 12px;
+}
+
+@media (min-width: 600px) {
+  .filtros-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 992px) {
+  .filtros-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.filtro-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filtro-item label {
+  font-size: 12px;
+  color: var(--color-text-muted, #9fb0c3);
+}
+
+.filtro-item select {
+  background: var(--color-input-bg, #17324a);
+  border: 1px solid var(--color-border, #1e4666);
+  color: var(--color-text, #f6f8fb);
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 13px;
+  width: 100%;
+}
+
+.filtros-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.btn-limpar {
+  background: none;
+  border: none;
+  color: var(--color-text-muted, #9fb0c3);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+.btn-limpar:hover {
+  background: var(--color-surface-alt, #102a42);
+  color: var(--color-text, #f6f8fb);
+}

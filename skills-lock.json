@@ -1,11 +1,29 @@
 {
   "version": 1,
   "skills": {
+    "context7-mcp": {
+      "source": "rtadewald/skills",
+      "sourceType": "github",
+      "skillPath": "context7-mcp/SKILL.md",
+      "computedHash": "3245acb0b2b8726c2a5b132e0d05754938a899b048966d8cafa07cb827b36441"
+    },
     "extension-to-functions-codebase": {
       "source": "firebase/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/extension-to-functions-codebase/SKILL.md",
       "computedHash": "1b0b4150895374330ff51a6f0d99663eda4d266730802eec85882443aeca9539"
+    },
+    "extract-ds": {
+      "source": "rtadewald/skills",
+      "sourceType": "github",
+      "skillPath": "extract-ds/SKILL.md",
+      "computedHash": "1b77f6e56bdde6ab0771f3098ad0d5fafa40514d3e55353d7706c601e1757b80"
+    },
+    "fal-ai": {
+      "source": "rtadewald/skills",
+      "sourceType": "github",
+      "skillPath": "fal-ai/SKILL.md",
+      "computedHash": "4aff3a70ac3614bb79a54d167c9814786043572735f0297c03693b431a54be43"
     },
     "firebase-ai-logic-basics": {
       "source": "firebase/agent-skills",
@@ -66,6 +84,66 @@
       "sourceType": "github",
       "skillPath": "skills/firebase-security-rules-auditor/SKILL.md",
       "computedHash": "be877f6c7aaf460791dd6103a08906734036c26bd7c686cfdb8b60e4b2f65742"
+    },
+    "grill-me": {
+      "source": "rtadewald/skills",
+      "sourceType": "github",
+      "skillPath": "grill-me/SKILL.md",
+      "computedHash": "3c3daffca419d73b09c34be8782a4ea3744978c39b5acbf433dfb39f0e388c8b"
+    },
+    "handoff": {
+      "source": "rtadewald/skills",
+      "sourceType": "github",
+      "skillPath": "handoff/SKILL.md",
+      "computedHash": "6a32a261ef1fdf48da8626349929289e98d90b361e1b63f3efd85d3c15c302bf"
+    },
+    "img-to-html": {
+      "source": "rtadewald/skills",
+      "sourceType": "github",
+      "skillPath": "img-to-html/SKILL.md",
+      "computedHash": "47aeb9c975d3abcb785eb8c5fe06d47b2707d16cef440a84d252ee85cdec5792"
+    },
+    "mediabunny": {
+      "source": "rtadewald/skills",
+      "sourceType": "github",
+      "skillPath": "mediabunny/SKILL.md",
+      "computedHash": "35850219c9ffe2f445ed28c99e17a408c0192fbd0a3e5f835d2ce4e92d160ba1"
+    },
+    "nano-banana-pro": {
+      "source": "rtadewald/skills",
+      "sourceType": "github",
+      "skillPath": "nano-banana-pro/SKILL.md",
+      "computedHash": "2f81263c625e67c2b902904670a4a308f64b7d8033b9c89ade02883dcd1cc333"
+    },
+    "openrouter-img": {
+      "source": "rtadewald/skills",
+      "sourceType": "github",
+      "skillPath": "openrouter-img/SKILL.md",
+      "computedHash": "e63574ec6d63f2b85d50193de6ac6d097a9647b958347f1888be6cd0e5e98653"
+    },
+    "plan-screen": {
+      "source": "rtadewald/skills",
+      "sourceType": "github",
+      "skillPath": "plan-screen/SKILL.md",
+      "computedHash": "d3dc3fcf4cd33e106368b083ade236413c0314f8b09bdff318603fd77a320fa8"
+    },
+    "to-img": {
+      "source": "rtadewald/skills",
+      "sourceType": "github",
+      "skillPath": "to-img/SKILL.md",
+      "computedHash": "8bad805a4a7178416aeee4d1f475c733050781a7901aac1dece1557453e47c54"
+    },
+    "to-tickets": {
+      "source": "rtadewald/skills",
+      "sourceType": "github",
+      "skillPath": "to-tickets/SKILL.md",
+      "computedHash": "2064ac9e3e755da3a5141bea92cca133b44758b72b52b5a70924baf5e7debd79"
+    },
+    "to-wireframe": {
+      "source": "rtadewald/skills",
+      "sourceType": "github",
+      "skillPath": "to-wireframe/SKILL.md",
+      "computedHash": "b3a7dad2a2982ffc04e23019d4e41a4c4e358986003f514d1a93e64528b90920"
     },
     "xcode-project-setup": {
       "source": "firebase/agent-skills",
