@@ -9,10 +9,9 @@
   margin-bottom: 24px;
 }
 
-.transacoes-header h2 {
+.transacoes-title-container h2 {
   font-size: 24px;
   font-weight: 700;
-  margin: 0 0 4px 0;
 }
 
 .transacoes-subtitle {

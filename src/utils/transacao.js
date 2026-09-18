@@ -126,8 +126,8 @@ export function ordenarTransacoes(transacoes, ordenacao) {
  */
 export function extrairMesesDisponiveis(transacoes) {
   const mesesSet = new Set();
-  
-  transacoes.forEach(t => {
+
+  transacoes.forEach((t) => {
     if (!t.data) return;
     const { ano, mes } = obterAnoEMes(t.data);
     if (ano > 0) {
@@ -137,18 +137,27 @@ export function extrairMesesDisponiveis(transacoes) {
     }
   });
 
-  const formatter = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' });
-  
+  // Garantir que o mês atual SEMPRE exista na lista, mesmo se não houver transações
+  const hoje = new Date();
+  const mesAtualStr = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, "0")}`;
+  mesesSet.add(mesAtualStr);
+
+  const formatter = new Intl.DateTimeFormat("pt-BR", {
+    month: "long",
+    year: "numeric",
+  });
+
   return Array.from(mesesSet)
-    .sort().reverse() // Mais recentes primeiro
-    .map(val => {
-      const [ano, mes] = val.split('-');
+    .sort()
+    .reverse() // Mais recentes primeiro
+    .map((val) => {
+      const [ano, mes] = val.split("-");
       // Criar data no meio do dia para evitar problemas de fuso
       const date = new Date(ano, Number(mes) - 1, 15);
       const label = formatter.format(date);
       return {
         valor: val, // '2026-09'
-        label: label.charAt(0).toUpperCase() + label.slice(1) // 'Setembro de 2026'
+        label: label.charAt(0).toUpperCase() + label.slice(1), // 'Setembro de 2026'
       };
     });
 }
@@ -161,35 +170,37 @@ export function aplicarFiltrosAvancados(transacoes, filtros) {
 
   // 1. Filtro de Tipo (receita, despesa, todas)
   if (filtros.tipo && filtros.tipo !== "todas") {
-    resultado = resultado.filter(t => t.tipo === filtros.tipo);
+    resultado = resultado.filter((t) => t.tipo === filtros.tipo);
   }
 
   // 2. Filtro de Busca (descrição)
   if (filtros.busca && filtros.busca.trim() !== "") {
     const termo = filtros.busca.toLowerCase().trim();
-    resultado = resultado.filter(t => 
-      t.descricao && t.descricao.toLowerCase().includes(termo)
+    resultado = resultado.filter(
+      (t) => t.descricao && t.descricao.toLowerCase().includes(termo),
     );
   }
 
   // 3. Filtro de Mês/Ano (Competência)
   if (filtros.mesAno && filtros.mesAno !== "todas") {
     const [anoAlvo, mesAlvo] = filtros.mesAno.split("-").map(Number);
-    resultado = resultado.filter(t => {
+    resultado = resultado.filter((t) => {
       const { ano, mes } = obterAnoEMes(t.data);
       // 'mes' do obterAnoEMes é 0-11. 'mesAlvo' do form é 1-12.
-      return ano === anoAlvo && (mes + 1) === mesAlvo;
+      return ano === anoAlvo && mes + 1 === mesAlvo;
     });
   }
 
   // 4. Filtro de Categoria
   if (filtros.categoria && filtros.categoria !== "todas") {
-    resultado = resultado.filter(t => t.categoria === filtros.categoria);
+    resultado = resultado.filter((t) => t.categoria === filtros.categoria);
   }
 
   // 5. Filtro de Método
   if (filtros.metodoPagamento && filtros.metodoPagamento !== "todas") {
-    resultado = resultado.filter(t => t.metodoPagamento === filtros.metodoPagamento);
+    resultado = resultado.filter(
+      (t) => t.metodoPagamento === filtros.metodoPagamento,
+    );
   }
 
   // 6. Ordenação
@@ -216,7 +227,11 @@ export function aplicarFiltrosAvancados(transacoes, filtros) {
 /**
  * Pagina as transações
  */
-export function paginarTransacoes(transacoes, paginaAtual, itensPorPagina = 10) {
+export function paginarTransacoes(
+  transacoes,
+  paginaAtual,
+  itensPorPagina = 10,
+) {
   const startIndex = (paginaAtual - 1) * itensPorPagina;
   const endIndex = startIndex + itensPorPagina;
   return transacoes.slice(startIndex, endIndex);
@@ -233,7 +248,7 @@ export function calcularTotais(transacoes) {
       acc.saldo = acc.receitas - acc.despesas;
       return acc;
     },
-    { saldo: 0, receitas: 0, despesas: 0 }
+    { saldo: 0, receitas: 0, despesas: 0 },
   );
 }
 

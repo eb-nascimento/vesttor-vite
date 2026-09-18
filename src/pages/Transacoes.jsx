@@ -5,6 +5,7 @@ import FiltrosTransacoes from "../components/FiltrosTransacoes";
 import TabelaTransacoes from "../components/TabelaTransacoes";
 import ItemTransacao from "../components/ItemTransacao";
 import Paginacao from "../components/Paginacao";
+import PaginadorMes from "../components/PaginadorMes";
 import ModalFormTransacao from "../components/ModalFormTransacao";
 import ModalExclusaoParcelamento from "../components/ModalExclusaoParcelamento";
 import { Plus } from "lucide-react";
@@ -80,11 +81,49 @@ function Transacoes({ usuario }) {
   const totalItens = transacoesFiltradas.length;
   const totalPaginas = Math.ceil(totalItens / ITENS_POR_PAGINA) || 1;
 
+  // Sempre que os meses carregarem, se estiver em "todas", pula automaticamente pro mês mais recente
+  useEffect(() => {
+    if (filtros.mesAno === "todas" && mesesDisponiveis.length > 0) {
+      setFiltros((prev) => ({ ...prev, mesAno: mesesDisponiveis[0].valor }));
+    }
+  }, [mesesDisponiveis, filtros.mesAno]);
+
   useEffect(() => {
     if (paginaAtual > totalPaginas) {
       setPaginaAtual(1);
     }
   }, [totalPaginas, paginaAtual]);
+
+  const handleMudarMes = (direcao) => {
+    // 1. Achamos em que posição (índice) do array está o mês que o usuário está vendo agora.
+    const indexAtual = mesesDisponiveis.findIndex(
+      (m) => m.valor === filtros.mesAno,
+    );
+
+    if (indexAtual === -1) return; // Se não encontrou, não faz nada.
+
+    let novoIndex = indexAtual;
+    // 2. Lembrete: nosso array está do mais NOVO pro mais VELHO.
+    // Então o "passado" está pra frente no array, e o "futuro" está pra trás.
+    if (direcao === "anterior") {
+      novoIndex = indexAtual + 1; // Passado
+    } else if (direcao === "proximo") {
+      novoIndex = indexAtual - 1; // Futuro
+    }
+
+    // 3. Verificamos se não estouramos os limites (não dá pra ir pro futuro se já estamos no mês mais recente)
+    if (novoIndex >= 0 && novoIndex < mesesDisponiveis.length) {
+      // 4. Atualizamos o estado!
+      setFiltros({
+        ...filtros,
+        mesAno: mesesDisponiveis[novoIndex].valor,
+      });
+      setPaginaAtual(1); // Resetar para a primeira página ao mudar o mês
+    }
+  };
+
+  // const novoMes = mesesDisponiveis[novoIndex].valor;
+  // setFiltros((prev) => ({ ...prev, mesAno: novoMes }));
 
   const transacoesPaginadas = useMemo(() => {
     return paginarTransacoes(
@@ -129,16 +168,28 @@ function Transacoes({ usuario }) {
             Consulte e gerencie suas movimentações.
           </p>
         </div>
-        <button
-          className="btn-nova-transacao"
-          onClick={() => {
-            setTransacaoEditando(null);
-            setModalFormAberto(true);
-          }}
+        <div
+          className="transacoes-title-actions"
+          style={{ display: "flex", gap: "16px", alignItems: "center" }}
         >
-          <Plus size={16} aria-hidden="true" />
-          Nova transação
-        </button>
+          <PaginadorMes
+            mesAtual={
+              mesesDisponiveis.find((m) => m.valor === filtros.mesAno)?.label ||
+              "Setembro de 2026"
+            }
+            onMudarMes={handleMudarMes}
+          />
+          <button
+            className="btn-nova-transacao"
+            onClick={() => {
+              setTransacaoEditando(null);
+              setModalFormAberto(true);
+            }}
+          >
+            <Plus size={16} aria-hidden="true" />
+            Nova transação
+          </button>
+        </div>
       </div>
 
       {(erroOperacao || erroLeitura) && (
