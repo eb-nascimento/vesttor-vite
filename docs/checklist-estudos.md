@@ -326,8 +326,26 @@ Decisao vigente: manter o MVP no plano Spark. A implementacao, os testes e o dep
 - [x] Desbloquear a digitação no campo de parcelas: permitir apagar e digitar livremente sem interferência do `onChange`, aplicando validação e clamping seguro (2 a 72) no `onBlur` e no envio.
 - [x] Implementar controle stepper visual `[ − ]` e `[ + ]` integrado ao campo de parcelas para incremento/decremento intuitivo.
 - [x] Implementar edição atômica de séries de parcelamento (`atualizarCompraParceladaNaApi` e `converterParaParceladaNaApi`) via `writeBatch` no Firestore, com higienização de descrição e carregamento do valor global da compra.
-- [x] Realizar auditoria de regras de segurança com a skill `firebase-security-rules-auditor`, adicionando limites estritos de tamanho de string e intervalos numéricos (1 a 72) em `firestore.rules`.
 - [x] Validar compilação de produção (`npm run build`), testes unitários (29/29 aprovados no Vitest) e conformidade no linter (`npm run lint` 0 erros).
+
+### Especificação e Planejamento: Transações V2 (Figma Node 222:2)
+
+- [x] Inspecionar design completo de Transações V2 no Figma (Node `222:2`, desktop 1440x860 e mobile 390x1154, temas claro e escuro).
+- [x] Conduzir sessão de alinhamento e refinamento (_grilling_) cobrindo Q1 a Q6 (modal de nova transação, resumo dinâmico, painel retrátil de filtros, paginação de 10/8 itens, extrato completo por competência e subtítulos de despesa à vista vs parcelada).
+- [x] Consolidar regras de produto RN25 a RN29 em `docs/requisitos.md`.
+- [x] Consolidar arquitetura da página, funções puras e gestão de estado em `docs/arquitetura.md` (seção 16.17).
+- [x] Criar documento de especificação funcional e técnica completa em `docs/transacoes-v2.md` com tokens, paleta de cores e árvore de componentes.
+- [x] Implementar e testar funções puras de filtragem avançada multi-critério e paginação com 36/36 testes unitários aprovados no Vitest.
+
+### Implementação: Transações V2 e Acessibilidade (A11y)
+
+- [x] Implementar o componente `PaginadorMes` como Fonte da Verdade de competência no cabeçalho.
+- [x] Construir o hook customizado `useFiltrosTransacoes` para isolar a complexidade de estado e paginação.
+- [x] Substituir `<select>` nativos por componente acessível `CustomSelect.jsx` (teclado, focus, scroll, blur).
+- [x] Integrar trava de foco nativa (Focus Trap) em modais (`ModalBase.jsx`) e restaurar foco após fechamento.
+- [x] Integrar fechamento por evento de Blur em popovers (`CustomSelect` e `DatePicker`).
+- [x] Montar página completa `Transacoes.jsx` consumindo os filtros dinâmicos e repassando para tabela e cartões.
+- [x] Concluir o checklist de documentação arquitetural no `arquitetura.md` e `transacoes-v2.md`.
 
 ## Regra de estudo combinada
 

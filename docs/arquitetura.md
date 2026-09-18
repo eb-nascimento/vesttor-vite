@@ -59,17 +59,24 @@ src/
 |   |-- CardResumo.jsx
 |   |-- ContainerResumo.jsx
 |   |-- ControlesTransacoes.jsx
-|   |-- Form.jsx
+|   |-- CustomSelect.jsx / .css
+|   |-- DatePicker.jsx / .css
+|   |-- Form.jsx / .css
 |   |-- FormAuth.jsx
 |   |-- Header.jsx
 |   |-- ItemTransacao.jsx
-|   `-- ListaTransacoes.jsx
+|   |-- ListaTransacoes.jsx
+|   |-- ModalBase.jsx
+|   |-- ModalFormTransacao.jsx
+|   |-- Paginacao.jsx
+|   `-- PaginadorMes.jsx
 |
 |-- config/
 |   `-- firebase.js
 |
 |-- hooks/
 |   |-- useAuth.js
+|   |-- useFiltrosTransacoes.js
 |   `-- useTransacoes.js
 |
 |-- layouts/
@@ -77,7 +84,8 @@ src/
 |
 |-- pages/
 |   |-- Home.jsx
-|   `-- Login.jsx
+|   |-- Login.jsx
+|   `-- Transacoes.jsx
 |
 |-- routes/
 |   |-- PrivateRoute.jsx
@@ -95,6 +103,7 @@ src/
 |
 |-- utils/
 |   |-- calculos.js
+|   |-- parcelamento.js
 |   `-- transacao.js
 |
 |-- App.jsx
@@ -127,11 +136,12 @@ main.jsx
 
 Rotas atuais:
 
-| Rota     | Tipo     | Comportamento                                          |
-| -------- | -------- | ------------------------------------------------------ |
-| `/login` | Publica  | Exibe login apenas para usuario nao autenticado        |
-| `/home`  | Privada  | Exibe home apenas para usuario autenticado             |
-| `*`      | Fallback | Redireciona para `/home` ou `/login` conforme a sessao |
+| Rota          | Tipo     | Comportamento                                          |
+| ------------- | -------- | ------------------------------------------------------ |
+| `/login`      | Publica  | Exibe login apenas para usuario nao autenticado        |
+| `/home`       | Privada  | Exibe home apenas para usuario autenticado             |
+| `/transacoes` | Privada  | Exibe extrato completo (Filtros V2 e Paginação)        |
+| `*`           | Fallback | Redireciona para `/home` ou `/login` conforme a sessao |
 
 ### 6.2. Estrutura atual em `App.jsx`
 
@@ -145,6 +155,7 @@ Rotas atuais:
     }
   >
     <Route path="/home" element={<Home usuario={usuario} />} />
+    <Route path="/transacoes" element={<Transacoes usuario={usuario} />} />
   </Route>
 
   <Route
@@ -260,13 +271,18 @@ Responsabilidade atual:
 
 - Usar `useTransacoes(usuario?.uid)`;
 - Renderizar resumo financeiro;
-- Renderizar formulario de transacao;
-- Renderizar lista de transacoes;
+- Renderizar formulario de transacao (via `ModalFormTransacao`);
+- Renderizar lista resumida de transacoes;
 - Exibir carregamento e erro;
-- Exibir email do usuario;
-- Disponibilizar logout.
 
-Com a criacao de `AppLayout`, `Home` nao deve mais renderizar `Header` nem criar outro `main`. A estrutura comum pertence ao layout.
+### 9.3. `Transacoes.jsx` (V2)
+
+Responsabilidade atual:
+
+- Fornecer um extrato completo com paginação em tela cheia;
+- Centralizar o estado visual no custom hook `useFiltrosTransacoes.js`;
+- Repassar dados calculados para os filtros avançados, componentes semânticos (`CustomSelect`, `DatePicker`), e totais baseados no mês ativo.
+- Utiliza `ModalBase.jsx` com _Focus Trap_ e regras estritas de Acessibilidade (A11y).
 
 ## 10. Autenticacao
 
@@ -715,9 +731,29 @@ Para viabilizar compras parceladas sem distorcer o fluxo de caixa inicial, a arq
 - **Segurança e Validação de Esquema (`firestore.rules`)**:
   - Regras auditadas pela skill `firebase-security-rules-auditor`, assegurando tipagem estrita, limites de tamanho de strings (<= 50/100 chars), intervalo de parcelas (1 a 72), `hasOnly` e autorização por `isOwner`.
 
+### 16.17. Arquitetura da Página Transações V2 (Extrato Completo)
+
+A página `/transacoes` implementa a arquitetura de extrato financeiro detalhado conforme o Figma Node `222:2`:
+
+- **Funções Puras de Filtragem e Paginação (`src/utils/transacao.js`)**:
+  - `aplicarFiltrosAvancados(transacoes, filtros)`: executa busca textual insensível a maiúsculas/minúsculas, filtragem combinada por tipo (Receita vs Despesa), competência mensal (`YYYY-MM`), categoria e método de pagamento, finalizando com a ordenação especificada;
+  - `paginarTransacoes(itens, paginaAtual, itensPorPagina)`: calcula fatias de array puras com metadados de intervalo (`de`, `ate`), controle de páginas válidas e sinalizadores de navegação (`temAnterior`, `temProxima`).
+- **Estado Reativo e Métricas Dinâmicas (`Transacoes.jsx`)**:
+  - O hook `useTransacoes` fornece a coleção bruta de transações do usuário via listener Firestore em tempo real;
+  - Um `useMemo` aplica os filtros ativos para produzir a lista filtrada;
+  - As 4 métricas do card `ResumoPeriodo` (Saldo, Receitas, Despesas, Quantidade de registros) derivam instantaneamente da lista filtrada;
+  - Um segundo `useMemo` aplica a paginação sobre a lista filtrada para renderizar os 10 itens da visualização Desktop ou 8 itens da visualização Mobile.
+- **Responsividade Semântica (Desktop vs Mobile)**:
+  - `TabelaTransacoes.jsx`: layout em tabela com grid de 7 colunas (Data, Descrição com subtítulo `À vista`/`Parcela X/Y`, Categoria, Método, Tipo com pill badge, Valor com sinal e botões de Ações);
+  - `CardTransacaoMobile.jsx`: cartões verticais contendo ícone da categoria, valor no topo, linha meta com data e botões de ação na base;
+  - `Paginacao.jsx`: barra de navegação com indicador textual de faixa e botões numéricos com destaque na página ativa.
+- **Gestão de Modais (`ModalFormTransacao.jsx` e `ModalExclusaoParcelamento.jsx`)**:
+  - Modal flutuante que encapsula o formulário para criação e edição sem perda de contexto da página;
+  - Isolamento de scroll do fundo e fechamento acessível por clique no backdrop ou tecla Escape.
+
 ## 17. Proximos passos tecnicos
 
 1. A Home está 100% concluída, testada e homologada.
-2. Avançar para a página completa de `/transacoes` (listagem irrestrita de todos os meses, busca textual, filtros avançados e exportação).
-3. Implementar módulo de gerenciamento de Categorias personalizadas por usuário.
-4. Implementar módulo de Métodos de Pagamento e Orçamentos mensais.
+2. A documentação técnica e de produto de `Transações V2` está 100% formalizada em `requisitos.md`, `arquitetura.md` e `transacoes-v2.md`.
+3. Iniciar o desenvolvimento dos componentes de interface de `Transações V2` (`ResumoPeriodo`, `FiltrosTransacoes`, `TabelaTransacoes`, `CardTransacaoMobile`, `Paginacao`, `ModalFormTransacao`).
+4. Implementar os módulos de Gestão de Categorias e Orçamentos Mensais.

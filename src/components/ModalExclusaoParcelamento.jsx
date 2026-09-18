@@ -1,5 +1,6 @@
 import "./ModalExclusaoParcelamento.css";
 import { AlertCircle, Trash2, X } from "lucide-react";
+import ModalBase from "./ModalBase";
 
 function ModalExclusaoParcelamento({
   transacao,
@@ -19,13 +20,7 @@ function ModalExclusaoParcelamento({
   const parcelasRestantes = totalParcelas - numParcela + 1;
 
   return (
-    <div
-      className="modal-parcelamento-overlay"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="modal-parcela-titulo"
-      onClick={onFechar}
-    >
+    <ModalBase isOpen={true} onClose={onFechar} ariaLabelledby="modal-parcela-titulo">
       <div
         className="modal-parcelamento-card"
         onClick={(e) => e.stopPropagation()}
@@ -112,7 +107,7 @@ function ModalExclusaoParcelamento({
           </button>
         </div>
       </div>
-    </div>
+    </ModalBase>
   );
 }
 
