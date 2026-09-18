@@ -1,5 +1,6 @@
 import "./FiltrosTransacoes.css";
 import { Search, Filter, X } from "lucide-react";
+import CustomSelect from "./CustomSelect";
 
 function FiltrosTransacoes({
   filtros,
@@ -32,7 +33,11 @@ function FiltrosTransacoes({
       {isOpen && (
         <div id="filtros-panel" className="filtros-panel">
           {/* Tipo (Pills) */}
-          <div className="filtro-grupo tipo-pills" role="radiogroup" aria-label="Filtrar por tipo">
+          <div
+            className="filtro-grupo tipo-pills"
+            role="radiogroup"
+            aria-label="Filtrar por tipo"
+          >
             <button
               className={`pill ${filtros.tipo === "todas" ? "ativo" : ""}`}
               onClick={() => handleChange("tipo", "todas")}
@@ -94,48 +99,46 @@ function FiltrosTransacoes({
 
             <div className="filtro-item">
               <label htmlFor="filtro-categoria">Categoria</label>
-              <select
+              <CustomSelect
                 id="filtro-categoria"
                 value={filtros.categoria}
-                onChange={(e) => handleChange("categoria", e.target.value)}
-              >
-                <option value="todas">Todas</option>
-                {categoriasDisponiveis.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
+                onChange={(val) => handleChange("categoria", val)}
+                options={[
+                  { valor: "todas", label: "Todas" },
+                  ...categoriasDisponiveis.map((cat) => ({
+                    valor: cat,
+                    label: cat,
+                  })),
+                ]}
+              />
             </div>
 
             <div className="filtro-item">
               <label htmlFor="filtro-metodo">Método</label>
-              <select
+              <CustomSelect
                 id="filtro-metodo"
                 value={filtros.metodoPagamento}
-                onChange={(e) => handleChange("metodoPagamento", e.target.value)}
-              >
-                <option value="todas">Todos</option>
-                {metodosDisponiveis.map((metodo) => (
-                  <option key={metodo.valor} value={metodo.valor}>
-                    {metodo.label}
-                  </option>
-                ))}
-              </select>
+                onChange={(val) => handleChange("metodoPagamento", val)}
+                options={[
+                  { valor: "todas", label: "Todos" },
+                  ...metodosDisponiveis,
+                ]}
+              />
             </div>
 
             <div className="filtro-item">
               <label htmlFor="filtro-ordenacao">Ordenação</label>
-              <select
+              <CustomSelect
                 id="filtro-ordenacao"
                 value={filtros.ordenacao}
-                onChange={(e) => handleChange("ordenacao", e.target.value)}
-              >
-                <option value="data-decrescente">Mais recentes</option>
-                <option value="data-crescente">Mais antigas</option>
-                <option value="valor-decrescente">Maior valor</option>
-                <option value="valor-crescente">Menor valor</option>
-              </select>
+                onChange={(val) => handleChange("ordenacao", val)}
+                options={[
+                  { valor: "data-decrescente", label: "Mais recentes" },
+                  { valor: "data-crescente", label: "Mais antigas" },
+                  { valor: "valor-decrescente", label: "Maior valor" },
+                  { valor: "valor-crescente", label: "Menor valor" },
+                ]}
+              />
             </div>
           </div>
 

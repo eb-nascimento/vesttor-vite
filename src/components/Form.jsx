@@ -9,14 +9,15 @@ import {
 import { calcularParcelas, gerarSerieTransacoes } from "../utils/parcelamento";
 import {
   Calendar,
-  DollarSign,
-  Tag,
   CreditCard,
-  CheckSquare,
-  Square,
+  DollarSign,
   FileText,
+  Tag,
+  Square,
+  CheckSquare,
   Layers,
 } from "lucide-react";
+import CustomSelect from "./CustomSelect";
 
 function obterDataAtual() {
   return new Date().toISOString().split("T")[0];
@@ -441,19 +442,19 @@ function Form({
               <CreditCard size={13} aria-hidden="true" />
               Método de pagamento
             </label>
-            <select
+            <CustomSelect
               id="metodoPagamento"
               value={form.metodoPagamento}
-              onChange={(e) =>
-                atualizarCampo("metodoPagamento", e.target.value)
-              }
-            >
-              {METODOS_PAGAMENTO.map((metodo) => (
-                <option key={metodo.valor} value={metodo.valor}>
-                  {metodo.label}
-                </option>
-              ))}
-            </select>
+              onChange={(val) => atualizarCampo("metodoPagamento", val)}
+              options={[
+                { valor: "pix", label: "Pix" },
+                { valor: "cartao_credito", label: "Cartão de Crédito" },
+                { valor: "cartao_debito", label: "Cartão de Débito" },
+                { valor: "dinheiro", label: "Dinheiro" },
+                { valor: "boleto", label: "Boleto" },
+                { valor: "transferencia", label: "Transferência" },
+              ]}
+            />
           </div>
         )}
 
@@ -606,17 +607,15 @@ function Form({
             <Tag size={13} aria-hidden="true" />
             Categoria
           </label>
-          <select
+          <CustomSelect
             id="categoria"
             value={form.categoria}
-            onChange={(e) => atualizarCampo("categoria", e.target.value)}
-          >
-            {categoriasDisponiveis.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
+            onChange={(val) => atualizarCampo("categoria", val)}
+            options={categoriasDisponiveis.map((cat) => ({
+              valor: cat,
+              label: cat,
+            }))}
+          />
         </div>
 
         {/* 7. DESCRIÇÃO */}
