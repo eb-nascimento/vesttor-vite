@@ -122,6 +122,122 @@ export function ordenarTransacoes(transacoes, ordenacao) {
 }
 
 /**
+ * Função utilitária global para obter meses únicos das transações
+ */
+export function extrairMesesDisponiveis(transacoes) {
+  const mesesSet = new Set();
+  
+  transacoes.forEach(t => {
+    if (!t.data) return;
+    const { ano, mes } = obterAnoEMes(t.data);
+    if (ano > 0) {
+      // mes vem de 0 a 11, mas para string vamos formatar como AAAA-MM
+      const mesFormatado = String(mes + 1).padStart(2, "0");
+      mesesSet.add(`${ano}-${mesFormatado}`);
+    }
+  });
+
+  const formatter = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' });
+  
+  return Array.from(mesesSet)
+    .sort().reverse() // Mais recentes primeiro
+    .map(val => {
+      const [ano, mes] = val.split('-');
+      // Criar data no meio do dia para evitar problemas de fuso
+      const date = new Date(ano, Number(mes) - 1, 15);
+      const label = formatter.format(date);
+      return {
+        valor: val, // '2026-09'
+        label: label.charAt(0).toUpperCase() + label.slice(1) // 'Setembro de 2026'
+      };
+    });
+}
+
+/**
+ * Aplica os filtros avançados V2
+ */
+export function aplicarFiltrosAvancados(transacoes, filtros) {
+  let resultado = [...transacoes];
+
+  // 1. Filtro de Tipo (receita, despesa, todas)
+  if (filtros.tipo && filtros.tipo !== "todas") {
+    resultado = resultado.filter(t => t.tipo === filtros.tipo);
+  }
+
+  // 2. Filtro de Busca (descrição)
+  if (filtros.busca && filtros.busca.trim() !== "") {
+    const termo = filtros.busca.toLowerCase().trim();
+    resultado = resultado.filter(t => 
+      t.descricao && t.descricao.toLowerCase().includes(termo)
+    );
+  }
+
+  // 3. Filtro de Mês/Ano (Competência)
+  if (filtros.mesAno && filtros.mesAno !== "todas") {
+    const [anoAlvo, mesAlvo] = filtros.mesAno.split("-").map(Number);
+    resultado = resultado.filter(t => {
+      const { ano, mes } = obterAnoEMes(t.data);
+      // 'mes' do obterAnoEMes é 0-11. 'mesAlvo' do form é 1-12.
+      return ano === anoAlvo && (mes + 1) === mesAlvo;
+    });
+  }
+
+  // 4. Filtro de Categoria
+  if (filtros.categoria && filtros.categoria !== "todas") {
+    resultado = resultado.filter(t => t.categoria === filtros.categoria);
+  }
+
+  // 5. Filtro de Método
+  if (filtros.metodoPagamento && filtros.metodoPagamento !== "todas") {
+    resultado = resultado.filter(t => t.metodoPagamento === filtros.metodoPagamento);
+  }
+
+  // 6. Ordenação
+  const ord = filtros.ordenacao || "data-decrescente";
+  resultado.sort((a, b) => {
+    if (ord === "data-decrescente") {
+      return obterMillis(b.data) - obterMillis(a.data);
+    }
+    if (ord === "data-crescente") {
+      return obterMillis(a.data) - obterMillis(b.data);
+    }
+    if (ord === "valor-decrescente") {
+      return (b.valor || 0) - (a.valor || 0);
+    }
+    if (ord === "valor-crescente") {
+      return (a.valor || 0) - (b.valor || 0);
+    }
+    return 0;
+  });
+
+  return resultado;
+}
+
+/**
+ * Pagina as transações
+ */
+export function paginarTransacoes(transacoes, paginaAtual, itensPorPagina = 10) {
+  const startIndex = (paginaAtual - 1) * itensPorPagina;
+  const endIndex = startIndex + itensPorPagina;
+  return transacoes.slice(startIndex, endIndex);
+}
+
+/**
+ * Calcula totais baseados num array arbitrário de transações
+ */
+export function calcularTotais(transacoes) {
+  return transacoes.reduce(
+    (acc, t) => {
+      if (t.tipo === "receita") acc.receitas += t.valor || 0;
+      else if (t.tipo === "despesa") acc.despesas += t.valor || 0;
+      acc.saldo = acc.receitas - acc.despesas;
+      return acc;
+    },
+    { saldo: 0, receitas: 0, despesas: 0 }
+  );
+}
+
+/**
  * Filtra as transações para a visualização de "Recentes" na Home:
  * 1. Oculta lançamentos de meses futuros (> mês atual).
  * 2. Deduplica compras parceladas: garante no máximo 1 parcela por parcelamentoId,

@@ -1,0 +1,52 @@
+.transacoes-page {
+  padding: 0 0 40px 0;
+}
+
+.transacoes-title-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.transacoes-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+}
+
+.transacoes-subtitle {
+  font-size: 14px;
+  color: var(--color-text-muted, #9fb0c3);
+  margin: 0;
+}
+
+.btn-nova-transacao {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--color-growth, #2dd4a4);
+  color: #050b16;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-nova-transacao:hover {
+  background-color: #25b88e;
+  transform: translateY(-1px);
+}
+
+.lista-mobile-only {
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .lista-mobile-only {
+    display: none;
+  }
+}

@@ -107,20 +107,22 @@ function TabelaTransacoes({
                   {isReceita ? `+ ${valorFormatado}` : `- ${valorFormatado}`}
                 </td>
                 <td className="td-acoes">
-                  <button
-                    className="btn-acao editar"
-                    aria-label={`Editar ${item.descricao}`}
-                    onClick={() => onEditar(item)}
-                  >
-                    <Pencil size={15} aria-hidden="true" />
-                  </button>
-                  <button
-                    className="btn-acao excluir"
-                    aria-label={`Excluir ${item.descricao}`}
-                    onClick={() => handleExcluir(item)}
-                  >
-                    <Trash2 size={15} aria-hidden="true" />
-                  </button>
+                  <div className="acoes-wrapper">
+                    <button
+                      className="btn-acao editar"
+                      aria-label={`Editar ${item.descricao}`}
+                      onClick={() => onEditar(item)}
+                    >
+                      <Pencil size={15} aria-hidden="true" />
+                    </button>
+                    <button
+                      className="btn-acao excluir"
+                      aria-label={`Excluir ${item.descricao}`}
+                      onClick={() => handleExcluir(item)}
+                    >
+                      <Trash2 size={15} aria-hidden="true" />
+                    </button>
+                  </div>
                 </td>
               </tr>
             );
