@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState } from "react";
 import { useTransacoes } from "../hooks/useTransacoes";
 import ResumoPeriodo from "../components/ResumoPeriodo";
 import FiltrosTransacoes from "../components/FiltrosTransacoes";
@@ -9,12 +9,7 @@ import PaginadorMes from "../components/PaginadorMes";
 import ModalFormTransacao from "../components/ModalFormTransacao";
 import ModalExclusaoParcelamento from "../components/ModalExclusaoParcelamento";
 import { Plus } from "lucide-react";
-import {
-  extrairMesesDisponiveis,
-  aplicarFiltrosAvancados,
-  paginarTransacoes,
-  calcularTotais,
-} from "../utils/transacao";
+import { ITENS_POR_PAGINA, useFiltrosTransacoes } from "../hooks/useFiltrosTransacoes";
 import "./Transacoes.css";
 
 function Transacoes({ usuario }) {
@@ -32,119 +27,28 @@ function Transacoes({ usuario }) {
     excluirParcelasFuturas,
   } = useTransacoes(usuario?.uid);
 
-  // Estados locais
-  const [filtros, setFiltros] = useState({
-    tipo: "todas",
-    busca: "",
-    mesAno: "todas",
-    categoria: "todas",
-    metodoPagamento: "todas",
-    ordenacao: "data-decrescente",
-  });
-  const [filtrosAbertos, setFiltrosAbertos] = useState(false);
-  const [paginaAtual, setPaginaAtual] = useState(1);
-  const ITENS_POR_PAGINA = 10;
+  const {
+    filtros,
+    setFiltros,
+    filtrosAbertos,
+    setFiltrosAbertos,
+    paginaAtual,
+    setPaginaAtual,
+    mesesDisponiveis,
+    categoriasDisponiveis,
+    metodosDisponiveis,
+    transacoesPaginadas,
+    totais,
+    totalItens,
+    totalPaginas,
+    limparFiltros,
+    handleMudarMes,
+  } = useFiltrosTransacoes(transacoes);
 
   // Estados de Modais
   const [modalFormAberto, setModalFormAberto] = useState(false);
   const [transacaoEditando, setTransacaoEditando] = useState(null);
   const [transacaoParaExcluir, setTransacaoParaExcluir] = useState(null);
-
-  // Derivações
-  const mesesDisponiveis = useMemo(
-    () => extrairMesesDisponiveis(transacoes),
-    [transacoes],
-  );
-  const categoriasDisponiveis = useMemo(() => {
-    const cats = new Set(transacoes.map((t) => t.categoria).filter(Boolean));
-    return Array.from(cats).sort();
-  }, [transacoes]);
-
-  const metodosDisponiveis = [
-    { valor: "pix", label: "Pix" },
-    { valor: "cartao_credito", label: "Cartão de Crédito" },
-    { valor: "cartao_debito", label: "Cartão de Débito" },
-    { valor: "dinheiro", label: "Dinheiro" },
-    { valor: "boleto", label: "Boleto" },
-    { valor: "transferencia", label: "Transferência" },
-  ];
-
-  const transacoesFiltradas = useMemo(() => {
-    return aplicarFiltrosAvancados(transacoes, filtros);
-  }, [transacoes, filtros]);
-
-  const totais = useMemo(
-    () => calcularTotais(transacoesFiltradas),
-    [transacoesFiltradas],
-  );
-
-  const totalItens = transacoesFiltradas.length;
-  const totalPaginas = Math.ceil(totalItens / ITENS_POR_PAGINA) || 1;
-
-  // Sempre que os meses carregarem, se estiver em "todas", pula automaticamente pro mês mais recente
-  useEffect(() => {
-    if (filtros.mesAno === "todas" && mesesDisponiveis.length > 0) {
-      setFiltros((prev) => ({ ...prev, mesAno: mesesDisponiveis[0].valor }));
-    }
-  }, [mesesDisponiveis, filtros.mesAno]);
-
-  useEffect(() => {
-    if (paginaAtual > totalPaginas) {
-      setPaginaAtual(1);
-    }
-  }, [totalPaginas, paginaAtual]);
-
-  const handleMudarMes = (direcao) => {
-    // 1. Achamos em que posição (índice) do array está o mês que o usuário está vendo agora.
-    const indexAtual = mesesDisponiveis.findIndex(
-      (m) => m.valor === filtros.mesAno,
-    );
-
-    if (indexAtual === -1) return; // Se não encontrou, não faz nada.
-
-    let novoIndex = indexAtual;
-    // 2. Lembrete: nosso array está do mais NOVO pro mais VELHO.
-    // Então o "passado" está pra frente no array, e o "futuro" está pra trás.
-    if (direcao === "anterior") {
-      novoIndex = indexAtual + 1; // Passado
-    } else if (direcao === "proximo") {
-      novoIndex = indexAtual - 1; // Futuro
-    }
-
-    // 3. Verificamos se não estouramos os limites (não dá pra ir pro futuro se já estamos no mês mais recente)
-    if (novoIndex >= 0 && novoIndex < mesesDisponiveis.length) {
-      // 4. Atualizamos o estado!
-      setFiltros({
-        ...filtros,
-        mesAno: mesesDisponiveis[novoIndex].valor,
-      });
-      setPaginaAtual(1); // Resetar para a primeira página ao mudar o mês
-    }
-  };
-
-  // const novoMes = mesesDisponiveis[novoIndex].valor;
-  // setFiltros((prev) => ({ ...prev, mesAno: novoMes }));
-
-  const transacoesPaginadas = useMemo(() => {
-    return paginarTransacoes(
-      transacoesFiltradas,
-      paginaAtual,
-      ITENS_POR_PAGINA,
-    );
-  }, [transacoesFiltradas, paginaAtual]);
-
-  // Handlers
-  const limparFiltros = () => {
-    setFiltros({
-      tipo: "todas",
-      busca: "",
-      mesAno: "todas",
-      categoria: "todas",
-      metodoPagamento: "todas",
-      ordenacao: "data-decrescente",
-    });
-    setPaginaAtual(1);
-  };
 
   const handleEditar = (item) => {
     setTransacaoEditando(item);

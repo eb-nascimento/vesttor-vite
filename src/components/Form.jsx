@@ -43,15 +43,6 @@ const CATEGORIAS_RECEITA = [
   "Outros",
 ];
 
-const METODOS_PAGAMENTO = [
-  { valor: "pix", label: "Pix" },
-  { valor: "cartao_credito", label: "Cartão de crédito" },
-  { valor: "cartao_debito", label: "Cartão de débito" },
-  { valor: "dinheiro", label: "Dinheiro" },
-  { valor: "boleto", label: "Boleto" },
-  { valor: "transferencia", label: "Transferência (TED/DOC)" },
-];
-
 function obterPlaceholderDescricao(categoria, tipo) {
   if (tipo === "receita") {
     if (categoria === "Salário") return "Ex: Salário mensal, adiantamento...";

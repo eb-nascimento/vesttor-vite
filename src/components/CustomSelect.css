@@ -62,7 +62,8 @@
     color 0.15s;
 }
 
-.custom-select-item:hover {
+.custom-select-item:hover,
+.custom-select-item.highlighted {
   background: var(--color-input-bg, #17324a);
   color: var(--color-text, #f6f8fb);
 }
