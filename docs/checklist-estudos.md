@@ -337,6 +337,16 @@ Decisao vigente: manter o MVP no plano Spark. A implementacao, os testes e o dep
 - [x] Criar documento de especificação funcional e técnica completa em `docs/transacoes-v2.md` com tokens, paleta de cores e árvore de componentes.
 - [x] Implementar e testar funções puras de filtragem avançada multi-critério e paginação com 36/36 testes unitários aprovados no Vitest.
 
+### Implementação: Transações V2 e Acessibilidade (A11y)
+
+- [x] Implementar o componente `PaginadorMes` como Fonte da Verdade de competência no cabeçalho.
+- [x] Construir o hook customizado `useFiltrosTransacoes` para isolar a complexidade de estado e paginação.
+- [x] Substituir `<select>` nativos por componente acessível `CustomSelect.jsx` (teclado, focus, scroll, blur).
+- [x] Integrar trava de foco nativa (Focus Trap) em modais (`ModalBase.jsx`) e restaurar foco após fechamento.
+- [x] Integrar fechamento por evento de Blur em popovers (`CustomSelect` e `DatePicker`).
+- [x] Montar página completa `Transacoes.jsx` consumindo os filtros dinâmicos e repassando para tabela e cartões.
+- [x] Concluir o checklist de documentação arquitetural no `arquitetura.md` e `transacoes-v2.md`.
+
 ## Regra de estudo combinada
 
 - Nao focar em repetir CRUD simples.

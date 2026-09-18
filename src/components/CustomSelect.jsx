@@ -50,7 +50,7 @@ export default function CustomSelect({
 
   const handleKeyDown = (e) => {
     if (disabled) return;
-    
+
     if (!isOpen) {
       if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown") {
         e.preventDefault();
@@ -63,7 +63,9 @@ export default function CustomSelect({
 
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setHighlightedIndex((prev) => (prev < options.length - 1 ? prev + 1 : prev));
+      setHighlightedIndex((prev) =>
+        prev < options.length - 1 ? prev + 1 : prev,
+      );
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : prev));
@@ -79,11 +81,18 @@ export default function CustomSelect({
     }
   };
 
+  const handleBlur = (e) => {
+    if (selectRef.current && !selectRef.current.contains(e.relatedTarget)) {
+      setIsOpen(false);
+    }
+  };
+
   return (
     <div
       className={`custom-select ${disabled ? "disabled" : ""}`}
       ref={selectRef}
       onKeyDown={handleKeyDown}
+      onBlur={handleBlur}
     >
       <button
         type="button"

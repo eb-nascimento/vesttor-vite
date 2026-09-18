@@ -59,17 +59,24 @@ src/
 |   |-- CardResumo.jsx
 |   |-- ContainerResumo.jsx
 |   |-- ControlesTransacoes.jsx
-|   |-- Form.jsx
+|   |-- CustomSelect.jsx / .css
+|   |-- DatePicker.jsx / .css
+|   |-- Form.jsx / .css
 |   |-- FormAuth.jsx
 |   |-- Header.jsx
 |   |-- ItemTransacao.jsx
-|   `-- ListaTransacoes.jsx
+|   |-- ListaTransacoes.jsx
+|   |-- ModalBase.jsx
+|   |-- ModalFormTransacao.jsx
+|   |-- Paginacao.jsx
+|   `-- PaginadorMes.jsx
 |
 |-- config/
 |   `-- firebase.js
 |
 |-- hooks/
 |   |-- useAuth.js
+|   |-- useFiltrosTransacoes.js
 |   `-- useTransacoes.js
 |
 |-- layouts/
@@ -77,7 +84,8 @@ src/
 |
 |-- pages/
 |   |-- Home.jsx
-|   `-- Login.jsx
+|   |-- Login.jsx
+|   `-- Transacoes.jsx
 |
 |-- routes/
 |   |-- PrivateRoute.jsx
@@ -95,6 +103,7 @@ src/
 |
 |-- utils/
 |   |-- calculos.js
+|   |-- parcelamento.js
 |   `-- transacao.js
 |
 |-- App.jsx
@@ -127,11 +136,12 @@ main.jsx
 
 Rotas atuais:
 
-| Rota     | Tipo     | Comportamento                                          |
-| -------- | -------- | ------------------------------------------------------ |
-| `/login` | Publica  | Exibe login apenas para usuario nao autenticado        |
-| `/home`  | Privada  | Exibe home apenas para usuario autenticado             |
-| `*`      | Fallback | Redireciona para `/home` ou `/login` conforme a sessao |
+| Rota          | Tipo     | Comportamento                                          |
+| ------------- | -------- | ------------------------------------------------------ |
+| `/login`      | Publica  | Exibe login apenas para usuario nao autenticado        |
+| `/home`       | Privada  | Exibe home apenas para usuario autenticado             |
+| `/transacoes` | Privada  | Exibe extrato completo (Filtros V2 e Paginação)        |
+| `*`           | Fallback | Redireciona para `/home` ou `/login` conforme a sessao |
 
 ### 6.2. Estrutura atual em `App.jsx`
 
@@ -145,6 +155,7 @@ Rotas atuais:
     }
   >
     <Route path="/home" element={<Home usuario={usuario} />} />
+    <Route path="/transacoes" element={<Transacoes usuario={usuario} />} />
   </Route>
 
   <Route
@@ -260,13 +271,18 @@ Responsabilidade atual:
 
 - Usar `useTransacoes(usuario?.uid)`;
 - Renderizar resumo financeiro;
-- Renderizar formulario de transacao;
-- Renderizar lista de transacoes;
+- Renderizar formulario de transacao (via `ModalFormTransacao`);
+- Renderizar lista resumida de transacoes;
 - Exibir carregamento e erro;
-- Exibir email do usuario;
-- Disponibilizar logout.
 
-Com a criacao de `AppLayout`, `Home` nao deve mais renderizar `Header` nem criar outro `main`. A estrutura comum pertence ao layout.
+### 9.3. `Transacoes.jsx` (V2)
+
+Responsabilidade atual:
+
+- Fornecer um extrato completo com paginação em tela cheia;
+- Centralizar o estado visual no custom hook `useFiltrosTransacoes.js`;
+- Repassar dados calculados para os filtros avançados, componentes semânticos (`CustomSelect`, `DatePicker`), e totais baseados no mês ativo.
+- Utiliza `ModalBase.jsx` com _Focus Trap_ e regras estritas de Acessibilidade (A11y).
 
 ## 10. Autenticacao
 

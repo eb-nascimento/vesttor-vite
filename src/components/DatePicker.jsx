@@ -149,9 +149,21 @@ function DatePicker({ id, value, onChange }) {
     const [ano, mes, d] = value.split("-").map(Number);
     return d === dia && mes - 1 === mesVisualizacao && ano === anoVisualizacao;
   };
+  const handleBlur = (e) => {
+    if (
+      containerRef.current &&
+      !containerRef.current.contains(e.relatedTarget)
+    ) {
+      fechar();
+    }
+  };
 
   return (
-    <div className="datepicker-container" ref={containerRef}>
+    <div
+      className="datepicker-container"
+      ref={containerRef}
+      onBlur={handleBlur}
+    >
       <button
         id={id}
         type="button"

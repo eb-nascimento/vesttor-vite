@@ -60,7 +60,11 @@ A versao atual contempla:
 - Formulario com selecao exclusiva Despesa/Receita (Despesa na esquerda por padrao);
 - Renderizacao condicional de metodo de pagamento e parcelamento para despesas;
 - Categorias dinamicas e calculo de parcelas em tempo real;
-- Filtros em formato de pilulas e ordenacao sincronizada na URL.
+- Filtros em formato de pilulas e ordenacao sincronizada na URL;
+- Tela completa de Transações V2 com paginação dinâmica de 10/8 itens;
+- Paginador de Competência mensal fixo como Fonte da Verdade;
+- Melhorias de Acessibilidade (Focus Trap em Modais e CustomSelect interativo);
+- Fechamento inteligente de popovers por detecção de blur e teclado.
 
 ## 5. Escopo alvo
 

@@ -200,11 +200,36 @@ export function paginarTransacoes(
 
 ---
 
-## 6. Próximos Passos de Estudo e Implementação
+## 6. Arquitetura e Acessibilidade (Atualização Pós-Implementação)
+
+Durante a fase de desenvolvimento, aplicamos refatorações cruciais para garantir escalabilidade e usabilidade avançada (A11y):
+
+### 6.1. Custom Hook `useFiltrosTransacoes`
+
+Para evitar que a página `Transacoes.jsx` se tornasse um "God Component" inflado, toda a lógica de paginação, filtros, e totalização foi extraída para o hook `src/hooks/useFiltrosTransacoes.js`.
+
+- O hook gerencia o estado `filtros` e força a Fonte da Verdade do `mesAno` para o mês atual (`new Date()`) sempre que os filtros são limpos.
+- A página principal tornou-se uma camada puramente visual que repassa as props.
+
+### 6.2. Mês Paginado como Fonte da Verdade
+
+O componente `PaginadorMes.jsx` foi incorporado ao lado do botão "+ Nova transação" no cabeçalho (HeaderSec). Diferente dos filtros recolhíveis, o paginador de mês está sempre visível.
+
+> A regra de negócio do produto exige que os cards numéricos (Saldo, Receitas, Despesas) ignorem a busca e a categoria, mas **obedeçam à competência mensal** ativa no Paginador.
+
+### 6.3. Acessibilidade (A11y)
+
+- **`CustomSelect.jsx`**: Substitui o `<select>` nativo. Totalmente acessível via teclado, suportando as setas `ArrowUp`, `ArrowDown`, `Space`, `Enter` e `Escape`. Inclui rastreamento de foco (`scrollIntoView`) e fechamento inteligente via evento `onBlur`.
+- **`ModalBase.jsx`**: Implementa uma trava de foco (Focus Trap) nativa. Quando aberto, o teclado não "vaza" para os elementos de fundo. Ao fechar, ele restaura o foco para o botão de origem (ex: botão "+ Nova transação").
+- **`DatePicker.jsx`**: Também integra suporte a evento `onBlur` para fechamento fluido ao navegar via Tab.
+
+---
+
+## 7. Próximos Passos de Estudo e Implementação
 
 1. [x] Conduzir refinamento de requisitos e _grilling_ com o usuário.
 2. [x] Inspecionar nós e extrair tokens do Figma Node `222:2`.
 3. [x] Criar testes unitários para filtros avançados e paginação (36/36 testes aprovados).
 4. [x] Consolidar a documentação de produto em `docs/requisitos.md` e técnica em `docs/arquitetura.md`.
-5. [ ] Construir componentes visuais (`ResumoPeriodo`, `FiltrosTransacoes`, `TabelaTransacoes`, `CardTransacaoMobile`, `Paginacao`, `ModalFormTransacao`).
-6. [ ] Integrar a página `Transacoes.jsx` com o hook `useTransacoes` e validar a experiência completa.
+5. [x] Construir componentes visuais V2 (`ResumoPeriodo`, `FiltrosTransacoes`, `PaginadorMes`, `TabelaTransacoes`, `CardTransacaoMobile`, `Paginacao`, `CustomSelect`).
+6. [x] Integrar a página `Transacoes.jsx` com hooks `useTransacoes` e `useFiltrosTransacoes`, validando navegação acessível e a experiência multi-filtros.
