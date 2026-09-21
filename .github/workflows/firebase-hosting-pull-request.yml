@@ -11,14 +11,6 @@ jobs:
   build_and_preview:
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: npm ci && npm run build
-      - uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_GESTOR_FINANCEIRO_43435 }}
-          projectId: gestor-financeiro-43435
     env:
       VITE_FIREBASE_API_KEY: ${{ vars.VITE_FIREBASE_API_KEY }}
       VITE_FIREBASE_AUTHDOMAIN: ${{ vars.VITE_FIREBASE_AUTHDOMAIN }}
@@ -27,3 +19,11 @@ jobs:
       VITE_FIREBASE_MESSAGINGSENDERID: ${{ vars.VITE_FIREBASE_MESSAGINGSENDERID }}
       VITE_FIREBASE_APPID: ${{ vars.VITE_FIREBASE_APPID }}
       VITE_FIREBASE_MEASUREMENTID: ${{ vars.VITE_FIREBASE_MEASUREMENTID }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npm run build
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_GESTOR_FINANCEIRO_43435 }}
+          projectId: gestor-financeiro-43435

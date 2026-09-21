@@ -9,6 +9,14 @@ on:
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
+    env:
+      VITE_FIREBASE_API_KEY: ${{ vars.VITE_FIREBASE_API_KEY }}
+      VITE_FIREBASE_AUTHDOMAIN: ${{ vars.VITE_FIREBASE_AUTHDOMAIN }}
+      VITE_FIREBASE_PROJECTID: ${{ vars.VITE_FIREBASE_PROJECTID }}
+      VITE_FIREBASE_STORAGEBUCKET: ${{ vars.VITE_FIREBASE_STORAGEBUCKET }}
+      VITE_FIREBASE_MESSAGINGSENDERID: ${{ vars.VITE_FIREBASE_MESSAGINGSENDERID }}
+      VITE_FIREBASE_APPID: ${{ vars.VITE_FIREBASE_APPID }}
+      VITE_FIREBASE_MEASUREMENTID: ${{ vars.VITE_FIREBASE_MEASUREMENTID }}
     steps:
       - uses: actions/checkout@v4
       - run: npm ci && npm run build
@@ -18,11 +26,3 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_GESTOR_FINANCEIRO_43435 }}
           channelId: live
           projectId: gestor-financeiro-43435
-        env:
-          VITE_FIREBASE_API_KEY: ${{ vars.VITE_FIREBASE_API_KEY }}
-          VITE_FIREBASE_AUTHDOMAIN: ${{ vars.VITE_FIREBASE_AUTHDOMAIN }}
-          VITE_FIREBASE_PROJECTID: ${{ vars.VITE_FIREBASE_PROJECTID }}
-          VITE_FIREBASE_STORAGEBUCKET: ${{ vars.VITE_FIREBASE_STORAGEBUCKET }}
-          VITE_FIREBASE_MESSAGINGSENDERID: ${{ vars.VITE_FIREBASE_MESSAGINGSENDERID }}
-          VITE_FIREBASE_APPID: ${{ vars.VITE_FIREBASE_APPID }}
-          VITE_FIREBASE_MEASUREMENTID: ${{ vars.VITE_FIREBASE_MEASUREMENTID }}
