@@ -1,0 +1,36 @@
+.paginador-mes {
+  display: flex;
+  align-items: center;
+  background: var(--color-surface, #0b1f33);
+  border: 1px solid var(--color-border, #1e4666);
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.btn-paginador {
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted, #9fb0c3);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-paginador:hover {
+  background: var(--color-surface-alt, #102a42);
+  color: var(--color-text, #f6f8fb);
+}
+
+.mes-texto {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text, #f6f8fb);
+  padding: 0 16px;
+  min-width: 140px;
+  text-align: center;
+}

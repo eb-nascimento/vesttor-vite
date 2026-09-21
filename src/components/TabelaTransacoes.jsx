@@ -1,0 +1,136 @@
+import "./TabelaTransacoes.css";
+import { Pencil, Trash2 } from "lucide-react";
+
+const formatarMetodo = (metodo) => {
+  if (!metodo) return "-";
+  const mapa = {
+    pix: "Pix",
+    cartao_credito: "Cartão de Crédito",
+    cartao_debito: "Cartão de Débito",
+    dinheiro: "Dinheiro",
+    boleto: "Boleto",
+    transferencia: "Transferência",
+  };
+  return mapa[metodo] || metodo;
+};
+
+const obterDataFormatada = (data) => {
+  if (!data) return "-";
+  return data.toDate ? data.toDate().toLocaleDateString("pt-BR") : String(data);
+};
+
+function TabelaTransacoes({
+  transacoes,
+  onEditar,
+  onExcluir,
+  onSolicitarExclusaoParcelamento,
+}) {
+  if (!transacoes || transacoes.length === 0) {
+    return (
+      <div className="tabela-vazia">
+        Nenhuma transação encontrada no período.
+      </div>
+    );
+  }
+
+  const handleExcluir = (item) => {
+    if (item.parcelamentoId && onSolicitarExclusaoParcelamento) {
+      onSolicitarExclusaoParcelamento(item);
+    } else {
+      onExcluir(item.id);
+    }
+  };
+
+  return (
+    <div className="tabela-transacoes-container desktop-only">
+      <table className="tabela-transacoes">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Descrição</th>
+            <th>Categoria</th>
+            <th>Método</th>
+            <th>Tipo</th>
+            <th className="th-valor">Valor</th>
+            <th className="th-acoes">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {transacoes.map((item) => {
+            const isReceita = item.tipo === "receita";
+            const inicial = item.descricao
+              ? item.descricao.charAt(0).toUpperCase()
+              : isReceita
+                ? "+"
+                : "-";
+            const dataStr = obterDataFormatada(item.data);
+            const valorFormatado = (item.valor || 0).toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            });
+
+            const infoParcela = item.parcelamentoId
+              ? `Parcela ${item.numeroParcela}/${item.totalParcelas}`
+              : isReceita
+                ? ""
+                : "À vista";
+
+            return (
+              <tr key={item.id}>
+                <td className="td-data">{dataStr}</td>
+                <td className="td-descricao">
+                  <div className="descricao-wrapper">
+                    <div
+                      className={`icone-inicial ${item.tipo}`}
+                      aria-hidden="true"
+                    >
+                      {inicial}
+                    </div>
+                    <div className="descricao-textos">
+                      <span className="nome">{item.descricao}</span>
+                      {infoParcela && (
+                        <span className="subtitulo">{infoParcela}</span>
+                      )}
+                    </div>
+                  </div>
+                </td>
+                <td className="td-categoria">{item.categoria || "-"}</td>
+                <td className="td-metodo">
+                  {formatarMetodo(item.metodoPagamento)}
+                </td>
+                <td className="td-tipo">
+                  <span className={`badge-tipo ${item.tipo}`}>
+                    {isReceita ? "Receita" : "Despesa"}
+                  </span>
+                </td>
+                <td className={`td-valor ${item.tipo}`}>
+                  {isReceita ? `+ ${valorFormatado}` : `- ${valorFormatado}`}
+                </td>
+                <td className="td-acoes">
+                  <div className="acoes-wrapper">
+                    <button
+                      className="btn-acao editar"
+                      aria-label={`Editar ${item.descricao}`}
+                      onClick={() => onEditar(item)}
+                    >
+                      <Pencil size={15} aria-hidden="true" />
+                    </button>
+                    <button
+                      className="btn-acao excluir"
+                      aria-label={`Excluir ${item.descricao}`}
+                      onClick={() => handleExcluir(item)}
+                    >
+                      <Trash2 size={15} aria-hidden="true" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+export default TabelaTransacoes;
