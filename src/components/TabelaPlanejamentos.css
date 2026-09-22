@@ -164,22 +164,22 @@
   font-family: var(--font-family-base, "Inter", sans-serif);
 }
 
-.badge-green {
+.badge.green {
   background: #113a30;
   color: #21d09a;
 }
 
-.badge-yellow {
+.badge.yellow {
   background: #3a2b11;
   color: #ffb020;
 }
 
-.badge-red {
+.badge.red {
   background: #3d1720;
   color: #ff5967;
 }
 
-.badge-dark {
+.badge.dark {
   background: #113a30; /* Fundo do pago (Figma usa #113A30 com texto verde mas no mockup pago está cinza? No figma "Pago" usa textStyle_6fb3b085 e fill_e398dbb4 (#21D09A)) */
   color: #21d09a;
 }
