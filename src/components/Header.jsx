@@ -28,10 +28,10 @@ function Header() {
           Transações
         </NavLink>
         <NavLink
-          to="/planning"
+          to="/budget"
           className={({ isActive }) => (isActive ? "active" : "")}
         >
-          Planejamento
+          Orçamentos
         </NavLink>
         <NavLink
           to="/dashboard"

@@ -1,0 +1,184 @@
+.painel-lateral-planejamento {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 464px;
+}
+
+.painel-card {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  background-color: var(--color-surface, #0b1f33);
+  border: 1px solid var(--color-border, #1e4666);
+  border-radius: 12px;
+}
+
+.painel-title {
+  font-family: var(--font-family-base, "Inter", sans-serif);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--color-text, #f6f8fb);
+  margin: 0;
+}
+
+.painel-subtitle {
+  font-family: var(--font-family-base, "Inter", sans-serif);
+  font-weight: 400;
+  font-size: 10px;
+  color: var(--color-text-muted, #9fb0c3);
+  margin: 0 0 10px 0;
+}
+
+/* Fechamento Projetado */
+.fechamento-projetado {
+  gap: 10px;
+}
+
+.saldo-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background-color: var(--color-input-bg, #0c2d48);
+  border-radius: 8px;
+  gap: 12px;
+}
+
+.saldo-label {
+  font-family: var(--font-family-base, "Inter", sans-serif);
+  font-weight: 500;
+  font-size: 11px;
+  color: var(--color-text, #f6f8fb);
+}
+
+.saldo-valor {
+  font-family: var(--font-family-base, "Inter", sans-serif);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--color-primary, #20aeff);
+}
+
+.track-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.track-label {
+  font-family: var(--font-family-base, "Inter", sans-serif);
+  font-weight: 500;
+  font-size: 11px;
+  color: var(--color-text-muted, #9fb0c3);
+  margin: 0;
+}
+
+.track-bg {
+  width: 100%;
+  height: 8px;
+  background-color: var(--color-background-hover, #102a42);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.track-progress {
+  height: 100%;
+  background-color: var(--color-primary, #20aeff);
+  border-radius: 4px;
+}
+
+/* Próximos Vencimentos */
+.proximos-vencimentos {
+  gap: 8px;
+}
+
+.proximos-vencimentos .painel-title {
+  margin-bottom: 8px;
+}
+
+.vencimento-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+}
+
+.vencimento-badge {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 34px;
+  height: 26px;
+  background-color: var(--color-input-bg, #0c2d48);
+  border-radius: 13px;
+  font-family: var(--font-family-base, "Inter", sans-serif);
+  font-weight: 600;
+  font-size: 10px;
+  color: var(--color-primary, #20aeff);
+}
+
+.vencimento-nome {
+  flex: 1;
+  font-family: var(--font-family-base, "Inter", sans-serif);
+  font-weight: 500;
+  font-size: 11px;
+  color: var(--color-text, #f6f8fb);
+}
+
+.vencimento-valor {
+  font-family: var(--font-family-base, "Inter", sans-serif);
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--color-text, #f6f8fb);
+}
+
+/* Alertas */
+.alertas-card {
+  background-color: #2b2415;
+  border: 1px solid #7d5a1c;
+  gap: 10px;
+}
+
+.alertas-title {
+  font-family: var(--font-family-base, "Inter", sans-serif);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--color-warning, #ffb020);
+  margin: 0;
+}
+
+.alertas-lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.alertas-lista li {
+  font-family: var(--font-family-base, "Inter", sans-serif);
+  font-weight: 500;
+  font-size: 11px;
+  color: var(--color-text, #f6f8fb);
+}
+
+.alertas-link {
+  font-family: var(--font-family-base, "Inter", sans-serif);
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--color-primary, #20aeff);
+  text-decoration: none;
+  margin-top: 4px;
+}
+
+.alertas-link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 1024px) {
+  .painel-lateral-planejamento {
+    width: 100%;
+  }
+}

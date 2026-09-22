@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useTransacoes } from "../hooks/useTransacoes";
+
+import BtnAdd from "../components/BtnAdd";
 import ResumoPeriodo from "../components/ResumoPeriodo";
 import FiltrosTransacoes from "../components/FiltrosTransacoes";
 import TabelaTransacoes from "../components/TabelaTransacoes";
@@ -8,9 +10,13 @@ import Paginacao from "../components/Paginacao";
 import PaginadorMes from "../components/PaginadorMes";
 import ModalFormTransacao from "../components/ModalFormTransacao";
 import ModalExclusaoParcelamento from "../components/ModalExclusaoParcelamento";
-import { Plus } from "lucide-react";
-import { ITENS_POR_PAGINA, useFiltrosTransacoes } from "../hooks/useFiltrosTransacoes";
+import {
+  ITENS_POR_PAGINA,
+  useFiltrosTransacoes,
+} from "../hooks/useFiltrosTransacoes";
 import "./Transacoes.css";
+
+import PageHeader from "../components/PageHeader";
 
 function Transacoes({ usuario }) {
   const {
@@ -64,37 +70,26 @@ function Transacoes({ usuario }) {
   };
 
   return (
-    <div className="transacoes-page">
-      <div className="transacoes-title-container">
-        <div>
-          <h2>Transações</h2>
-          <p className="transacoes-subtitle">
-            Consulte e gerencie suas movimentações.
-          </p>
-        </div>
-        <div
-          className="transacoes-title-actions"
-          style={{ display: "flex", gap: "16px", alignItems: "center" }}
-        >
-          <PaginadorMes
-            mesAtual={
-              mesesDisponiveis.find((m) => m.valor === filtros.mesAno)?.label ||
-              "Setembro de 2026"
-            }
-            onMudarMes={handleMudarMes}
-          />
-          <button
-            className="btn-nova-transacao"
-            onClick={() => {
-              setTransacaoEditando(null);
-              setModalFormAberto(true);
-            }}
-          >
-            <Plus size={16} aria-hidden="true" />
-            Nova transação
-          </button>
-        </div>
-      </div>
+    <section className="transacoes-page">
+      <PageHeader
+        title="Transações"
+        subtitle="Consulte e gerencie suas movimentações."
+      >
+        <PaginadorMes
+          mesAtual={
+            mesesDisponiveis.find((m) => m.valor === filtros.mesAno)?.label
+          }
+          onMudarMes={handleMudarMes}
+        />
+
+        <BtnAdd
+          texto="Nova Transação"
+          onClick={() => {
+            setTransacaoEditando(null);
+            setModalFormAberto(true);
+          }}
+        />
+      </PageHeader>
 
       {(erroOperacao || erroLeitura) && (
         <div className="erro-msg" role="alert">
@@ -198,7 +193,7 @@ function Transacoes({ usuario }) {
           onFechar={() => setTransacaoParaExcluir(null)}
         />
       )}
-    </div>
+    </section>
   );
 }
 
