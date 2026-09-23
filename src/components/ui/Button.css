@@ -1,0 +1,87 @@
+.btn-ui {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-ui-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-ui-loader {
+  animation: spin 1s linear infinite;
+  width: 18px;
+  height: 18px;
+}
+
+/* Variantes */
+.btn-ui-primary {
+  background: var(--color-primary, #05213a);
+  color: #ffffff;
+  box-shadow: 0px 6px 14px 0px rgba(5, 33, 58, 0.18);
+}
+
+.btn-ui-primary:hover:not(:disabled) {
+  background: var(--color-primary-light, #0b3d5c);
+  box-shadow: 0px 6px 18px 0px rgba(5, 33, 58, 0.28);
+}
+
+.btn-ui-primary:focus:not(:disabled) {
+  outline: 3px solid rgba(27, 167, 255, 0.4);
+}
+
+.btn-ui-secondary {
+  background: var(--color-surface-alt, #eef3f8);
+  color: var(--color-text, #0f172a);
+  border: 1px solid var(--color-border, #e2e8f0);
+}
+
+.btn-ui-secondary:hover:not(:disabled) {
+  background: var(--color-border, #e2e8f0);
+}
+
+.btn-ui-secondary:focus:not(:disabled) {
+  outline: 3px solid rgba(27, 167, 255, 0.4);
+}
+
+.btn-ui-danger {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.btn-ui-danger:hover:not(:disabled) {
+  background: #dc2626;
+}
+
+.btn-ui-danger:focus:not(:disabled) {
+  outline: 3px solid rgba(239, 68, 68, 0.4);
+}
+
+/* Disabled */
+.btn-ui:disabled {
+  background: var(--color-surface, #ffffff);
+  color: var(--color-text-muted, #64748b);
+  border: 1px solid var(--color-border, #e2e8f0);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
