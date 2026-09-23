@@ -2,7 +2,7 @@ import { useState } from "react";
 import "./TabelaPlanejamentos.css";
 import { Search, AlertTriangle, Check, EditIcon } from "lucide-react";
 
-function TabelaPlanejamentos({ itens = [], onApprove, onEdit }) {
+function TabelaPlanejamentos({ itens = [], onApprove, onEdit, onAdd }) {
   const [filtroAtivo, setFiltroAtivo] = useState("Todos");
   const [buscaAtiva, setBuscaAtiva] = useState(false);
   const [textoBusca, setTextoBusca] = useState("");
@@ -140,7 +140,7 @@ function TabelaPlanejamentos({ itens = [], onApprove, onEdit }) {
         </tbody>
         <tfoot>
           <tr>
-            <td colSpan="5" className="add-row">
+            <td colSpan="5" className="add-row" onClick={onAdd}>
               + Adicionar planejamento
             </td>
           </tr>

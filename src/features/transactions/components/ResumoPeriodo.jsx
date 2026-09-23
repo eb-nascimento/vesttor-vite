@@ -1,5 +1,5 @@
 import "./ResumoPeriodo.css";
-import CardResumo from "../../../features/dashboard/components/CardResumo";
+import StatCard from "../../../components/ui/StatCard";
 
 function ResumoPeriodo({ saldo, receitas, despesas, quantidade }) {
   const formatCurrency = (val) =>
@@ -10,25 +10,25 @@ function ResumoPeriodo({ saldo, receitas, despesas, quantidade }) {
 
   return (
     <section className="resumo-periodo-container">
-      <CardResumo
+      <StatCard
         title="Saldo no período"
         balance={formatCurrency(saldo)}
         type="saldo"
         subtitle="Balanço do recorte atual"
       />
-      <CardResumo
+      <StatCard
         title="Receitas"
         balance={formatCurrency(receitas)}
         type="receita"
         subtitle="Total de entradas"
       />
-      <CardResumo
+      <StatCard
         title="Despesas"
         balance={formatCurrency(despesas)}
         type="despesa"
         subtitle="Total de saídas"
       />
-      <CardResumo
+      <StatCard
         title="Movimentações"
         balance={`${quantidade} registro${quantidade !== 1 ? "s" : ""}`}
         type="default"

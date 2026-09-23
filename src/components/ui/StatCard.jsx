@@ -1,6 +1,6 @@
-import "./CardResumo.css";
+import "./StatCard.css";
 
-function CardResumo({
+function StatCard({
   title,
   balance = "R$ 0,00",
   type = "default",
@@ -15,4 +15,4 @@ function CardResumo({
   );
 }
 
-export default CardResumo;
+export default StatCard;

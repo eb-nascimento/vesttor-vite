@@ -61,6 +61,7 @@ function Budget({ usuario }) {
     "Contas & Serviços": "Fixo",
     Educação: "Fixo",
     Investimentos: "Fixo",
+    Fixo: true,
   };
 
   transacoesDoMes.forEach((t) => {
@@ -73,6 +74,7 @@ function Budget({ usuario }) {
           planejado: 0,
           valorRealizado: 0,
           isUnplanned: true, // Aqui marcamos que é órfão
+          fixo: TIPO_POR_CATEGORIA[t.fixo] || false,
         };
       }
       unplannedMap[t.categoria].valorRealizado += Number(t.valor);
@@ -202,6 +204,10 @@ function Budget({ usuario }) {
           itens={todosPlanejamentos}
           onApprove={handleApproveUnplanned}
           onEdit={handleEditPlanejamento}
+          onAdd={() => {
+            setPlanejamentoEditando(null);
+            setModalFormAberto(true);
+          }}
         />
         <PainelLateralPlanejamento
           saldoProjetado={saldoProjetado}
