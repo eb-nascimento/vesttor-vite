@@ -39,7 +39,7 @@
   top: calc(100% + 4px);
   left: 0;
   width: 100%;
-  max-height: 200px;
+  max-height: 250px;
   overflow-y: auto;
   background: var(--color-surface, #0b1f33);
   border: 1px solid var(--color-border, #1e4666);

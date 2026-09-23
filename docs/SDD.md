@@ -367,6 +367,28 @@ A data é exibida convertendo o `Timestamp` com `toDate()`.
 
 ---
 
+### 10.8. `Budget.jsx` (Página de Planejamento)
+
+Página principal do módulo de orçamentos. Cruza transações realizadas no mês com os planos futuros cadastrados no Firestore (collection `planejamentos`). Gera "transações fantasmas" (gastos avulsos não planejados) inferindo seu tipo (Entrada, Fixo, Variável) através de um dicionário dinâmico.
+
+### 10.9. `EquacaoMes.jsx`
+
+Barra superior do planejamento. Consolida e exibe a matemática financeira: `Entradas - Fixos - Variáveis = Saldo Projetado`. Apresenta alertas caso a receita seja zero.
+
+### 10.10. `TabelaPlanejamentos.jsx`
+
+Lista interativa dos planejamentos. Suporta busca textual expansível e filtros por abas (Entradas, Fixos, Variáveis). Calcula o percentual de utilização (Status) e exibe alertas para itens "Não planejados" (fantasmas) com opção de efetivação rápida (`OK`) ou edição detalhada (`•••`).
+
+### 10.11. `PainelLateralPlanejamento.jsx`
+
+Exibe a régua visual de "Comprometimento total" da renda base, mudando a cor para alerta (`#ff5967`) quando a proporção de despesas planejadas supera as receitas. Exibe uma lista de "Próximos vencimentos" puxando as transações do mês vigente cuja data seja maior ou igual a hoje.
+
+### 10.12. `ModalFormPlanejamento.jsx`
+
+Formulário em modal focado na gestão do planejamento. Possui suporte a `focus trap` de acessibilidade e renderiza componentes interativos complexos (como o `CustomSelect` resolvendo concorrências de blur/mousedown).
+
+---
+
 ## 11. Hooks
 
 ### 11.1. `useAuth`
@@ -418,6 +440,16 @@ As alterações locais acontecem somente depois da confirmação do Firestore.
 
 ---
 
+### 11.3. `usePlanejamentos`
+
+Responsável por:
+
+- Iniciar listener em tempo real (onSnapshot) para sincronizar planejamentos do Firestore;
+- Expor função para criar planejamentos no backend;
+- Expor função para atualizar planejamentos no backend.
+
+---
+
 ## 12. Services
 
 ### 12.1. `authService.js`
@@ -447,12 +479,25 @@ Apesar do sufixo `NaApi`, o service atualmente usa o SDK do Firestore, não uma 
 
 ---
 
+### 12.3. `planejamentoService.js`
+
+Encapsula o CRUD da collection `planejamentos` no Firestore.
+
+| Função                                         | Operação                                     |
+| ---------------------------------------------- | -------------------------------------------- |
+| `onPlanejamentoChange(userId, onDados)`        | Listener contínuo com `onSnapshot`           |
+| `criarPlanejamentoNaApi(planejamento, userId)` | Insere documento (inclui dataCriacao gerada) |
+| `atualizarPlanejamentoNaApi(id, dados)`        | Faz `updateDoc` num documento existente      |
+
+---
+
 ## 13. Modelo de dados atual
 
-### 13.1. Coleção
+### 13.1. Coleções Ativas
 
 ```text
 transacoes
+planejamentos
 ```
 
 ### 13.2. Documento de transação atual
@@ -468,7 +513,20 @@ transacoes
 }
 ```
 
-### 13.3. Regras de domínio atuais
+### 13.3. Documento de planejamento atual
+
+```js
+{
+  id: "ID gerado pelo Firestore",
+  userId: "UID do Firebase Authentication",
+  categoria: "Salário",
+  valorPlanejado: 5000,
+  tipo: "Entrada", // Entrada, Fixo, Variável
+  dataCriacao: Timestamp
+}
+```
+
+### 13.4. Regras de domínio atuais
 
 - `tipo` deve ser `receita` ou `despesa`;
 - `valor` deve ser numérico e maior que zero;
@@ -1015,6 +1073,7 @@ A ativação do Blaze e o uso de Functions em produção foram adiados por decis
 ---
 
 ### 24.2. Prioridade média
+
 1. Implementar orçamento mensal por categoria.
 2. Implementar cálculo de orçamento utilizado.
 3. Implementar alertas visuais de orçamento.

@@ -18,6 +18,7 @@ import {
   Layers,
 } from "lucide-react";
 import CustomSelect from "./CustomSelect";
+import TipoSwitcher from "./TipoSwitcher";
 
 function obterDataAtual() {
   return new Date().toISOString().split("T")[0];
@@ -370,26 +371,22 @@ function Form({
         {/* 1. SELETOR DE TIPO (DESPESA / RECEITA) */}
         <div className="form-item">
           <label htmlFor="tipo">Tipo</label>
-          <div
-            className="tipo-switcher"
-            role="group"
-            aria-label="Tipo de transação"
-          >
-            <button
-              type="button"
-              className={`tipo-btn ${form.tipo === "despesa" ? "ativo despesa" : ""}`}
-              onClick={() => atualizarCampo("tipo", "despesa")}
-            >
-              Despesa
-            </button>
-            <button
-              type="button"
-              className={`tipo-btn ${form.tipo === "receita" ? "ativo receita" : ""}`}
-              onClick={() => atualizarCampo("tipo", "receita")}
-            >
-              Receita
-            </button>
-          </div>
+          <TipoSwitcher
+            opcoes={[
+              {
+                valor: "despesa",
+                label: "Despesa",
+                classeAdicional: "despesa",
+              },
+              {
+                valor: "receita",
+                label: "Receita",
+                classeAdicional: "receita",
+              },
+            ]}
+            valorAtual={form.tipo}
+            onChange={(val) => atualizarCampo("tipo", val)}
+          />
         </div>
 
         {/* 2. DATA */}

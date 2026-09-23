@@ -64,7 +64,11 @@ A versao atual contempla:
 - Tela completa de Transações V2 com paginação dinâmica de 10/8 itens;
 - Paginador de Competência mensal fixo como Fonte da Verdade;
 - Melhorias de Acessibilidade (Focus Trap em Modais e CustomSelect interativo);
-- Fechamento inteligente de popovers por detecção de blur e teclado.
+- Fechamento inteligente de popovers por detecção de blur e teclado;
+- Tela de Planejamento (Budget) com visualização de orçamento mensal e equação financeira;
+- Mapeamento dinâmico de "Transações Fantasmas" (gastos não planejados previamente);
+- Painel lateral com "Comprometimento Total", alertas de limite e próximos vencimentos;
+- Tabela de planejamentos interativa com filtros (Fixo, Variável, etc), busca e edição.
 
 ## 5. Escopo alvo
 

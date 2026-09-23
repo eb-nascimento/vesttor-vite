@@ -9,7 +9,7 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Transacoes from "./pages/Transacoes";
 import Dashboard from "./pages/Dashboard";
-import Planning from "./pages/Planning";
+import Budget from "./pages/Budget";
 import Account from "./pages/Account";
 import Payments from "./pages/Payments";
 import Categories from "./pages/Categories";
@@ -37,7 +37,7 @@ function App() {
         <Route path="/payments" element={<Payments usuario={usuario} />} />
         <Route path="/categories" element={<Categories usuario={usuario} />} />
         <Route path="/settings" element={<Settings usuario={usuario} />} />
-        <Route path="/planning" element={<Planning usuario={usuario} />} />
+        <Route path="/budget" element={<Budget usuario={usuario} />} />
       </Route>
 
       <Route

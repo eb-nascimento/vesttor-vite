@@ -178,10 +178,10 @@ Antes de abrir muitos CRUDs parecidos, a prioridade e consolidar autenticacao, s
 - [ ] Criar metodos de pagamento.
 - [ ] Associar transacoes com categoria.
 - [ ] Associar transacoes com metodo de pagamento.
-- [ ] Criar orcamento mensal por categoria.
-- [ ] Calcular valor utilizado do orcamento.
-- [ ] Calcular valor restante do orcamento.
-- [ ] Criar alertas de orcamento perto do limite.
+- [x] Criar orcamento mensal por categoria.
+- [x] Calcular valor utilizado do orcamento.
+- [x] Calcular valor restante do orcamento.
+- [x] Criar alertas de orcamento perto do limite.
 - [ ] Criar relatorios simples.
 
 ### Firebase e seguranca

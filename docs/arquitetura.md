@@ -61,15 +61,19 @@ src/
 |   |-- ControlesTransacoes.jsx
 |   |-- CustomSelect.jsx / .css
 |   |-- DatePicker.jsx / .css
+|   |-- EquacaoMes.jsx
 |   |-- Form.jsx / .css
 |   |-- FormAuth.jsx
 |   |-- Header.jsx
 |   |-- ItemTransacao.jsx
 |   |-- ListaTransacoes.jsx
 |   |-- ModalBase.jsx
+|   |-- ModalFormPlanejamento.jsx
 |   |-- ModalFormTransacao.jsx
 |   |-- Paginacao.jsx
-|   `-- PaginadorMes.jsx
+|   |-- PaginadorMes.jsx
+|   |-- PainelLateralPlanejamento.jsx
+|   `-- TabelaPlanejamentos.jsx / .css
 |
 |-- config/
 |   `-- firebase.js
@@ -77,12 +81,14 @@ src/
 |-- hooks/
 |   |-- useAuth.js
 |   |-- useFiltrosTransacoes.js
+|   |-- usePlanejamentos.js
 |   `-- useTransacoes.js
 |
 |-- layouts/
 |   `-- AppLayout.jsx
 |
 |-- pages/
+|   |-- Budget.jsx
 |   |-- Home.jsx
 |   |-- Login.jsx
 |   `-- Transacoes.jsx
@@ -93,6 +99,7 @@ src/
 |
 |-- services/
 |   |-- authService.js
+|   |-- planejamentoService.js
 |   `-- transacoesService.js
 |
 |-- styles/
@@ -283,6 +290,16 @@ Responsabilidade atual:
 - Centralizar o estado visual no custom hook `useFiltrosTransacoes.js`;
 - Repassar dados calculados para os filtros avançados, componentes semânticos (`CustomSelect`, `DatePicker`), e totais baseados no mês ativo.
 - Utiliza `ModalBase.jsx` com _Focus Trap_ e regras estritas de Acessibilidade (A11y).
+
+### 9.4. `Budget.jsx` (Página de Planejamento)
+
+Responsabilidade atual:
+
+- Cruzar transações realizadas no mês com planos futuros (collection `planejamentos`);
+- Gerar dinamicamente "transações fantasmas" (gastos avulsos não planejados) com base em um dicionário de inferência;
+- Renderizar a matemática superior de orçamentos (entradas - despesas = saldo projetado);
+- Renderizar a régua de comprometimento visual da renda e alertas de limite excedido;
+- Fornecer visão e ações detalhadas da Tabela de Planejamento.
 
 ## 10. Autenticacao
 

@@ -117,7 +117,8 @@ export default function CustomSelect({
               className={`custom-select-item ${option.valor === value ? "selected" : ""} ${highlightedIndex === index ? "highlighted" : ""}`}
               role="option"
               aria-selected={option.valor === value}
-              onClick={() => {
+              onMouseDown={(e) => {
+                e.preventDefault();
                 onChange(option.valor);
                 setIsOpen(false);
               }}
