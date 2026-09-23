@@ -1,6 +1,6 @@
 import "./Form.css";
 import { useState, useMemo } from "react";
-import DatePicker from "./DatePicker";
+import DatePicker from "./ui/DatePicker";
 import {
   criarTransacao,
   validarTransacao,
@@ -17,7 +17,7 @@ import {
   CheckSquare,
   Layers,
 } from "lucide-react";
-import CustomSelect from "./CustomSelect";
+import CustomSelect from "./ui/CustomSelect";
 import TipoSwitcher from "./TipoSwitcher";
 
 function obterDataAtual() {

@@ -1,7 +1,7 @@
 import "./ModalFormTransacao.css";
 import Form from "./Form";
 import { X } from "lucide-react";
-import ModalBase from "./ModalBase";
+import ModalBase from "./ui/ModalBase";
 
 function ModalFormTransacao({
   isOpen,

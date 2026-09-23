@@ -6,7 +6,7 @@ import ResumoPeriodo from "../components/ResumoPeriodo";
 import FiltrosTransacoes from "../components/FiltrosTransacoes";
 import TabelaTransacoes from "../components/TabelaTransacoes";
 import ItemTransacao from "../components/ItemTransacao";
-import Paginacao from "../components/Paginacao";
+import Paginacao from "../components/ui/Paginacao";
 import PaginadorMes from "../components/PaginadorMes";
 import ModalFormTransacao from "../components/ModalFormTransacao";
 import ModalExclusaoParcelamento from "../components/ModalExclusaoParcelamento";
