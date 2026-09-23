@@ -1,5 +1,5 @@
 import "./ContainerResumo.css";
-import CardResumo from "./CardResumo";
+import CardResumo from "../../../features/dashboard/components/CardResumo";
 
 function ContainerResumo({
   saldo,

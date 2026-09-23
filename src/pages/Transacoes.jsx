@@ -3,14 +3,14 @@ import { useTransacoes } from "../hooks/useTransacoes";
 import Button from "../components/ui/Button";
 import { Plus } from "lucide-react";
 
-import ResumoPeriodo from "../components/ResumoPeriodo";
-import FiltrosTransacoes from "../components/FiltrosTransacoes";
-import TabelaTransacoes from "../components/TabelaTransacoes";
-import ItemTransacao from "../components/ItemTransacao";
+import ResumoPeriodo from "../features/transactions/components/ResumoPeriodo";
+import FiltrosTransacoes from "../features/transactions/components/FiltrosTransacoes";
+import TabelaTransacoes from "../features/transactions/components/TabelaTransacoes";
+import ItemTransacao from "../features/transactions/components/ItemTransacao";
 import Paginacao from "../components/ui/Paginacao";
 import PaginadorMes from "../components/ui/PaginadorMes";
-import ModalFormTransacao from "../components/ModalFormTransacao";
-import ModalExclusaoParcelamento from "../components/ModalExclusaoParcelamento";
+import ModalFormTransacao from "../features/transactions/components/ModalFormTransacao";
+import ModalExclusaoParcelamento from "../features/transactions/components/ModalExclusaoParcelamento";
 import {
   ITENS_POR_PAGINA,
   useFiltrosTransacoes,

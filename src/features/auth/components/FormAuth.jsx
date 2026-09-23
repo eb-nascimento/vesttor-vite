@@ -3,14 +3,14 @@ import { Link, useNavigate } from "react-router";
 import {
   enviarEmailRedefinicaoSenha,
   redefinirSenha,
-} from "../services/authService";
+} from "../../../services/authService";
 
 import {
   cadastroUsuario,
   login,
   loginGoogle,
   obterMensagemErroAuth,
-} from "../services/authService";
+} from "../../../services/authService";
 import "./FormAuth.css";
 
 const estadosAuth = {

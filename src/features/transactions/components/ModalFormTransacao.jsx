@@ -1,7 +1,7 @@
-import "./ModalFormTransacao.css";
-import Form from "./Form";
+import "../../../features/transactions/components/ModalFormTransacao.css";
+import FormTransacao from "./FormTransacao";
 import { X } from "lucide-react";
-import ModalBase from "./ui/ModalBase";
+import ModalBase from "../../../components/ui/ModalBase";
 
 function ModalFormTransacao({
   isOpen,
@@ -28,7 +28,7 @@ function ModalFormTransacao({
           <X size={20} />
         </button>
 
-        <Form
+        <FormTransacao
           transacaoEditando={transacaoEditando}
           onAdd={onAdd}
           onAddParcelado={onAddParcelado}

@@ -1,4 +1,4 @@
-import FormAuth from "../components/FormAuth";
+import FormAuth from "../features/auth/components/FormAuth";
 import { useLocation, useSearchParams } from "react-router";
 
 function Login() {

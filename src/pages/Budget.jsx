@@ -8,11 +8,11 @@ import { usePlanejamentos } from "../hooks/usePlanejamentos";
 
 import Button from "../components/ui/Button";
 import { Plus } from "lucide-react";
-import EquacaoMes from "../components/EquacaoMes";
+import EquacaoMes from "../features/budget/components/EquacaoMes";
 import PageHeader from "../components/ui/PageHeader";
-import TabelaPlanejamentos from "../components/TabelaPlanejamentos";
-import PainelLateralPlanejamento from "../components/PainelLateralPlanejamento";
-import ModalFormPlanejamento from "../components/ModalFormPlanejamento";
+import TabelaPlanejamentos from "../features/budget/components/TabelaPlanejamentos";
+import PainelLateralPlanejamento from "../features/budget/components/PainelLateralPlanejamento";
+import ModalFormPlanejamento from "../features/budget/components/ModalFormPlanejamento";
 
 function Budget({ usuario }) {
   const [modalFormAberto, setModalFormAberto] = useState(false);

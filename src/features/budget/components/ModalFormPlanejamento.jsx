@@ -1,13 +1,13 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from "react";
 import { X, DollarSign, Tag } from "lucide-react";
-import ModalBase from "./ui/ModalBase";
-import CustomSelect from "./ui/CustomSelect";
+import ModalBase from "../../../components/ui/ModalBase";
+import CustomSelect from "../../../components/ui/CustomSelect";
 
-import { normalizarInputValor } from "../utils/transacao";
-import "./ModalFormTransacao.css";
+import { normalizarInputValor } from "../../../utils/transacao";
+import "../../../features/transactions/components/ModalFormTransacao.css";
 import "./ModalFormPlanejamento.css";
-import "./Form.css";
+import "../../../features/transactions/components/FormTransacao.css";
 
 const CATEGORIAS = [
   "Alimentação",

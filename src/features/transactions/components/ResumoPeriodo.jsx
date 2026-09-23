@@ -1,5 +1,5 @@
 import "./ResumoPeriodo.css";
-import CardResumo from "./CardResumo";
+import CardResumo from "../../../features/dashboard/components/CardResumo";
 
 function ResumoPeriodo({ saldo, receitas, despesas, quantidade }) {
   const formatCurrency = (val) =>

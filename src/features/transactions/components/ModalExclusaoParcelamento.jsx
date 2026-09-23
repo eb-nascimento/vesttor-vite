@@ -1,6 +1,6 @@
 import "./ModalExclusaoParcelamento.css";
 import { AlertCircle, Trash2, X } from "lucide-react";
-import ModalBase from "./ui/ModalBase";
+import ModalBase from "../../../components/ui/ModalBase";
 
 function ModalExclusaoParcelamento({
   transacao,
