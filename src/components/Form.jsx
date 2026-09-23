@@ -18,7 +18,7 @@ import {
   Layers,
 } from "lucide-react";
 import CustomSelect from "./ui/CustomSelect";
-import TipoSwitcher from "./TipoSwitcher";
+import TipoSwitcher from "./ui/TipoSwitcher";
 
 function obterDataAtual() {
   return new Date().toISOString().split("T")[0];

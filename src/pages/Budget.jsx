@@ -1,4 +1,4 @@
-import PaginadorMes from "../components/PaginadorMes";
+import PaginadorMes from "../components/ui/PaginadorMes";
 import { useState } from "react";
 import "./Budget.css";
 
@@ -6,9 +6,10 @@ import { useTransacoes } from "../hooks/useTransacoes";
 import { useFiltrosTransacoes } from "../hooks/useFiltrosTransacoes";
 import { usePlanejamentos } from "../hooks/usePlanejamentos";
 
-import BtnAdd from "../components/BtnAdd";
+import Button from "../components/ui/Button";
+import { Plus } from "lucide-react";
 import EquacaoMes from "../components/EquacaoMes";
-import PageHeader from "../components/PageHeader";
+import PageHeader from "../components/ui/PageHeader";
 import TabelaPlanejamentos from "../components/TabelaPlanejamentos";
 import PainelLateralPlanejamento from "../components/PainelLateralPlanejamento";
 import ModalFormPlanejamento from "../components/ModalFormPlanejamento";
@@ -177,13 +178,15 @@ function Budget({ usuario }) {
           onMudarMes={handleMudarMes}
         />
 
-        <BtnAdd
-          texto="Novo Orçamento"
+        <Button
+          icon={Plus}
           onClick={() => {
             setTransacaoEditando(null);
             setModalFormAberto(true);
           }}
-        />
+        >
+          Novo Orçamento
+        </Button>
       </PageHeader>
       <EquacaoMes
         entradasPlanejadas={entradasPlanejadas}

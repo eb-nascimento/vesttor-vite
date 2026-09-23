@@ -1,6 +1,7 @@
 import "./ModalFormTransacao.css";
 import Form from "./Form";
 import { X } from "lucide-react";
+import ModalBase from "./ModalBase";
 import ModalBase from "./ui/ModalBase";
 
 function ModalFormTransacao({
@@ -14,11 +15,15 @@ function ModalFormTransacao({
   onConverterParaParcelado,
 }) {
   return (
-    <ModalBase isOpen={isOpen} onClose={onClose} ariaLabelledby="modal-form-title">
+    <ModalBase
+      isOpen={isOpen}
+      onClose={onClose}
+      ariaLabelledby="modal-form-title"
+    >
       <div className="modal-content">
-        <button 
-          className="btn-fechar-modal" 
-          onClick={onClose} 
+        <button
+          className="btn-fechar-modal"
+          onClick={onClose}
           aria-label="Fechar formulário"
         >
           <X size={20} />

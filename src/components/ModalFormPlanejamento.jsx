@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { X, DollarSign, Tag } from "lucide-react";
 import ModalBase from "./ui/ModalBase";
 import CustomSelect from "./ui/CustomSelect";
-import TipoSwitcher from "./TipoSwitcher";
+import TipoSwitcher from "./ui/TipoSwitcher";
 import { normalizarInputValor } from "../utils/transacao";
 import "./ModalFormTransacao.css";
 import "./ModalFormPlanejamento.css";

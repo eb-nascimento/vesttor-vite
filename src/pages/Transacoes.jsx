@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { useTransacoes } from "../hooks/useTransacoes";
 
-import BtnAdd from "../components/BtnAdd";
+import Button from "../components/ui/Button";
+import { Plus } from "lucide-react";
 import ResumoPeriodo from "../components/ResumoPeriodo";
 import FiltrosTransacoes from "../components/FiltrosTransacoes";
 import TabelaTransacoes from "../components/TabelaTransacoes";
 import ItemTransacao from "../components/ItemTransacao";
 import Paginacao from "../components/ui/Paginacao";
-import PaginadorMes from "../components/PaginadorMes";
+import PaginadorMes from "../components/ui/PaginadorMes";
 import ModalFormTransacao from "../components/ModalFormTransacao";
 import ModalExclusaoParcelamento from "../components/ModalExclusaoParcelamento";
 import {
@@ -16,7 +17,7 @@ import {
 } from "../hooks/useFiltrosTransacoes";
 import "./Transacoes.css";
 
-import PageHeader from "../components/PageHeader";
+import PageHeader from "../components/ui/PageHeader";
 
 function Transacoes({ usuario }) {
   const {

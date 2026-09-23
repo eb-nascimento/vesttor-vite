@@ -3,6 +3,7 @@ import "./Header.css";
 import MenuAccount from "./MenuAccount.jsx";
 
 import { NavLink } from "react-router";
+import LogoGrafia from "./LogoGrafia.jsx";
 import LogoGrafia from "./ui/logos/LogoGrafia.jsx";
 
 function Header() {
