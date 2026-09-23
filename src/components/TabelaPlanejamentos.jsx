@@ -1,21 +1,78 @@
+import { useState } from "react";
 import "./TabelaPlanejamentos.css";
-import { Search, Plus } from "lucide-react";
+import { Search, Plus, AlertTriangle, Check, EditIcon } from "lucide-react";
 
-function TabelaPlanejamentos({ itens = [] }) {
+function TabelaPlanejamentos({ itens = [], onApprove, onEdit }) {
+  const [filtroAtivo, setFiltroAtivo] = useState("Todos");
+  const [buscaAtiva, setBuscaAtiva] = useState(false);
+  const [textoBusca, setTextoBusca] = useState("");
+
+  // Função que abstrai a regra de negócios da porcentagem
+  const calcularStatus = (realizado, planejado) => {
+    if (planejado > 0) {
+      return `${((realizado / planejado) * 100).toFixed(0)}% utilizado`;
+    }
+    if (realizado > 0) {
+      return "Acima do limite";
+    }
+    return "0% utilizado";
+  };
+
+  // Aplica os filtros
+  const itensFiltrados = itens.filter((item) => {
+    // 1. Filtro por Aba
+    if (filtroAtivo === "Entradas" && item.tipo !== "Entrada") return false;
+    if (filtroAtivo === "Fixos" && item.tipo !== "Fixo") return false;
+    if (filtroAtivo === "Variáveis" && item.tipo !== "Variável") return false;
+
+    // 2. Filtro por Texto (Busca)
+    if (textoBusca) {
+      const termo = textoBusca.toLowerCase();
+      return item.categoria.toLowerCase().includes(termo);
+    }
+    return true;
+  });
+
   return (
     <section className="tabela-planejamentos-container">
       <div className="tabela-planejamentos-header">
         <h2>Planejamentos</h2>
         <div className="tabela-planejamentos-filtros">
-          <button className="filtro-btn ativo">Todos</button>
-          <button className="filtro-btn">Entradas</button>
-          <button className="filtro-btn">Fixos</button>
-          <button className="filtro-btn">Variáveis</button>
+          {["Todos", "Entradas", "Fixos", "Variáveis"].map((aba) => (
+            <button
+              key={aba}
+              className={`filtro-btn ${filtroAtivo === aba ? "ativo" : ""}`}
+              onClick={() => setFiltroAtivo(aba)}
+            >
+              {aba}
+            </button>
+          ))}
         </div>
-        <button className="btn-acao search">
-          <Search size={12} />
-          Buscar
-        </button>
+
+        {buscaAtiva || textoBusca ? (
+          <div className="busca-container-ativo">
+            <Search size={12} color="#9fb0c3" />
+            <input
+              autoFocus
+              type="text"
+              placeholder="Buscar..."
+              value={textoBusca}
+              onChange={(e) => setTextoBusca(e.target.value)}
+              onBlur={() => {
+                if (!textoBusca) setBuscaAtiva(false);
+              }}
+              className="busca-input"
+            />
+          </div>
+        ) : (
+          <button
+            className="btn-acao search"
+            onClick={() => setBuscaAtiva(true)}
+          >
+            <Search size={12} />
+            Buscar
+          </button>
+        )}
       </div>
       <table className="tabela-planejamentos">
         <thead>
@@ -28,8 +85,11 @@ function TabelaPlanejamentos({ itens = [] }) {
           </tr>
         </thead>
         <tbody>
-          {itens.map((item) => (
-            <tr key={item.id}>
+          {itensFiltrados.map((item) => (
+            <tr
+              key={item.id}
+              className={item.isUnplanned ? "linha-alerta" : ""}
+            >
               <td>
                 <div className="item-info">
                   <span className="item-title">{item.categoria}</span>
@@ -37,17 +97,44 @@ function TabelaPlanejamentos({ itens = [] }) {
                 </div>
               </td>
               <td className="align-right">R$ {item.planejado.toFixed(2)}</td>
-              <td className="align-right `text-`${item.categoria === 'Entrada' ? 'green' : 'red'}`">
+              <td
+                className={`align-right text-${item.categoria === "Entrada" ? "green" : "red"}`}
+              >
                 R$ {item.valorRealizado.toFixed(2)}
               </td>
               <td>
-                <span
-                  className={`badge ${item.valorRealizado > item.planejado ? "red" : "green"}`}
-                >
-                  X% utilizado
-                </span>
+                {item.isUnplanned ? (
+                  <span className="badge red alert-badge">
+                    <AlertTriangle size={12} />
+                    Não planejado
+                  </span>
+                ) : (
+                  <span
+                    className={`badge ${item.valorRealizado > item.planejado ? "red" : "green"}`}
+                  >
+                    {calcularStatus(item.valorRealizado, item.planejado)}
+                  </span>
+                )}
               </td>
-              <td className="acoes">•••</td>
+              <td className="acoes">
+                {item.isUnplanned ? (
+                  <button
+                    className="btn-acao-ok"
+                    onClick={() => onApprove && onApprove(item)}
+                    title="Adicionar ao planejamento"
+                  >
+                    <Check size={14} /> OK
+                  </button>
+                ) : (
+                  <button
+                    className="btn-acao-dots"
+                    onClick={() => onEdit && onEdit(item)}
+                    title="Editar planejamento"
+                  >
+                    <EditIcon size={14} />
+                  </button>
+                )}
+              </td>
             </tr>
           ))}
         </tbody>

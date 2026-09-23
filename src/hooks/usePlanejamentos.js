@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import {
   onPlanejamentoChange,
-  criarPlanejamento,
+  criarPlanejamentoNaApi,
+  atualizarPlanejamentoNaApi,
 } from "../services/planejamentoService";
 
 export function usePlanejamentos(userId) {
@@ -20,7 +21,11 @@ export function usePlanejamentos(userId) {
   }, [userId]);
 
   async function criarPlanejamento(novoPlanejamento) {
-    await criarPlanejamento(novoPlanejamento, userId);
+    await criarPlanejamentoNaApi(novoPlanejamento, userId);
   }
-  return { planejamentos, criarPlanejamento };
+
+  async function atualizarPlanejamento(id, dados) {
+    await atualizarPlanejamentoNaApi(id, dados);
+  }
+  return { planejamentos, criarPlanejamento, atualizarPlanejamento };
 }

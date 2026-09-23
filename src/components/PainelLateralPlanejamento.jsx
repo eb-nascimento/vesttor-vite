@@ -1,7 +1,11 @@
 import React from "react";
 import "./PainelLateralPlanejamento.css";
 
-function PainelLateralPlanejamento() {
+function PainelLateralPlanejamento({
+  saldoProjetado = 0,
+  porcentagemComprometida = 0,
+  proximosVencimentos = [],
+}) {
   return (
     <div className="painel-lateral-planejamento">
       {/* Fechamento Projetado */}
@@ -11,48 +15,60 @@ function PainelLateralPlanejamento() {
 
         <div className="saldo-card">
           <span className="saldo-label">Saldo disponível</span>
-          <span className="saldo-valor">R$ 1.800</span>
+          <span className="saldo-valor">R$ {saldoProjetado.toFixed(2)}</span>
         </div>
 
         <div className="track-container">
-          <p className="track-label">Comprometimento total: 79%</p>
+          <p className="track-label">
+            {porcentagemComprometida === 101 && saldoProjetado < 0
+              ? "Comprometimento: Orçamento excedido"
+              : `Comprometimento total: ${porcentagemComprometida}%`}
+          </p>
           <div className="track-bg">
-            <div className="track-progress" style={{ width: "79%" }}></div>
+            <div
+              className="track-progress"
+              style={{
+                width: `${Math.min(porcentagemComprometida, 100)}%`,
+                backgroundColor:
+                  porcentagemComprometida > 100 ? "#ff5967" : "#20aeff",
+              }}
+            ></div>
           </div>
         </div>
       </div>
 
       {/* Próximos vencimentos */}
-      <div className="painel-card proximos-vencimentos">
+      {/* <div className="painel-card proximos-vencimentos">
         <h3 className="painel-title">Próximos vencimentos</h3>
-
-        <div className="vencimento-item">
-          <div className="vencimento-badge">08</div>
-          <span className="vencimento-nome">Aluguel</span>
-          <span className="vencimento-valor">R$ 2.200</span>
-        </div>
-        <div className="vencimento-item">
-          <div className="vencimento-badge">10</div>
-          <span className="vencimento-nome">Condomínio</span>
-          <span className="vencimento-valor">R$ 900</span>
-        </div>
-        <div className="vencimento-item">
-          <div className="vencimento-badge">12</div>
-          <span className="vencimento-nome">Internet + celular</span>
-          <span className="vencimento-valor">R$ 300</span>
-        </div>
-      </div>
+        {proximosVencimentos.length === 0 ? (
+          <p className="painel-subtitle">Nenhuma despesa futura este mês.</p>
+        ) : (
+          proximosVencimentos.map((t) => {
+            const dataObj = t.data.toDate
+              ? t.data.toDate()
+              : new Date(`${t.data}T12:00:00`);
+            const dia = String(dataObj.getDate()).padStart(2, "0");
+            return (
+              <div key={t.id} className="vencimento-item">
+                <div className="vencimento-badge">{dia}</div>
+                <span className="vencimento-nome" title={t.descricao}>
+                  {t.categoria}
+                </span>
+                <span className="vencimento-valor">
+                  R$ {Number(t.valor).toFixed(2)}
+                </span>
+              </div>
+            );
+          })
+        )}
+      </div> */}
 
       {/* Alertas */}
       <div className="painel-card alertas-card">
-        <h4 className="alertas-title">2 pontos de atenção</h4>
+        <h4 className="alertas-title">Em breve</h4>
         <ul className="alertas-lista">
-          <li>Lazer ultrapassou o limite em R$ 100.</li>
-          <li>Freelance ainda tem R$ 300 pendentes.</li>
+          <li>Notificações automáticas de alertas aparecerão aqui.</li>
         </ul>
-        <a href="#" className="alertas-link">
-          Ver detalhes →
-        </a>
       </div>
     </div>
   );

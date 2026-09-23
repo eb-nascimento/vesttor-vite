@@ -105,6 +105,11 @@
   padding-right: 26px;
 }
 
+th:nth-child(4),
+td:nth-child(4) {
+  text-align: center;
+}
+
 .tabela-planejamentos tbody tr:last-child td {
   border-bottom: none;
 }
@@ -154,7 +159,7 @@
 
 /* Badges de Status */
 .badge {
-  display: inline-flex;
+  display: flex;
   justify-content: center;
   align-items: center;
   padding: 6px 12px;
@@ -184,8 +189,14 @@
   color: #21d09a;
 }
 
+.alert-badge {
+  align-items: center;
+  gap: 4px;
+}
+
 /* Ações (•••) */
 .acoes {
+  justify-self: center;
   color: #9fb0c3;
   font-size: 11px;
   font-weight: 600;
@@ -223,4 +234,68 @@
     overflow-x: auto;
     padding-bottom: 4px;
   }
+}
+
+/* --- Alertas de Gastos Não Planejados --- */
+.btn-acao-ok {
+  background: transparent;
+  border: 1px solid #ff5967;
+  color: #ff5967;
+  border-radius: 13px;
+  padding: 4px 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-self: center;
+  gap: 4px;
+  font-family: var(--font-family-base, "Inter", sans-serif);
+  font-size: 10px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-acao-ok:hover {
+  background: rgba(255, 89, 103, 0.1);
+}
+
+.btn-acao-dots {
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted, #9fb0c3);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition:
+    background 0.2s,
+    color 0.2s;
+  letter-spacing: 2px;
+}
+
+.btn-acao-dots:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-text, #f6f8fb);
+}
+
+.busca-container-ativo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-input-bg, #102a42);
+  padding: 6px 12px;
+  border-radius: 13px;
+}
+
+.busca-input {
+  background: transparent;
+  border: none;
+  color: #f6f8fb;
+  outline: none;
+  font-size: 11px;
+  width: 100px;
+  font-family: var(--font-family-base, "Inter", sans-serif);
+}
+
+.busca-input::placeholder {
+  color: #9fb0c3;
 }

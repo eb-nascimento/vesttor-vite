@@ -60,7 +60,9 @@ function EquacaoMes({
           {formatarMoeda(saldoProjetado)}
         </span>
         <span className="fluxo-subtitulo">
-          {porcentagemSaldo}% das entradas
+          {entradasPlanejadas > 0
+            ? `${porcentagemSaldo}% das entradas`
+            : "Sem receita base"}
         </span>
       </div>
     </section>
