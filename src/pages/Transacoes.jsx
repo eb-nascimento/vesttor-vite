@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useTransacoes } from "../hooks/useTransacoes";
-
 import Button from "../components/ui/Button";
 import { Plus } from "lucide-react";
+
+
 import ResumoPeriodo from "../components/ResumoPeriodo";
 import FiltrosTransacoes from "../components/FiltrosTransacoes";
 import TabelaTransacoes from "../components/TabelaTransacoes";
@@ -83,13 +84,15 @@ function Transacoes({ usuario }) {
           onMudarMes={handleMudarMes}
         />
 
-        <BtnAdd
-          texto="Nova Transação"
+        <Button
+          icon={Plus}
           onClick={() => {
             setTransacaoEditando(null);
             setModalFormAberto(true);
           }}
-        />
+        >
+          Nova Transação
+        </Button>
       </PageHeader>
 
       {(erroOperacao || erroLeitura) && (

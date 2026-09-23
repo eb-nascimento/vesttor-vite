@@ -1,6 +1,5 @@
 import "./FiltrosTransacoes.css";
 import { Search, Filter, X } from "lucide-react";
-import CustomSelect from "./CustomSelect";
 import CustomSelect from "./ui/CustomSelect";
 
 function FiltrosTransacoes({
