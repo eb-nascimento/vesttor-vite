@@ -1,8 +1,9 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from "react";
 import { X, DollarSign, Tag } from "lucide-react";
 import ModalBase from "./ui/ModalBase";
 import CustomSelect from "./ui/CustomSelect";
-import TipoSwitcher from "./ui/TipoSwitcher";
+
 import { normalizarInputValor } from "../utils/transacao";
 import "./ModalFormTransacao.css";
 import "./ModalFormPlanejamento.css";
@@ -39,21 +40,21 @@ function ModalFormPlanejamento({
 
   useEffect(() => {
     if (itemEditando) {
-      setForm({
+            setForm({
         categoria: itemEditando.categoria,
         tipo: itemEditando.tipo,
         planejado: itemEditando.planejado.toString(),
       });
     } else {
-      setForm({ categoria: "Alimentação", tipo: "Variável", planejado: "" });
+            setForm({ categoria: "Alimentação", tipo: "Variável", planejado: "" });
     }
   }, [itemEditando, isOpen]);
 
   const atualizarCampo = (campo, valor) => {
     if (campo === "planejado") {
-      setForm({ ...form, [campo]: normalizarInputValor(valor) });
+            setForm({ ...form, [campo]: normalizarInputValor(valor) });
     } else {
-      setForm({ ...form, [campo]: valor });
+            setForm({ ...form, [campo]: valor });
     }
   };
 
@@ -76,7 +77,7 @@ function ModalFormPlanejamento({
       });
     }
 
-    setForm({ categoria: "Alimentação", tipo: "Variável", planejado: "" });
+          setForm({ categoria: "Alimentação", tipo: "Variável", planejado: "" });
     onClose();
   };
 

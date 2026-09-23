@@ -83,7 +83,6 @@ export default function CustomSelect({
 
   const handleBlur = (e) => {
     if (selectRef.current && !selectRef.current.contains(e.relatedTarget)) {
-      setIsOpen(false);
       setTimeout(() => setIsOpen(false), 150);
     }
   };

@@ -16,7 +16,6 @@ import ModalFormPlanejamento from "../components/ModalFormPlanejamento";
 
 function Budget({ usuario }) {
   const [modalFormAberto, setModalFormAberto] = useState(false);
-  const [transacaoEditando, setTransacaoEditando] = useState(null);
   const [planejamentoEditando, setPlanejamentoEditando] = useState(null);
 
   const { transacoes } = useTransacoes(usuario?.uid);
@@ -181,7 +180,7 @@ function Budget({ usuario }) {
         <Button
           icon={Plus}
           onClick={() => {
-            setTransacaoEditando(null);
+            setPlanejamentoEditando(null);
             setModalFormAberto(true);
           }}
         >

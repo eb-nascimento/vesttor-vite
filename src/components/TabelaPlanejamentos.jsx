@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./TabelaPlanejamentos.css";
-import { Search, Plus, AlertTriangle, Check, EditIcon } from "lucide-react";
+import { Search, AlertTriangle, Check, EditIcon } from "lucide-react";
 
 function TabelaPlanejamentos({ itens = [], onApprove, onEdit }) {
   const [filtroAtivo, setFiltroAtivo] = useState("Todos");

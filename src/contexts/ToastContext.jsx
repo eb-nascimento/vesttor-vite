@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useCallback } from "react";
 import Toast from "../components/ui/Toast";
 
@@ -5,6 +6,10 @@ const ToastContext = createContext();
 
 export function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([]);
+
+  const removeToast = useCallback((id) => {
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
+  }, []);
 
   // status: "success", "error", "warning", "info"
   const addToast = useCallback((message, status = "info", duration = 4000) => {
@@ -16,11 +21,7 @@ export function ToastProvider({ children }) {
         removeToast(id);
       }, duration);
     }
-  }, []);
-
-  const removeToast = useCallback((id) => {
-    setToasts((prev) => prev.filter((toast) => toast.id !== id));
-  }, []);
+  }, [removeToast]);
 
   return (
     <ToastContext.Provider value={{ addToast }}>
