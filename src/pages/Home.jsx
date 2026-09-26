@@ -1,8 +1,8 @@
 import "./Home.css";
 import { useTransacoes } from "../hooks/useTransacoes";
-import ContainerResumo from "../components/ContainerResumo";
-import Form from "../components/Form";
-import ListaTransacoes from "../components/ListaTransacoes";
+import ContainerResumo from "../features/dashboard/components/ContainerResumo";
+import FormTransacao from "../features/transactions/components/FormTransacao";
+import ListaTransacoes from "../features/transactions/components/ListaTransacoes";
 
 function Home({ usuario }) {
   // O home só é renderizado para usuários autenticados.
@@ -31,7 +31,7 @@ function Home({ usuario }) {
     <section className="home-page">
       <div className="home-grid">
         <aside className="home-coluna-form">
-          <Form
+          <FormTransacao
             key={transacaoEditando?.id ?? "nova-transacao"}
             onAdd={adicionarTransacao}
             onAddParcelado={adicionarCompraParcelada}

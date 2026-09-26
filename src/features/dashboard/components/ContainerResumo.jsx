@@ -1,5 +1,5 @@
 import "./ContainerResumo.css";
-import CardResumo from "./CardResumo";
+import StatCard from "../../../components/ui/StatCard";
 
 function ContainerResumo({
   saldo,
@@ -19,7 +19,7 @@ function ContainerResumo({
         {titulo || `Saldos do mês atual (${mesCapitalizado})`}
       </h3>
       <div className="resumo-container">
-        <CardResumo
+        <StatCard
           title="Receitas"
           balance={new Intl.NumberFormat("pt-BR", {
             style: "currency",
@@ -29,7 +29,7 @@ function ContainerResumo({
           subtitle={`Entradas em ${mesCapitalizado}`}
         />
 
-        <CardResumo
+        <StatCard
           title="Despesas"
           balance={new Intl.NumberFormat("pt-BR", {
             style: "currency",
@@ -39,7 +39,7 @@ function ContainerResumo({
           subtitle={`Saídas em ${mesCapitalizado}`}
         />
 
-        <CardResumo
+        <StatCard
           title="Saldo do mês"
           balance={new Intl.NumberFormat("pt-BR", {
             style: "currency",

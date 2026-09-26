@@ -1,4 +1,4 @@
-import PaginadorMes from "../components/PaginadorMes";
+import PaginadorMes from "../components/ui/PaginadorMes";
 import { useState } from "react";
 import "./Budget.css";
 
@@ -6,16 +6,16 @@ import { useTransacoes } from "../hooks/useTransacoes";
 import { useFiltrosTransacoes } from "../hooks/useFiltrosTransacoes";
 import { usePlanejamentos } from "../hooks/usePlanejamentos";
 
-import BtnAdd from "../components/BtnAdd";
-import EquacaoMes from "../components/EquacaoMes";
-import PageHeader from "../components/PageHeader";
-import TabelaPlanejamentos from "../components/TabelaPlanejamentos";
-import PainelLateralPlanejamento from "../components/PainelLateralPlanejamento";
-import ModalFormPlanejamento from "../components/ModalFormPlanejamento";
+import Button from "../components/ui/Button";
+import { Plus } from "lucide-react";
+import EquacaoMes from "../features/budget/components/EquacaoMes";
+import PageHeader from "../components/ui/PageHeader";
+import TabelaPlanejamentos from "../features/budget/components/TabelaPlanejamentos";
+import PainelLateralPlanejamento from "../features/budget/components/PainelLateralPlanejamento";
+import ModalFormPlanejamento from "../features/budget/components/ModalFormPlanejamento";
 
 function Budget({ usuario }) {
   const [modalFormAberto, setModalFormAberto] = useState(false);
-  const [transacaoEditando, setTransacaoEditando] = useState(null);
   const [planejamentoEditando, setPlanejamentoEditando] = useState(null);
 
   const { transacoes } = useTransacoes(usuario?.uid);
@@ -61,6 +61,7 @@ function Budget({ usuario }) {
     "Contas & Serviços": "Fixo",
     Educação: "Fixo",
     Investimentos: "Fixo",
+    Fixo: true,
   };
 
   transacoesDoMes.forEach((t) => {
@@ -73,6 +74,7 @@ function Budget({ usuario }) {
           planejado: 0,
           valorRealizado: 0,
           isUnplanned: true, // Aqui marcamos que é órfão
+          fixo: TIPO_POR_CATEGORIA[t.fixo] || false,
         };
       }
       unplannedMap[t.categoria].valorRealizado += Number(t.valor);
@@ -177,13 +179,15 @@ function Budget({ usuario }) {
           onMudarMes={handleMudarMes}
         />
 
-        <BtnAdd
-          texto="Novo Orçamento"
+        <Button
+          icon={Plus}
           onClick={() => {
-            setTransacaoEditando(null);
+            setPlanejamentoEditando(null);
             setModalFormAberto(true);
           }}
-        />
+        >
+          Novo Orçamento
+        </Button>
       </PageHeader>
       <EquacaoMes
         entradasPlanejadas={entradasPlanejadas}
@@ -200,6 +204,10 @@ function Budget({ usuario }) {
           itens={todosPlanejamentos}
           onApprove={handleApproveUnplanned}
           onEdit={handleEditPlanejamento}
+          onAdd={() => {
+            setPlanejamentoEditando(null);
+            setModalFormAberto(true);
+          }}
         />
         <PainelLateralPlanejamento
           saldoProjetado={saldoProjetado}

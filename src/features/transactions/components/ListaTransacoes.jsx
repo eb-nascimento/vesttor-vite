@@ -6,8 +6,8 @@ import {
   filtrarTransacoes,
   filtrarTransacoesRecentes,
   ordenarTransacoes,
-} from "../utils/transacao";
-import ItemTransacao from "./ItemTransacao";
+} from "../../../utils/transacao";
+import ItemTransacao from "../../../features/transactions/components/ItemTransacao";
 import ControlesTransacoes from "./ControlesTransacoes";
 import ModalExclusaoParcelamento from "./ModalExclusaoParcelamento";
 

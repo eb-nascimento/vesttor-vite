@@ -1,22 +1,23 @@
 import { useState } from "react";
 import { useTransacoes } from "../hooks/useTransacoes";
+import Button from "../components/ui/Button";
+import { Plus } from "lucide-react";
 
-import BtnAdd from "../components/BtnAdd";
-import ResumoPeriodo from "../components/ResumoPeriodo";
-import FiltrosTransacoes from "../components/FiltrosTransacoes";
-import TabelaTransacoes from "../components/TabelaTransacoes";
-import ItemTransacao from "../components/ItemTransacao";
-import Paginacao from "../components/Paginacao";
-import PaginadorMes from "../components/PaginadorMes";
-import ModalFormTransacao from "../components/ModalFormTransacao";
-import ModalExclusaoParcelamento from "../components/ModalExclusaoParcelamento";
+import ResumoPeriodo from "../features/transactions/components/ResumoPeriodo";
+import FiltrosTransacoes from "../features/transactions/components/FiltrosTransacoes";
+import TabelaTransacoes from "../features/transactions/components/TabelaTransacoes";
+import ItemTransacao from "../features/transactions/components/ItemTransacao";
+import Paginacao from "../components/ui/Paginacao";
+import PaginadorMes from "../components/ui/PaginadorMes";
+import ModalFormTransacao from "../features/transactions/components/ModalFormTransacao";
+import ModalExclusaoParcelamento from "../features/transactions/components/ModalExclusaoParcelamento";
 import {
   ITENS_POR_PAGINA,
   useFiltrosTransacoes,
 } from "../hooks/useFiltrosTransacoes";
 import "./Transacoes.css";
 
-import PageHeader from "../components/PageHeader";
+import PageHeader from "../components/ui/PageHeader";
 
 function Transacoes({ usuario }) {
   const {
@@ -82,13 +83,15 @@ function Transacoes({ usuario }) {
           onMudarMes={handleMudarMes}
         />
 
-        <BtnAdd
-          texto="Nova Transação"
+        <Button
+          icon={Plus}
           onClick={() => {
             setTransacaoEditando(null);
             setModalFormAberto(true);
           }}
-        />
+        >
+          Nova Transação
+        </Button>
       </PageHeader>
 
       {(erroOperacao || erroLeitura) && (

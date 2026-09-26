@@ -83,7 +83,7 @@ export default function CustomSelect({
 
   const handleBlur = (e) => {
     if (selectRef.current && !selectRef.current.contains(e.relatedTarget)) {
-      setIsOpen(false);
+      setTimeout(() => setIsOpen(false), 150);
     }
   };
 
@@ -117,8 +117,7 @@ export default function CustomSelect({
               className={`custom-select-item ${option.valor === value ? "selected" : ""} ${highlightedIndex === index ? "highlighted" : ""}`}
               role="option"
               aria-selected={option.valor === value}
-              onMouseDown={(e) => {
-                e.preventDefault();
+              onClick={() => {
                 onChange(option.valor);
                 setIsOpen(false);
               }}

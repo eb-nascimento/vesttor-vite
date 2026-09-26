@@ -1,12 +1,12 @@
-import "./Form.css";
+import "./FormTransacao.css";
 import { useState, useMemo } from "react";
-import DatePicker from "./DatePicker";
+import DatePicker from "../../../components/ui/DatePicker";
 import {
   criarTransacao,
   validarTransacao,
   normalizarInputValor,
-} from "../utils/transacao";
-import { calcularParcelas, gerarSerieTransacoes } from "../utils/parcelamento";
+} from "../../../utils/transacao";
+import { calcularParcelas, gerarSerieTransacoes } from "../../../utils/parcelamento";
 import {
   Calendar,
   CreditCard,
@@ -17,8 +17,8 @@ import {
   CheckSquare,
   Layers,
 } from "lucide-react";
-import CustomSelect from "./CustomSelect";
-import TipoSwitcher from "./TipoSwitcher";
+import CustomSelect from "../../../components/ui/CustomSelect";
+import TipoSwitcher from "../../../components/ui/TipoSwitcher";
 
 function obterDataAtual() {
   return new Date().toISOString().split("T")[0];

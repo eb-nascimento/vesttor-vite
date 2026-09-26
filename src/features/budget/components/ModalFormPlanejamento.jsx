@@ -1,12 +1,13 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from "react";
 import { X, DollarSign, Tag } from "lucide-react";
-import ModalBase from "./ModalBase";
-import CustomSelect from "./CustomSelect";
-import TipoSwitcher from "./TipoSwitcher";
-import { normalizarInputValor } from "../utils/transacao";
-import "./ModalFormTransacao.css";
+import ModalBase from "../../../components/ui/ModalBase";
+import CustomSelect from "../../../components/ui/CustomSelect";
+
+import { normalizarInputValor } from "../../../utils/transacao";
+import "../../../features/transactions/components/ModalFormTransacao.css";
 import "./ModalFormPlanejamento.css";
-import "./Form.css";
+import "../../../features/transactions/components/FormTransacao.css";
 
 const CATEGORIAS = [
   "Alimentação",
@@ -39,21 +40,21 @@ function ModalFormPlanejamento({
 
   useEffect(() => {
     if (itemEditando) {
-      setForm({
+            setForm({
         categoria: itemEditando.categoria,
         tipo: itemEditando.tipo,
         planejado: itemEditando.planejado.toString(),
       });
     } else {
-      setForm({ categoria: "Alimentação", tipo: "Variável", planejado: "" });
+            setForm({ categoria: "Alimentação", tipo: "Variável", planejado: "" });
     }
   }, [itemEditando, isOpen]);
 
   const atualizarCampo = (campo, valor) => {
     if (campo === "planejado") {
-      setForm({ ...form, [campo]: normalizarInputValor(valor) });
+            setForm({ ...form, [campo]: normalizarInputValor(valor) });
     } else {
-      setForm({ ...form, [campo]: valor });
+            setForm({ ...form, [campo]: valor });
     }
   };
 
@@ -76,7 +77,7 @@ function ModalFormPlanejamento({
       });
     }
 
-    setForm({ categoria: "Alimentação", tipo: "Variável", planejado: "" });
+          setForm({ categoria: "Alimentação", tipo: "Variável", planejado: "" });
     onClose();
   };
 

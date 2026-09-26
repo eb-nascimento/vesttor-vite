@@ -1,10 +1,9 @@
-import React from "react";
+
 import "./PainelLateralPlanejamento.css";
 
 function PainelLateralPlanejamento({
   saldoProjetado = 0,
   porcentagemComprometida = 0,
-  proximosVencimentos = [],
 }) {
   return (
     <div className="painel-lateral-planejamento">

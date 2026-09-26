@@ -1,0 +1,2 @@
+- [x] Mover e organizar arquivos por feature
+- [ ] Verificar build

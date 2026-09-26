@@ -1,0 +1,100 @@
+.input-ui-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.input-ui-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text, #0f172a);
+}
+
+.input-ui-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+
+.input-ui {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+/* Style Variants */
+.input-ui-surface {
+  background: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border, #e2e8f0);
+  color: var(--color-text, #0f172a);
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.input-ui-surface:focus {
+  border-color: var(--color-primary, #05213a);
+  box-shadow: 0px 0px 0px 3px rgba(27, 167, 255, 0.18);
+}
+
+.input-ui-subtle {
+  background: var(--color-input-bg, #edf3fa);
+  border: 1px solid transparent;
+  color: var(--color-text, #0f172a);
+}
+
+.input-ui-subtle:focus {
+  background: var(--color-surface, #ffffff);
+  border-color: var(--color-primary, #05213a);
+}
+
+/* Error State */
+.input-ui-error,
+.input-ui-error:focus {
+  border-color: #ef4444;
+  box-shadow: 0px 0px 0px 3px rgba(239, 68, 68, 0.18);
+}
+
+/* Disabled State */
+.input-ui:disabled {
+  background: var(--color-surface-alt, #eef3f8);
+  color: var(--color-text-muted, #64748b);
+  cursor: not-allowed;
+  border-color: var(--color-border, #e2e8f0);
+}
+
+.input-ui-prefix {
+  position: absolute;
+  left: 12px;
+  color: var(--color-text-muted, #64748b);
+  pointer-events: none;
+}
+
+.input-ui-suffix {
+  position: absolute;
+  right: 12px;
+  color: var(--color-text-muted, #64748b);
+}
+
+/* If prefix exists, add padding */
+.input-ui-container:has(.input-ui-prefix) .input-ui {
+  padding-left: 36px;
+}
+.input-ui-container:has(.input-ui-suffix) .input-ui {
+  padding-right: 36px;
+}
+
+.input-ui-helper {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: var(--color-text-muted, #64748b);
+}
+
+.helper-error {
+  color: #ef4444;
+}
