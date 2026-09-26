@@ -26,10 +26,10 @@ function Transacoes({ usuario }) {
     erroLeitura,
     transacoes,
     adicionarTransacao,
-    adicionarTransacaoParcelada,
+    adicionarCompraParcelada,
     editarTransacao,
-    editarTransacaoParcelada,
-    converterParaParcelado,
+    atualizarCompraParcelada,
+    converterParaParcelada,
     excluirTransacao,
     excluirParcelasFuturas,
   } = useTransacoes(usuario?.uid);
@@ -173,10 +173,10 @@ function Transacoes({ usuario }) {
         }}
         transacaoEditando={transacaoEditando}
         onAdd={adicionarTransacao}
-        onAddParcelado={adicionarTransacaoParcelada}
+        onAddParcelado={adicionarCompraParcelada}
         onEdit={editarTransacao}
-        onEditParcelado={editarTransacaoParcelada}
-        onConverterParaParcelado={converterParaParcelado}
+        onEditParcelado={atualizarCompraParcelada}
+        onConverterParaParcelado={converterParaParcelada}
       />
 
       {transacaoParaExcluir && (

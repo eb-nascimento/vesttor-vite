@@ -68,6 +68,40 @@ service cloud.firestore {
         && (!('valorTotalCompra' in data) || (data.valorTotalCompra is number && data.valorTotalCompra > 0));
     }
 
+    function isValidPlanning(data) {
+      return data.keys().hasAll([
+          'userId',
+          'categoria',
+          'tipo',
+          'planejado',
+          'mesAno',
+          'dataCriacao'
+        ])
+        && data.keys().hasOnly([
+          'userId',
+          'categoria',
+          'tipo',
+          'planejado',
+          'mesAno',
+          'dataCriacao'
+        ])
+        && data.userId is string
+        && data.userId.size() > 0
+        && data.userId.size() <= 128
+        && data.categoria is string
+        && data.categoria.size() > 0
+        && data.categoria.size() <= 50
+        && data.tipo in ['Entrada', 'Fixo', 'Variável']
+        && data.planejado is number
+        && data.planejado >= 0
+        && data.mesAno is string
+        && data.mesAno.matches('^\\d{4}-(0[1-9]|1[0-2])$')
+        && (data.dataCriacao is timestamp
+          || (data.dataCriacao is string
+            && data.dataCriacao.size() > 0
+            && data.dataCriacao.size() <= 40));
+    }
+
     match /transacoes/{transactionId} {
       allow read: if isOwner(resource.data.userId);
 
@@ -77,6 +111,19 @@ service cloud.firestore {
       allow update: if isOwner(resource.data.userId)
         && uidNotModified()
         && isValidTransaction(request.resource.data);
+
+      allow delete: if isOwner(resource.data.userId);
+    }
+
+    match /planejamentos/{planningId} {
+      allow read: if isOwner(resource.data.userId);
+
+      allow create: if uidUnchanged()
+        && isValidPlanning(request.resource.data);
+
+      allow update: if isOwner(resource.data.userId)
+        && uidNotModified()
+        && isValidPlanning(request.resource.data);
 
       allow delete: if isOwner(resource.data.userId);
     }

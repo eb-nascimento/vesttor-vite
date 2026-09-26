@@ -1,5 +1,7 @@
 # Software Design Document - Vesttor
 
+> **Documento histórico e não normativo.** A revisão atual de 26/09/2026 está em [SDD V2](SDD-v2.md). O conteúdo abaixo foi preservado apenas para rastreabilidade e inclui decisões superadas.
+
 ## 1. Informações do documento
 
 - **Projeto:** Vesttor - Gestor Financeiro

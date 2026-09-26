@@ -2,6 +2,8 @@
 
 Este checklist registra o que ja foi estudado/implementado no projeto e o que ainda falta fazer. A ideia e evitar repetir CRUD simples e manter o foco em conceitos novos.
 
+> **Registro histórico de estudo.** Para situação, prioridade e critérios vigentes em 26/09/2026, prevalecem [Plano de refatoração](plano-refatoracao.md), [Especificação funcional](especificacao-funcional.md) e o backlog do Notion.
+
 ## Diretriz de estudo
 
 O estudo deve priorizar conceitos novos antes de replicar padroes ja aprendidos em outras telas. Depois que um conceito estiver entendido e aplicado uma primeira vez, ele pode ser replicado no restante do projeto.

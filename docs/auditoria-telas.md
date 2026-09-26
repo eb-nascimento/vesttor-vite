@@ -1,15 +1,15 @@
 # Auditoria das telas — Vesttor V2/V3
 
-Revisão consolidada em 20/09/2026. O escopo desta auditoria é o arquivo oficial do Figma e sua documentação. Ela não comprova a implementação das funcionalidades no React/Firebase.
+Revisão consolidada em 25/09/2026. O escopo desta auditoria é o arquivo oficial do Figma e sua documentação. Ela não comprova a implementação das funcionalidades no React/Firebase.
 
 ## Resultado
 
-O arquivo possui atualmente 12 seções e 212 telas no padrão V2/V3. Todas as áreas principais possuem versões desktop e mobile nos temas escuro e claro.
+O arquivo possui atualmente 12 seções e 372 telas no padrão V2/V3. Todas as áreas principais possuem versões desktop e mobile nos temas escuro e claro.
 
 Foram verificadas:
 
-- 188 telas já existentes, com auditoria estrutural de textos e limites;
-- 24 novas telas de erros operacionais;
+- 212 telas existentes na revisão anterior;
+- 160 novas telas de validação, processamento, sucesso, confirmação e falha operacional;
 - versões mobile das áreas principais por inspeção visual;
 - separação entre as seções no canvas;
 - títulos, descrições, botões e caixas de texto com maior risco de colisão.
@@ -48,14 +48,14 @@ Em caso de conflito, prevalecem as decisões mais recentes:
 | Cadastro | `192:2` | 4 | Criação de conta |
 | Recuperação e verificação | `192:141` | 12 | Recuperar senha, verificar e-mail e redefinir senha |
 | Estados de autenticação | `194:60` | 44 | Sucessos, erros, carregamento, links expirados e falha no envio |
-| Home | `207:5` | 16 | Cadastro de transação, saldos e últimas movimentações |
+| Home | `207:5` | 32 | Cadastro, validação, salvamento, sucesso, falhas, saldos e últimas movimentações |
 | Dashboard | `207:9` | 16 | Visão analítica resumida |
-| Transações | `222:2` | 20 | Extrato, resumo, paginação, filtros recolhidos e falha ao salvar |
-| Categorias | `254:2` | 20 | Lista, carregamento, vazio, erro e exclusão bloqueada |
-| Métodos de pagamento | `255:2` | 20 | Lista, carregamento, vazio, erro e exclusão bloqueada |
-| Orçamentos | `256:2` | 20 | Entradas, gastos fixos/variáveis e estados V3 |
+| Transações | `222:2` | 48 | Extrato, edição, exclusão simples/parcelada e retornos operacionais |
+| Categorias | `254:2` | 52 | Lista, criação, validação, exclusão, bloqueios e retornos operacionais |
+| Métodos de pagamento | `255:2` | 52 | Lista, criação, validação, exclusão, bloqueios e retornos operacionais |
+| Orçamentos | `256:2` | 52 | Entradas, gastos fixos/variáveis, CRUD, alertas e estados V3 |
 | Relatórios | `257:2` | 16 | Comparativos, categorias e planejado × realizado |
-| Conta e preferências | `259:2` | 20 | Perfil, tema, sessão, risco e confirmação de identidade |
+| Conta e preferências | `259:2` | 40 | Perfil, preferências, salvamento, risco e exclusão da conta |
 
 ## Correções realizadas na revisão
 
@@ -191,9 +191,9 @@ IDs do novo estado de recuperação:
 ### Home
 
 - Seção: `207:5` — `Home V2`
-- Quantidade: 16 telas
+- Quantidade: 32 telas
 - Principais: 4
-- Estados: carregando, sem dados e erro, cada um com 4 variações
+- Estados: carregando, sem dados, erro, validação do formulário, salvando, sucesso e falha ao salvar
 
 A Home é obrigatoriamente centrada no cadastro de transações. No desktop também apresenta saldos e últimas transações. Ela não deve ser substituída pelo Dashboard.
 
@@ -209,9 +209,9 @@ Conteúdo: saldo disponível, receitas, despesas, fluxo mensal, orçamento, aler
 ### Transações
 
 - Seção: `222:2` — `Transações V2`
-- Quantidade: 20 telas
+- Quantidade: 48 telas
 - Principais: 4
-- Estados: carregando, sem resultados, erro ao carregar e falha ao salvar
+- Estados: carregando, sem resultados, erro ao carregar, falha ao salvar, confirmação/resultado da edição e confirmação/processamento/resultado da exclusão
 
 Regras visuais:
 
@@ -235,9 +235,9 @@ A mensagem informa que os campos foram preservados para reduzir duplicações em
 ### Categorias
 
 - Seção: `254:2` — `Categorias V2`
-- Quantidade: 20 telas
+- Quantidade: 52 telas
 - Principais: 4
-- Estados: carregando, sem dados, erro e exclusão bloqueada
+- Estados: carregando, sem dados, erro, validação, salvamento, sucesso, falha ao salvar, confirmação, processamento, sucesso/falha ao excluir e exclusão bloqueada
 
 IDs da exclusão bloqueada:
 
@@ -253,9 +253,9 @@ Categorias vinculadas a transações não são excluídas diretamente. A interfa
 ### Métodos de pagamento
 
 - Seção: `255:2` — `Métodos de pagamento V2`
-- Quantidade: 20 telas
+- Quantidade: 52 telas
 - Principais: 4
-- Estados: carregando, sem dados, erro e exclusão bloqueada
+- Estados: carregando, sem dados, erro, validação, salvamento, sucesso, falha ao salvar, confirmação, processamento, sucesso/falha ao excluir e exclusão bloqueada
 
 IDs da exclusão bloqueada:
 
@@ -271,9 +271,9 @@ Métodos vinculados a transações devem ser desativados ou substituídos antes 
 ### Orçamentos
 
 - Seção: `256:2` — `Orçamentos V3`
-- Quantidade: 20 telas
+- Quantidade: 52 telas
 - Principais: 4
-- Estados: carregando, sem dados, erro ao carregar e falha ao salvar
+- Estados: carregando, sem dados, erro ao carregar, validação, salvamento, sucesso, falha ao salvar, confirmação/processamento/resultado da exclusão e limite ultrapassado
 
 A versão aprovada é a V3. As versões exploratórias anteriores devem ser desconsideradas.
 
@@ -313,9 +313,9 @@ Conteúdo:
 ### Conta e preferências
 
 - Seção: `259:2` — `Conta e preferências V2`
-- Quantidade: 20 telas
+- Quantidade: 40 telas
 - Principais: 4
-- Estados: salvando, perfil incompleto, erro ao atualizar e falha de identidade
+- Estados: salvando, perfil incompleto, erro ao atualizar, falha de identidade, sucesso/falha ao salvar e confirmação/processamento/conclusão da exclusão da conta
 
 Conteúdo:
 
@@ -338,16 +338,16 @@ Antes da exclusão da conta, a interface exige nova autenticação. Em caso de f
 
 ## Matriz de estados
 
-| Área | Principal | Carregando | Vazio/sem resultado | Erro de leitura | Erro operacional |
-| --- | :---: | :---: | :---: | :---: | :---: |
-| Home | ✓ | ✓ | ✓ | ✓ | — |
-| Dashboard | ✓ | ✓ | ✓ | ✓ | — |
-| Transações | ✓ | ✓ | ✓ | ✓ | Falha ao salvar |
-| Categorias | ✓ | ✓ | ✓ | ✓ | Exclusão bloqueada |
-| Métodos | ✓ | ✓ | ✓ | ✓ | Exclusão bloqueada |
-| Orçamentos | ✓ | ✓ | ✓ | ✓ | Falha ao salvar |
-| Relatórios | ✓ | ✓ | ✓ | ✓ | — |
-| Conta | ✓ | Salvando | Perfil incompleto | ✓ | Falha de identidade |
+| Área | Principal | Leitura | Validação | Processamento | Sucesso | Confirmação | Falha operacional |
+| --- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| Home | ✓ | Carregando, vazio e erro | ✓ | Salvando | ✓ | — | Falha ao salvar |
+| Dashboard | ✓ | Carregando, vazio e erro | — | — | — | — | — |
+| Transações | ✓ | Carregando, sem resultado e erro | Formulário existente | Editando e excluindo | Edição e exclusão | Edição e série parcelada | Salvar e excluir |
+| Categorias | ✓ | Carregando, vazio e erro | ✓ | Salvando e excluindo | Salvar e excluir | Exclusão | Salvar, excluir e vínculo ativo |
+| Métodos | ✓ | Carregando, vazio e erro | ✓ | Salvando e excluindo | Salvar e excluir | Exclusão | Salvar, excluir e vínculo ativo |
+| Orçamentos | ✓ | Carregando, vazio e erro | ✓ | Salvando e excluindo | Salvar e excluir | Exclusão | Salvar, excluir e limite excedido |
+| Relatórios | ✓ | Carregando, sem dados e erro | — | — | — | — | — |
+| Conta | ✓ | Perfil incompleto e erro | Dados existentes | Salvando e excluindo | Salvar e excluir | Exclusão | Salvar e identidade |
 
 Os fluxos de autenticação possuem estados próprios e não seguem exatamente a matriz das páginas autenticadas.
 
@@ -374,10 +374,11 @@ Também foram inspecionadas versões mobile representativas de Home, Dashboard, 
 
 Resultado final:
 
-- 212 telas documentadas;
-- 24 telas novas validadas individualmente;
+- 372 telas documentadas;
+- 160 telas novas validadas individualmente nesta revisão;
 - zero texto visível fora dos novos frames;
 - zero colisão semântica entre títulos e descrições nas novas telas;
+- zero rótulo fora dos botões;
 - zero sobreposição entre seções;
 - posições das seções preservadas.
 

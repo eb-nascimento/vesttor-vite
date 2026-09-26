@@ -1,5 +1,7 @@
 # Vesttor - Requisitos do Projeto
 
+> **Documento histórico e não normativo.** Esta versão contém premissas anteriores à revisão de 26/09/2026. As fontes atuais são [Requisitos V2](requisitos-v2.md), [Especificação funcional](especificacao-funcional.md) e [Modelo de dados](modelo-de-dados.md).
+
 ## 1. Visao geral
 
 O Vesttor e uma aplicacao web de controle e planejamento financeiro pessoal.
