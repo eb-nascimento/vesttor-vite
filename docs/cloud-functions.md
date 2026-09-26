@@ -1,4 +1,12 @@
-# Vesttor - Separacao segura com Cloud Functions
+# Cloud Functions no Vesttor
+
+> **Situação em 26/09/2026: Fora do escopo atual.** O MVP continuará usando o SDK Web do Firestore protegido por Security Rules e não exigirá plano Blaze. Functions só serão reavaliadas depois do MVP para exclusão integral de conta, convites de ambientes, notificações ou tarefas que realmente exijam execução privilegiada no servidor. A pasta e o predeploy atuais são um scaffold incompleto e não devem participar de uma publicação geral.
+
+O Vesttor funciona sem Functions para autenticação, transações, parcelamentos em lote, planejamento, catálogos de leitura, atraso derivado e recorrências determinísticas. Publicações devem ser direcionadas por recurso.
+
+## Proposta histórica preservada
+
+O conteúdo abaixo registra a proposta anterior de migração para Functions. Ele não define mais a arquitetura do MVP e foi mantido somente para rastreabilidade.
 
 ## Status e objetivo
 
@@ -104,7 +112,7 @@ Validacoes minimas:
 - identidade obtida exclusivamente do contexto autenticado.
 
 
-Datas futuras atendem ao registro de compras parceladas nos meses seguintes. A [proposta de interface](parcelamento.md) define os campos e a previa. O contrato de persistencia, a geracao automatica, o vinculo entre parcelas e os testes continuam pendentes; esta definicao nao antecipa a ativacao de Functions/Blaze.
+Datas futuras atendem ao registro de compras parceladas nos meses seguintes. A [proposta de interface](parcelamento.md) define os campos e a previa. A geração, o vínculo e a persistência em lote já existem no cliente para a Home; permanece pendente migrar esse contrato para Functions, adicionar idempotência no backend e concluir os testes de integração.
 
 ## Integridade, idempotencia e confirmacoes
 
@@ -181,7 +189,7 @@ vite-vesttor/
 
 Decisoes confirmadas: descricao de ate 100 caracteres; valor positivo sem maximo de negocio; datas passadas e futuras; toda transacao com `userId`; dados no mesmo Firestore; leitura em tempo real; confirmacoes antes de editar e excluir; e criacao obrigatoriamente idempotente.
 
-Continuam pendentes: edicao e regiao do Firestore; regiao, memoria, concorrencia e limites das Functions; documentos antigos sem `userId`; auditoria; formato e retencao da chave de idempotencia; regras completas de parcelamento; App Check, IAM, logs, alertas e custos.
+Continuam pendentes: região, memória, concorrência e limites das Functions; documentos antigos; auditoria; formato e retenção da chave de idempotência; migração do parcelamento já existente no cliente; App Check, IAM, logs, alertas e custos.
 
 ## Referencias oficiais
 

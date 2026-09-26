@@ -1,5 +1,7 @@
 # Especificação Funcional e Técnica: Transações V2
 
+> **Situação em 26/09/2026: A ser refatorada.** A interface, os filtros, a paginação e os componentes existem. As três operações parceladas foram alinhadas aos nomes exportados por `useTransacoes` e possuem teste de regressão. Ainda faltam o modelo financeiro aprovado, paginação consistente, cards derivados de todos os filtros e tratamento correto de falhas.
+
 Documento de especificação técnica e de design para a página de **Transações V2**, elaborado a partir do Figma oficial (**Node 222:2 — Transações V2**) e alinhado via sessão de refinamento de domínio (_grilling_).
 
 ---
@@ -78,7 +80,7 @@ graph TD
     ResumoCard["ResumoPeriodo.jsx (4 Métricas Dinâmicas)"]
     FiltrosPanel["FiltrosTransacoes.jsx (Painel Retrátil)"]
     TableView["TabelaTransacoes.jsx (Desktop: 7 Colunas)"]
-    CardsView["CardTransacaoMobile.jsx (Mobile: Vertical)"]
+    CardsView["ItemTransacao.jsx (Mobile: Vertical)"]
     PaginacaoComp["Paginacao.jsx (X-Y de Z, Controles)"]
     ModalForm["ModalFormTransacao.jsx (Modal com Form.jsx)"]
     ModalExclusao["ModalExclusaoParcelamento.jsx (Exclusão em Série)"]
@@ -146,7 +148,7 @@ Colunas da tabela (layout em grid com 7 colunas):
    - `Editar`: Abre o modal em modo de edição.
    - `Excluir`: Dispara exclusão direta para transações avulsas ou o modal `ModalExclusaoParcelamento` para parceladas.
 
-### 4.6. Cards Mobile (`CardTransacaoMobile.jsx`)
+### 4.6. Cards Mobile (`ItemTransacao.jsx`)
 
 Exibição otimizada para telas < 768px:
 
@@ -215,7 +217,7 @@ Para evitar que a página `Transacoes.jsx` se tornasse um "God Component" inflad
 
 O componente `PaginadorMes.jsx` foi incorporado ao lado do botão "+ Nova transação" no cabeçalho (HeaderSec). Diferente dos filtros recolhíveis, o paginador de mês está sempre visível.
 
-> A regra de negócio do produto exige que os cards numéricos (Saldo, Receitas, Despesas) ignorem a busca e a categoria, mas **obedeçam à competência mensal** ativa no Paginador.
+> A regra aprovada exige que todos os filtros alterem cards e lista. Se o resultado possuir apenas despesas, aparecem “Despesas filtradas” e quantidade; se possuir apenas receitas, aparecem “Receitas filtradas” e quantidade; se possuir ambas, aparecem receitas, despesas, resultado e quantidade. A natureza é inferida do conjunto final, inclusive no filtro de categoria. “Resultado do mês” substitui “Saldo” porque o MVP não concilia contas bancárias.
 
 ### 6.3. Acessibilidade (A11y)
 
@@ -229,7 +231,7 @@ O componente `PaginadorMes.jsx` foi incorporado ao lado do botão "+ Nova transa
 
 1. [x] Conduzir refinamento de requisitos e _grilling_ com o usuário.
 2. [x] Inspecionar nós e extrair tokens do Figma Node `222:2`.
-3. [x] Criar testes unitários para filtros avançados e paginação (36/36 testes aprovados).
+3. [x] Criar testes unitários para filtros e paginação; a contagem vigente consolidada está em `sdd-testes.md`.
 4. [x] Consolidar a documentação de produto em `docs/requisitos.md` e técnica em `docs/arquitetura.md`.
-5. [x] Construir componentes visuais V2 (`ResumoPeriodo`, `FiltrosTransacoes`, `PaginadorMes`, `TabelaTransacoes`, `CardTransacaoMobile`, `Paginacao`, `CustomSelect`).
+5. [x] Construir componentes visuais V2 (`ResumoPeriodo`, `FiltrosTransacoes`, `PaginadorMes`, `TabelaTransacoes`, `ItemTransacao`, `Paginacao`, `CustomSelect`).
 6. [x] Integrar a página `Transacoes.jsx` com hooks `useTransacoes` e `useFiltrosTransacoes`, validando navegação acessível e a experiência multi-filtros.

@@ -1,4 +1,8 @@
-# SDD de Testes - Vesttor
+# Estratégia de Testes do Vesttor
+
+**Revisão:** 26/09/2026
+
+> A estratégia vigente prioriza riscos de perda de dados, cálculo incorreto e acesso indevido. A última verificação registrada aprovou 30 testes Vitest e 5 testes das Security Rules. As contagens e a orientação reduzida das versões anteriores estão superadas por esta revisão.
 
 ## 1. Objetivo
 
@@ -24,12 +28,12 @@ Definir uma estrategia de testes proporcional ao risco do Vesttor. O objetivo na
 
 ## 4. Cobertura atual
 
-| Area | Arquivo | Estado | Comportamento coberto |
-| --- | --- | --- | --- |
-| Calculos | `src/utils/calculos.test.js` | Implementado | Soma de receitas |
-| Filtros | `src/utils/transacao.test.js` | Implementado | Todas, receitas e despesas |
-
-Os testes existentes comprovam que a configuracao do Vitest funciona e protegem dois comportamentos de regra de negocio. Eles sao uma base suficiente para a etapa atual de estudos.
+| Área | Estado |
+| --- | --- |
+| Cálculos, filtros, ordenação e parcelamento | Cobertos por testes unitários |
+| Contrato de Transações com `useTransacoes` | Coberto por teste de regressão |
+| Isolamento de `transacoes` e `planejamentos` | Coberto por 5 testes de Rules |
+| Services, formulários, Budget, autenticação e migração | Cobertura ainda insuficiente |
 
 ## 5. Criterios para adicionar testes
 
@@ -69,19 +73,16 @@ Nao e obrigatorio criar teste novo para ajustes exclusivamente visuais, textos e
 - Em testes automatizados, simular apenas o contrato necessario do Firebase.
 - Validar mensagens amigaveis para erros de autenticacao mapeados.
 
-### Cloud Functions e seguranca
+### Segurança e migração
 
-- Testar validadores de descricao, valor, data, tipo e campos protegidos.
-- Testar callable sem autenticacao e com payload invalido.
-- Testar criacao, edicao e exclusao apenas pelo proprietario.
-- Testar tentativa de forjar `userId`.
-- Testar retentativas simultaneas e sequenciais com a mesma chave de idempotencia.
-- Testar descricao com 100 e 101 caracteres, valores altos e datas passadas e futuras.
-- Testar Security Rules com proprietario, outro usuario e usuario anonimo.
-- Usar Functions e Firestore Emulators antes de validar no projeto Firebase real.
-- Confirmar que a leitura em tempo real continua restrita ao proprietario.
+- Testar descrição, centavos, datas civis, situação e campos protegidos.
+- Testar criação, edição e exclusão apenas pelo proprietário.
+- Testar tentativa de forjar `userId`, autoria ou revisão.
+- Testar Security Rules com proprietário, outra conta e pessoa anônima.
+- Testar migração repetida, documentos inválidos e reconciliação de somas.
+- Confirmar que a leitura em tempo real permanece restrita ao proprietário.
 
-Esses testes passam a ser obrigatorios para a migracao das escritas. Os testes existentes continuam representando apenas a cobertura atual do frontend.
+Cloud Functions permanecem fora do escopo atual.
 
 ## 7. Execucao
 
@@ -97,14 +98,15 @@ Antes de concluir uma etapa, usar a execucao unica:
 npm run test:run
 ```
 
-O padrao minimo de verificacao local do projeto e:
+O padrão mínimo de verificação local do projeto é:
 
 ```bash
 npm run lint
 npm run test:run
+npm run test:rules
 npm run build
 ```
 
-## 8. Decisao de qualidade atual
+## 8. Decisão de qualidade
 
-O Vesttor possui testes unitarios iniciais e lint configurado. A proxima ampliacao de cobertura deve acontecer junto de uma funcionalidade nova ou de um bug real; testes de componente sao um proximo tema de estudo, nao um requisito imediato para encerrar esta etapa.
+Uma funcionalidade só é concluída com testes proporcionais ao risco, lint, build, Rules quando aplicável e documentação sincronizada. Publicação é uma etapa separada. As próximas prioridades são planejamento, services, formulários, autenticação, datas, parcelamentos, recorrências e migração.

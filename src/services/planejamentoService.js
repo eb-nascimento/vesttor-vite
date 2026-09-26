@@ -6,6 +6,7 @@ import {
   where,
   onSnapshot,
   doc,
+  serverTimestamp,
 } from "firebase/firestore";
 import { db } from "../config/firebase";
 
@@ -28,7 +29,7 @@ export async function criarPlanejamentoNaApi(planejamento, userId) {
   await addDoc(planejamentoCollection, {
     ...planejamento,
     userId,
-    dataCriacao: new Date().toISOString(),
+    dataCriacao: serverTimestamp(),
   });
 }
 

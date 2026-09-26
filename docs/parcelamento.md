@@ -1,6 +1,27 @@
 # Especificação Funcional e Técnica: Transação e Parcelamento
 
+> **Revisão de 26/09/2026.** A criação parcelada em lote está implementada. A edição atual da série está **A ser refatorada** porque ainda substitui documentos anteriores, inclusive parcelas liquidadas. Os nomes consumidos pela tela foram alinhados ao contrato de `useTransacoes` e receberam cobertura de regressão.
+
 Este documento define a arquitetura, regras de negócio, modelo de dados e comportamento de interface para compras parceladas no Vesttor, consolidado após sessão de refinamento de domínio (_grilling session_).
+
+## Regra aprovada para a refatoração
+
+- Parcelas pagas ou recebidas são imutáveis.
+- A edição poderá afetar somente a parcela escolhida ou ela e as futuras ainda não liquidadas.
+- O `parcelamentoId`, a numeração original e o total histórico serão preservados.
+- Cancelamento não renumera a série; transação liquidada incorreta é corrigida por estorno.
+- O modelo permitirá parcelamento de receitas, embora a primeira interface possa priorizar despesas.
+- Pagamento antecipado mantém competência e vencimento e registra a data real de liquidação.
+- Recorrência terá regra própria, chave determinística por competência, início, término opcional e edição “Somente esta” ou “Esta e as próximas”.
+
+## Conceitos separados
+
+- **Condição de pagamento:** à vista ou parcelada.
+- **Método de pagamento:** Pix, dinheiro, cartão, boleto, transferência ou outro.
+- **Parcelamento:** obrigação finita com quantidade e total conhecidos.
+- **Recorrência:** regra que gera obrigações independentes, com término opcional. Está planejada e não deve ser representada como parcelamento.
+
+Uma compra pode ser parcelada no boleto ou no Pix. Um seguro anual pago em parcelas também é parcelamento; uma renovação anual automática é recorrência. O método pode sugerir um estado inicial, mas não comprova sozinho que houve liquidação.
 
 ---
 
@@ -10,8 +31,8 @@ Este documento define a arquitetura, regras de negócio, modelo de dados e compo
 
 Se um usuário recebe **R$ 3.000,00** de salário e compra um celular de **R$ 5.000,00** parcelado em **24x** de R$ 208,33:
 
-- **Abordagem incorreta**: Lançar uma única despesa de R$ 5.000,00 no mês da compra gera um saldo falso de **-R$ 2.000,00**, distorcendo completamente o fluxo de caixa do mês.
-- **Abordagem adotada (Regime de Competência Mensal)**: A compra gera lançamentos mensais de R$ 208,33 (com centavos na primeira parcela). No mês atual, a saída de caixa real é de apenas R$ 208,41, preservando o saldo positivo do mês em **+R$ 2.791,59**. As 23 parcelas restantes são compromissos futuros que impactarão seus respectivos meses.
+- **Abordagem incorreta**: Lançar uma única despesa de R$ 5.000,00 em uma só competência distorce o resultado mensal e esconde a distribuição das obrigações.
+- **Abordagem adotada para resultado por competência**: a compra gera obrigações mensais de R$ 208,33, com centavos excedentes na primeira parcela. Isso não comprova saída de caixa: o fluxo líquido só considera uma parcela quando ela for efetivamente paga.
 
 ---
 
@@ -32,7 +53,7 @@ Cada parcela é armazenada como um **documento individual** na coleção `transa
 | :----------------- | :---------- | :------------------------------------------------- | :-------------------------------- |
 | `userId`           | `string`    | UID do usuário autenticado (obrigatório)           | `"abc123xyz"`                     |
 | `data`             | `timestamp` | Data de vencimento daquela parcela específica      | `Timestamp(2026-10-15)`           |
-| `descricao`        | `string`    | Nome da transação com sufixo da parcela            | `"Celular (1/24)"`                |
+| `descricao`        | `string`    | Nome da transação; o sufixo atual é legado e deve ser removido | `"Celular"` |
 | `valor`            | `number`    | Valor monetário da parcela individual              | `208.41` (1ª) / `208.33` (demais) |
 | `tipo`             | `string`    | Tipo de movimentação (sempre `"despesa"`)          | `"despesa"`                       |
 | `categoria`        | `string`    | Categoria selecionada                              | `"Outros"`                        |
@@ -78,7 +99,7 @@ Ao projetar as datas futuras, o dia do mês deve ser mantido sempre que possíve
 ## 4. Comportamento do Formulário (`Form.jsx`)
 
 1. **Modo de Entrada Flexível**:
-   - Switcher entre **"Valor Total"** (o usuário digita R$ 5.000,00 e o sistema calcula as parcelas) e **"Valor da Parcela"** (o usuário digita R$ 208,33 e o sistema calcula o total).
+   - A implementação atual recebe somente o **valor total** e calcula as parcelas. Um modo alternativo para informar o valor da parcela não faz parte do fluxo atual.
 2. **Quantidade Livre de Parcelas**:
    - Campo numérico aberto (`min={2}`, `max={72}`), permitindo qualquer número digitado pelo usuário (ex: 15x, 18x, etc.), acompanhado de botões rápidos para as quantidades mais comuns (2x, 3x, 6x, 10x, 12x).
 3. **Renderização Condicional**:
@@ -90,14 +111,14 @@ Ao projetar as datas futuras, o dia do mês deve ser mantido sempre que possíve
 
 1. **Saldo do Mês Atual**:
    - Os cards de **Receitas**, **Despesas** e **Saldo Total** somam apenas os lançamentos cujo vencimento recai no **mês e ano corrente**.
-   - As parcelas futuras a vencer permanecem no banco, mas só afetam o saldo quando seu respectivo mês for atingido.
+   - As parcelas futuras permanecem no banco e afetam o resultado de sua própria competência; o fluxo líquido só muda quando cada parcela é paga ou recebida.
 2. **Lista Compacta da Home (Top 5 e Deduplicação)**:
    - A lista de transações recentes na página inicial exibe no máximo **5 itens** para não ultrapassar a altura do formulário fixado na coluna esquerda.
    - **Escopo Temporal Recente**: Oculta lançamentos com vencimentos em meses futuros (> mês corrente), evitando que parcelas de 2027/2028 poluam o extrato imediato.
    - **Deduplicação de Série Parcelada**: Garante que cada compra parcelada (`parcelamentoId`) ocupe **no máximo 1 linha** na Home, exibindo apenas a parcela de competência do momento (ex: `1/24` em setembro, virando `2/24` em outubro), deixando as outras 4 posições livres para outras movimentações reais.
    - Um link de rodapé (_"Abrir todas as transações (X) &rarr;"_) direciona para `/transacoes`, onde todas as transações de todos os meses podem ser visualizadas e filtradas.
 3. **Badges de Parcela**:
-   - Cada lançamento parcelado exibe a etiqueta visual `Parcela X/Y` e o identificador no título da transação.
+   - Cada lançamento parcelado exibe a etiqueta visual `Parcela X/Y`, derivada de `numeroParcela` e `totalParcelas`. O modelo-alvo não inclui esse sufixo na descrição persistida.
 
 ---
 

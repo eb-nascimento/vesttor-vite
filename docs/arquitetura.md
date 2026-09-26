@@ -1,5 +1,7 @@
 # Vesttor - Arquitetura e Implementacao
 
+> **Documento histórico e não normativo.** A arquitetura confirmada em 26/09/2026 está em [Arquitetura V2](arquitetura-v2.md). O conteúdo abaixo foi preservado apenas para rastreabilidade e inclui decisões superadas.
+
 ## 1. Visao tecnica
 
 O Vesttor e uma aplicacao web criada com React, Vite, Firebase Authentication e Cloud Firestore.

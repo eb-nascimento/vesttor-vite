@@ -1,5 +1,7 @@
 # Temas e identidade visual
 
+> **Revisão documental em 26/09/2026.** Os tokens e decisões visuais permanecem válidos. Contagens antigas de arquivos ou testes são históricas; a situação de qualidade vigente está em [Estratégia de testes](sdd-testes.md).
+
 ## 1. Objetivo
 
 O projeto possui duas identidades visuais, clara e escura, baseadas nas imagens:
