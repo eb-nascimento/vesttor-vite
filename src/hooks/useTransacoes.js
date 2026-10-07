@@ -74,6 +74,7 @@ export function useTransacoes(userId) {
       await criarTransacaoNaApi(nova, userId);
     } catch (erro) {
       setErroOperacao(erro.message);
+      throw erro;
     }
   }
 
@@ -92,6 +93,7 @@ export function useTransacoes(userId) {
       await criarCompraParceladaNaApi(parcelas, userId);
     } catch (erro) {
       setErroOperacao(erro.message);
+      throw erro;
     }
   }
 
@@ -118,6 +120,7 @@ export function useTransacoes(userId) {
       await editarTransacaoNaApi(id, novosDados);
     } catch (erro) {
       setErroOperacao(erro.message);
+      throw erro;
     }
   }
 
@@ -127,6 +130,7 @@ export function useTransacoes(userId) {
       await atualizarCompraParceladaNaApi({ ...dados, userId });
     } catch (erro) {
       setErroOperacao(erro.message);
+      throw erro;
     }
   }
 
@@ -136,6 +140,7 @@ export function useTransacoes(userId) {
       await converterParaParceladaNaApi(transacaoId, novasParcelas, userId);
     } catch (erro) {
       setErroOperacao(erro.message);
+      throw erro;
     }
   }
 

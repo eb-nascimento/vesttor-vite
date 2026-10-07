@@ -1,5 +1,5 @@
 import "./FormTransacao.css";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import DatePicker from "../../../components/ui/DatePicker";
 import {
   criarTransacao,
@@ -117,10 +117,14 @@ function Form({
   onConverterParaParcelado,
   transacaoEditando,
   cancelarEdicao,
+  onProcessandoChange,
 }) {
+  const [processando, setProcessando] = useState(false);
+  const envioEmCurso = useRef(false);
   const [form, setForm] = useState(() => criarEstadoInicial(transacaoEditando));
 
   function atualizarCampo(campo, valor) {
+    if (envioEmCurso.current && campo !== "erro") return;
     let valorProcessado = valor;
 
     if (campo === "valor") {
@@ -218,6 +222,7 @@ function Form({
 
   async function salvar(e) {
     e.preventDefault();
+    if (envioEmCurso.current) return;
 
     const mensagemErro = validarTransacao({
       data: form.data,
@@ -256,12 +261,53 @@ function Form({
       ...(isParceladoValido ? { parcelas: numParcelasValidas } : {}),
     };
 
-    if (transacaoEditando) {
-      const tinhaParcelamentoId = Boolean(transacaoEditando.parcelamentoId);
+    envioEmCurso.current = true;
+    setProcessando(true);
+    onProcessandoChange?.(true);
+    try {
+      if (transacaoEditando) {
+        const tinhaParcelamentoId = Boolean(transacaoEditando.parcelamentoId);
 
-      if (tinhaParcelamentoId && onEditParcelado) {
-        if (isParceladoValido) {
-          // Atualiza toda a série recalculada com a nova quantidade de parcelas e valor
+        if (tinhaParcelamentoId && onEditParcelado) {
+          if (isParceladoValido) {
+            // Atualiza toda a série recalculada com a nova quantidade de parcelas e valor
+            const novaSerie = gerarSerieTransacoes({
+              data: form.data,
+              descricao: form.descricao,
+              valor: valorNumerico,
+              numParcelas: numParcelasValidas,
+              modo: "total",
+              categoria: form.categoria,
+              metodoPagamento: form.metodoPagamento,
+            });
+            await onEditParcelado({
+              parcelamentoId: transacaoEditando.parcelamentoId,
+              novasParcelas: novaSerie,
+            });
+          } else {
+            // Usuário desmarcou parcelamento: converte a série inteira em transação única
+            const transacaoUnica = criarTransacao(
+              payload.data,
+              payload.descricao,
+              valorNumerico,
+              payload.tipo,
+              payload.categoria,
+              payload.metodoPagamento || "",
+              false,
+              1,
+            );
+            await onEditParcelado({
+              parcelamentoId: transacaoEditando.parcelamentoId,
+              novasParcelas: null,
+              transacaoUnica,
+            });
+          }
+        } else if (
+          !tinhaParcelamentoId &&
+          isParceladoValido &&
+          onConverterParaParcelado
+        ) {
+          // Era transação única e foi convertida para compra parcelada
           const novaSerie = gerarSerieTransacoes({
             data: form.data,
             descricao: form.descricao,
@@ -271,35 +317,15 @@ function Form({
             categoria: form.categoria,
             metodoPagamento: form.metodoPagamento,
           });
-          await onEditParcelado({
-            parcelamentoId: transacaoEditando.parcelamentoId,
-            novasParcelas: novaSerie,
-          });
+          await onConverterParaParcelado(transacaoEditando.id, novaSerie);
         } else {
-          // Usuário desmarcou parcelamento: converte a série inteira em transação única
-          const transacaoUnica = criarTransacao(
-            payload.data,
-            payload.descricao,
-            valorNumerico,
-            payload.tipo,
-            payload.categoria,
-            payload.metodoPagamento || "",
-            false,
-            1,
-          );
-          await onEditParcelado({
-            parcelamentoId: transacaoEditando.parcelamentoId,
-            novasParcelas: null,
-            transacaoUnica,
-          });
+          // Edição simples de transação avulsa
+          await onEdit(transacaoEditando.id, payload);
         }
-      } else if (
-        !tinhaParcelamentoId &&
-        isParceladoValido &&
-        onConverterParaParcelado
-      ) {
-        // Era transação única e foi convertida para compra parcelada
-        const novaSerie = gerarSerieTransacoes({
+
+        cancelarEdicao();
+      } else if (isParceladoValido && onAddParcelado) {
+        const serie = gerarSerieTransacoes({
           data: form.data,
           descricao: form.descricao,
           valor: valorNumerico,
@@ -308,50 +334,40 @@ function Form({
           categoria: form.categoria,
           metodoPagamento: form.metodoPagamento,
         });
-        await onConverterParaParcelado(transacaoEditando.id, novaSerie);
+        await onAddParcelado(serie);
       } else {
-        // Edição simples de transação avulsa
-        await onEdit(transacaoEditando.id, payload);
+        const nova = criarTransacao(
+          payload.data,
+          payload.descricao,
+          valorNumerico,
+          payload.tipo,
+          payload.categoria,
+          payload.metodoPagamento || "",
+          payload.parcelado,
+          payload.parcelas || 1,
+        );
+        await onAdd(nova);
       }
 
-      cancelarEdicao();
-    } else if (isParceladoValido && onAddParcelado) {
-      const serie = gerarSerieTransacoes({
-        data: form.data,
-        descricao: form.descricao,
-        valor: valorNumerico,
-        numParcelas: numParcelasValidas,
-        modo: "total",
-        categoria: form.categoria,
-        metodoPagamento: form.metodoPagamento,
+      // Reset para o estado inicial
+      setForm({
+        data: obterDataAtual(),
+        descricao: "",
+        valor: "",
+        tipo: "despesa",
+        metodoPagamento: "pix",
+        categoria: "Alimentação",
+        parcelado: false,
+        parcelas: 2,
+        erro: "",
       });
-      onAddParcelado(serie);
-    } else {
-      const nova = criarTransacao(
-        payload.data,
-        payload.descricao,
-        valorNumerico,
-        payload.tipo,
-        payload.categoria,
-        payload.metodoPagamento || "",
-        payload.parcelado,
-        payload.parcelas || 1,
-      );
-      onAdd(nova);
+    } catch (erro) {
+      atualizarCampo("erro", erro.message || "Não foi possível salvar. Tente novamente.");
+    } finally {
+      envioEmCurso.current = false;
+      setProcessando(false);
+      onProcessandoChange?.(false);
     }
-
-    // Reset para o estado inicial
-    setForm({
-      data: obterDataAtual(),
-      descricao: "",
-      valor: "",
-      tipo: "despesa",
-      metodoPagamento: "pix",
-      categoria: "Alimentação",
-      parcelado: false,
-      parcelas: 2,
-      erro: "",
-    });
   }
 
   const isDespesa = form.tipo === "despesa";
@@ -367,7 +383,8 @@ function Form({
         </p>
       </div>
 
-      <form onSubmit={salvar}>
+      <form onSubmit={salvar} aria-busy={processando}>
+        <fieldset disabled={processando} className="form-campos">
         {/* 1. SELETOR DE TIPO (DESPESA / RECEITA) */}
         <div className="form-item">
           <label htmlFor="tipo">Tipo</label>
@@ -630,14 +647,15 @@ function Form({
 
         {/* 8. BOTÕES DE AÇÃO */}
         <div className="form-acoes">
-          <button type="submit" className="btn-submit">
-            {textoBotaoPrincipal}
+          <button type="submit" className="btn-submit" disabled={processando}>
+            {processando ? "Salvando…" : textoBotaoPrincipal}
           </button>
 
           {transacaoEditando && (
             <button
               type="button"
               className="btn-cancelar"
+              disabled={processando}
               onClick={cancelarEdicao}
             >
               Cancelar edição
@@ -645,9 +663,12 @@ function Form({
           )}
         </div>
 
+        </fieldset>
         {/* 9. HELPER RODAPÉ DO FIGMA */}
         <p className="form-helper-rodape">
-          Os saldos e a lista serão atualizados automaticamente.
+          <span role="status">
+            {processando ? "Salvando transação. Aguarde." : "Os saldos e a lista serão atualizados automaticamente."}
+          </span>
         </p>
       </form>
     </section>

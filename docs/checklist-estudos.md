@@ -360,3 +360,14 @@ Decisao vigente: manter o MVP no plano Spark. A implementacao, os testes e o dep
 - `requisitos.md` registra produto, escopo e regras.
 - `arquitetura.md` registra implementacao e decisoes tecnicas.
 - Este checklist registra progresso e proximos passos.
+
+
+### Estado de processamento de transações — 07/10/2026
+
+- [x] Aguardar gravação simples e parcelada antes de limpar o formulário.
+- [x] Bloquear envios simultâneos e mostrar Salvando durante a operação.
+- [x] Preservar campos e edição após falha, permitindo nova tentativa.
+- [x] Propagar falhas das gravações do hook para o formulário.
+- [x] Impedir fechamento do modal durante a gravação.
+- [ ] Estender processamento e confirmação de sucesso às exclusões e ao planejamento.
+- Alteração local na branch codex/estado-processamento-transacoes; publicação e atualização do Notion permanecem separadas.
