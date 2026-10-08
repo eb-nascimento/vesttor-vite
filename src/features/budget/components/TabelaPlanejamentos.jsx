@@ -1,8 +1,12 @@
 import { useState } from "react";
 import "./TabelaPlanejamentos.css";
 import { Search, AlertTriangle, Check, EditIcon } from "lucide-react";
+import { useOperacaoAssincrona } from "../../../hooks/useOperacaoAssincrona";
 
 function TabelaPlanejamentos({ itens = [], onApprove, onEdit, onAdd }) {
+  const { processando, erro, executar } = useOperacaoAssincrona(
+    "Não foi possível adicionar ao planejamento. Tente novamente.",
+  );
   const [filtroAtivo, setFiltroAtivo] = useState("Todos");
   const [buscaAtiva, setBuscaAtiva] = useState(false);
   const [textoBusca, setTextoBusca] = useState("");
@@ -35,6 +39,8 @@ function TabelaPlanejamentos({ itens = [], onApprove, onEdit, onAdd }) {
 
   return (
     <section className="tabela-planejamentos-container">
+      {processando && <p role="status">Adicionando ao planejamento...</p>}
+      {erro && <p className="erro-msg" role="alert">{erro}</p>}
       <div className="tabela-planejamentos-header">
         <h2>Planejamentos</h2>
         <div className="tabela-planejamentos-filtros">
@@ -120,7 +126,8 @@ function TabelaPlanejamentos({ itens = [], onApprove, onEdit, onAdd }) {
                 {item.isUnplanned ? (
                   <button
                     className="btn-acao-ok"
-                    onClick={() => onApprove && onApprove(item)}
+                    onClick={() => onApprove && executar(() => onApprove(item))}
+                    disabled={processando}
                     title="Adicionar ao planejamento"
                   >
                     <Check size={14} /> OK

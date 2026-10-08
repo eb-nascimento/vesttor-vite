@@ -115,18 +115,14 @@ function ListaTransacoes({
       {transacaoParceladaParaExcluir && (
         <ModalExclusaoParcelamento
           transacao={transacaoParceladaParaExcluir}
-          onExcluirApenasEsta={() => {
-            onExcluir(transacaoParceladaParaExcluir.id);
-            setTransacaoParceladaParaExcluir(null);
-          }}
+          onExcluirApenasEsta={() => onExcluir(transacaoParceladaParaExcluir.id)}
           onExcluirSerie={() => {
             if (onExcluirSerie) {
-              onExcluirSerie(
+              return onExcluirSerie(
                 transacaoParceladaParaExcluir.parcelamentoId,
                 transacaoParceladaParaExcluir.numeroParcela,
               );
             }
-            setTransacaoParceladaParaExcluir(null);
           }}
           onFechar={() => setTransacaoParceladaParaExcluir(null)}
         />

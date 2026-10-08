@@ -26,6 +26,8 @@ describe("falhas das gravações de transações", () => {
     ["editarTransacao", "editarTransacaoNaApi", ["id-1", {}]],
     ["atualizarCompraParcelada", "atualizarCompraParceladaNaApi", [{}]],
     ["converterParaParcelada", "converterParaParceladaNaApi", ["id-1", []]],
+    ["excluirTransacao", "excluirTransacaoNaApi", ["id-1"]],
+    ["excluirParcelasFuturas", "excluirParcelasFuturasNaApi", ["serie-1", 2]],
   ])("%s informa a falha ao formulário", async (method, service, args) => {
     const erro = new Error("Gravação recusada");
     services[service].mockRejectedValue(erro);

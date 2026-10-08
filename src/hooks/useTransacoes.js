@@ -83,7 +83,8 @@ export function useTransacoes(userId) {
       setErroOperacao("");
       await excluirTransacaoNaApi(id);
     } catch (erro) {
-      setErroOperacao(erro.message);
+      setErroOperacao("Não foi possível excluir a transação. Tente novamente.");
+      throw erro;
     }
   }
 
@@ -106,7 +107,8 @@ export function useTransacoes(userId) {
         userId,
       );
     } catch (erro) {
-      setErroOperacao(erro.message);
+      setErroOperacao("Não foi possível excluir as parcelas. Confira os dados e tente novamente.");
+      throw erro;
     }
   }
 

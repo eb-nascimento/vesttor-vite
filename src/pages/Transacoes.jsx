@@ -63,7 +63,7 @@ function Transacoes({ usuario }) {
   };
 
   const handleExcluirNormal = (id) => {
-    excluirTransacao(id);
+    return excluirTransacao(id);
   };
 
   const handleSolicitarExclusaoParcelamento = (item) => {
@@ -182,16 +182,12 @@ function Transacoes({ usuario }) {
       {transacaoParaExcluir && (
         <ModalExclusaoParcelamento
           transacao={transacaoParaExcluir}
-          onExcluirApenasEsta={() => {
-            excluirTransacao(transacaoParaExcluir.id);
-            setTransacaoParaExcluir(null);
-          }}
+          onExcluirApenasEsta={() => excluirTransacao(transacaoParaExcluir.id)}
           onExcluirSerie={() => {
-            excluirParcelasFuturas(
+            return excluirParcelasFuturas(
               transacaoParaExcluir.parcelamentoId,
               transacaoParaExcluir.numeroParcela,
             );
-            setTransacaoParaExcluir(null);
           }}
           onFechar={() => setTransacaoParaExcluir(null)}
         />

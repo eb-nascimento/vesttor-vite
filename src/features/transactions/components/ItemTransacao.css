@@ -12,6 +12,22 @@
   border-bottom: 0;
 }
 
+.transacao-item:has([role="alert"]),
+.transacao-item:has([role="status"]) {
+  flex-wrap: wrap;
+}
+
+.transacao-item > [role="alert"],
+.transacao-item > [role="status"] {
+  flex-basis: 100%;
+  font-size: 12px;
+}
+
+.btn-acao:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
 .transacao-esquerda {
   display: flex;
   align-items: center;

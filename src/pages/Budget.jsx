@@ -216,6 +216,7 @@ function Budget({ usuario }) {
         />
       </div>
       <ModalFormPlanejamento
+        key={`${modalFormAberto}-${planejamentoEditando?.id || "novo"}`}
         isOpen={modalFormAberto}
         onClose={() => {
           setModalFormAberto(false);
