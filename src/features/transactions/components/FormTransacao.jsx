@@ -1,3 +1,4 @@
+import { obterMensagemErroFirestore } from "../../../utils/errosFirestore";
 import "./FormTransacao.css";
 import { useState, useMemo, useRef } from "react";
 import DatePicker from "../../../components/ui/DatePicker";
@@ -362,7 +363,7 @@ function Form({
         erro: "",
       });
     } catch (erro) {
-      atualizarCampo("erro", erro.message || "Não foi possível salvar. Tente novamente.");
+      atualizarCampo("erro", obterMensagemErroFirestore(erro, "Não foi possível salvar. Tente novamente."));
     } finally {
       envioEmCurso.current = false;
       setProcessando(false);

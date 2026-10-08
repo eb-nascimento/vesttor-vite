@@ -1,4 +1,5 @@
 import "./Home.css";
+import Button from "../components/ui/Button";
 import { useTransacoes } from "../hooks/useTransacoes";
 import ContainerResumo from "../features/dashboard/components/ContainerResumo";
 import FormTransacao from "../features/transactions/components/FormTransacao";
@@ -11,6 +12,7 @@ function Home({ usuario }) {
     transacoes,
     carregando,
     erroLeitura,
+    tentarNovamente,
     erroOperacao,
     adicionarTransacao,
     adicionarCompraParcelada,
@@ -61,9 +63,10 @@ function Home({ usuario }) {
           )}
 
           {erroLeitura && (
-            <p className="erro-msg" role="alert">
-              {erroLeitura}
-            </p>
+            <div className="erro-msg" role="alert">
+              <p>{erroLeitura}</p>
+              <Button onClick={tentarNovamente} disabled={carregando}>Tentar novamente</Button>
+            </div>
           )}
 
           {!carregando && !erroLeitura && (

@@ -1,10 +1,5 @@
-function Account() {
-  return (
-    <div>
-      <h1>Minha Conta</h1>
-      <p>Esta é a página da minha conta.</p>
-    </div>
-  );
-}
+import EmConstrucao from "../components/ui/EmConstrucao";
 
-export default Account;
+export default function Account() {
+  return <EmConstrucao titulo="Minha conta" descricao="Aqui você poderá gerenciar as informações da sua conta." />;
+}

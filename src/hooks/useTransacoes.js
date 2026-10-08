@@ -1,3 +1,4 @@
+import { obterMensagemErroFirestore } from "../utils/errosFirestore";
 import { useEffect, useState } from "react";
 
 import {
@@ -23,6 +24,7 @@ export function useTransacoes(userId) {
   const [carregando, setCarregando] = useState(true);
   const [erroLeitura, setErroLeitura] = useState("");
   const [erroOperacao, setErroOperacao] = useState("");
+  const [tentativaLeitura, setTentativaLeitura] = useState(0);
 
   // Saldo geral acumulado histórico
   const saldo = calcularSaldo(transacoes);
@@ -57,23 +59,30 @@ export function useTransacoes(userId) {
       userId,
       (dados) => {
         setTransacoes(dados);
+        setErroLeitura("");
         setCarregando(false);
       },
       (erro) => {
-        setErroLeitura(erro.message);
+        setErroLeitura(obterMensagemErroFirestore(erro));
         setCarregando(false);
       },
     );
 
     return cancelarObservacao;
-  }, [userId]);
+  }, [userId, tentativaLeitura]);
+
+  function tentarNovamente() {
+    setCarregando(true);
+    setErroLeitura("");
+    setTentativaLeitura((tentativa) => tentativa + 1);
+  }
 
   async function adicionarTransacao(nova) {
     try {
       setErroOperacao("");
       await criarTransacaoNaApi(nova, userId);
     } catch (erro) {
-      setErroOperacao(erro.message);
+      setErroOperacao(obterMensagemErroFirestore(erro));
       throw erro;
     }
   }
@@ -83,7 +92,7 @@ export function useTransacoes(userId) {
       setErroOperacao("");
       await excluirTransacaoNaApi(id);
     } catch (erro) {
-      setErroOperacao("Não foi possível excluir a transação. Tente novamente.");
+      setErroOperacao(obterMensagemErroFirestore(erro, "Não foi possível excluir a transação. Tente novamente."));
       throw erro;
     }
   }
@@ -93,7 +102,7 @@ export function useTransacoes(userId) {
       setErroOperacao("");
       await criarCompraParceladaNaApi(parcelas, userId);
     } catch (erro) {
-      setErroOperacao(erro.message);
+      setErroOperacao(obterMensagemErroFirestore(erro));
       throw erro;
     }
   }
@@ -107,7 +116,7 @@ export function useTransacoes(userId) {
         userId,
       );
     } catch (erro) {
-      setErroOperacao("Não foi possível excluir as parcelas. Confira os dados e tente novamente.");
+      setErroOperacao(obterMensagemErroFirestore(erro, "Não foi possível excluir as parcelas. Confira os dados e tente novamente."));
       throw erro;
     }
   }
@@ -121,7 +130,7 @@ export function useTransacoes(userId) {
       setErroOperacao("");
       await editarTransacaoNaApi(id, novosDados);
     } catch (erro) {
-      setErroOperacao(erro.message);
+      setErroOperacao(obterMensagemErroFirestore(erro));
       throw erro;
     }
   }
@@ -131,7 +140,7 @@ export function useTransacoes(userId) {
       setErroOperacao("");
       await atualizarCompraParceladaNaApi({ ...dados, userId });
     } catch (erro) {
-      setErroOperacao(erro.message);
+      setErroOperacao(obterMensagemErroFirestore(erro));
       throw erro;
     }
   }
@@ -141,7 +150,7 @@ export function useTransacoes(userId) {
       setErroOperacao("");
       await converterParaParceladaNaApi(transacaoId, novasParcelas, userId);
     } catch (erro) {
-      setErroOperacao(erro.message);
+      setErroOperacao(obterMensagemErroFirestore(erro));
       throw erro;
     }
   }
@@ -155,6 +164,7 @@ export function useTransacoes(userId) {
     carregando,
     erroLeitura,
     erroOperacao,
+    tentarNovamente,
     saldo,
     receitas,
     despesas,

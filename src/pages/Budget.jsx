@@ -10,6 +10,7 @@ import Button from "../components/ui/Button";
 import { Plus } from "lucide-react";
 import EquacaoMes from "../features/budget/components/EquacaoMes";
 import PageHeader from "../components/ui/PageHeader";
+import StatePanel from "../components/ui/StatePanel";
 import TabelaPlanejamentos from "../features/budget/components/TabelaPlanejamentos";
 import PainelLateralPlanejamento from "../features/budget/components/PainelLateralPlanejamento";
 import ModalFormPlanejamento from "../features/budget/components/ModalFormPlanejamento";
@@ -18,8 +19,8 @@ function Budget({ usuario }) {
   const [modalFormAberto, setModalFormAberto] = useState(false);
   const [planejamentoEditando, setPlanejamentoEditando] = useState(null);
 
-  const { transacoes } = useTransacoes(usuario?.uid);
-  const { planejamentos, criarPlanejamento, atualizarPlanejamento } =
+  const { transacoes, carregando: carregandoTransacoes, erroLeitura: erroTransacoes, tentarNovamente: tentarTransacoes } = useTransacoes(usuario?.uid);
+  const { planejamentos, criarPlanejamento, atualizarPlanejamento, carregando, erroLeitura, tentarNovamente } =
     usePlanejamentos(usuario?.uid);
   const { filtros, mesesDisponiveis, handleMudarMes } =
     useFiltrosTransacoes(transacoes);
@@ -165,6 +166,15 @@ function Budget({ usuario }) {
         : new Date(`${b.data}T12:00:00`);
       return dataA - dataB;
     });
+
+  if (carregando || carregandoTransacoes) {
+    return <StatePanel state="loading" message="Carregando planejamento financeiro..." />;
+  }
+  if (erroLeitura || erroTransacoes) {
+    return <StatePanel state="error" message={erroLeitura || erroTransacoes}>
+      <Button onClick={() => { tentarNovamente(); tentarTransacoes(); }}>Tentar novamente</Button>
+    </StatePanel>;
+  }
 
   return (
     <section className="budget-page">

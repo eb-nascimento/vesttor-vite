@@ -1,10 +1,5 @@
-function Settings() {
-  return (
-    <div>
-      <h1>Settings</h1>
-      <p>Esta é a página de configurações.</p>
-    </div>
-  );
-}
+import EmConstrucao from "../components/ui/EmConstrucao";
 
-export default Settings;
+export default function Settings() {
+  return <EmConstrucao titulo="Configurações" descricao="Aqui você poderá ajustar suas preferências." />;
+}

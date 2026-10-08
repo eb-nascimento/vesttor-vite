@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { obterMensagemErroFirestore } from "../utils/errosFirestore";
 
 // O ref bloqueia também cliques ocorridos antes do próximo render.
 export function useOperacaoAssincrona(mensagemErro) {
@@ -14,8 +15,8 @@ export function useOperacaoAssincrona(mensagemErro) {
     try {
       await operacao();
       return true;
-    } catch {
-      setErro(mensagemErro);
+    } catch (falha) {
+      setErro(obterMensagemErroFirestore(falha, mensagemErro));
       return false;
     } finally {
       emCurso.current = false;

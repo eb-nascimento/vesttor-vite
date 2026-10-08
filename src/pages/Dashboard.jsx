@@ -1,10 +1,5 @@
-function Dashboard() {
-  return (
-    <div>
-      <h1>Dashboard</h1>
-      <p>Bem-vindo ao Dashboard!</p>
-    </div>
-  );
-}
+import EmConstrucao from "../components/ui/EmConstrucao";
 
-export default Dashboard;
+export default function Dashboard() {
+  return <EmConstrucao titulo="Dashboard" descricao="Aqui você poderá acompanhar uma visão geral das suas finanças." />;
+}

@@ -13,7 +13,7 @@ import { db } from "../config/firebase";
 const planejamentoCollection = collection(db, "planejamentos");
 
 // Fica "ouvindo" o Firebase e avisa sempre que um planejamento for criado/alterado
-export function onPlanejamentoChange(userId, onDados) {
+export function onPlanejamentoChange(userId, onDados, onErro) {
   const consulta = query(planejamentoCollection, where("userId", "==", userId));
 
   return onSnapshot(consulta, (snapshot) => {
@@ -22,7 +22,7 @@ export function onPlanejamentoChange(userId, onDados) {
       ...doc.data(),
     }));
     onDados(planejamentos);
-  });
+  }, onErro);
 }
 
 export async function criarPlanejamentoNaApi(planejamento, userId) {

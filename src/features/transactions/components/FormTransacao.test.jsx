@@ -67,7 +67,7 @@ describe("envio de transações", () => {
     const tree = render(props);
     expect(field(tree, "descricao").props.value).toBe("Compra de teste");
     expect(field(tree, "valor").props.value).toBe("120");
-    expect(find(tree, (node) => node.props?.role === "alert").props.children).toBe("Falha na gravação");
+    expect(find(tree, (node) => node.props?.role === "alert").props.children).toBe("Não foi possível salvar. Tente novamente.");
     expect(find(tree, (node) => node.type === "fieldset").props.disabled).toBe(false);
     await submit(tree);
     expect(onAdd).toHaveBeenCalledTimes(2);

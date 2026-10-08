@@ -24,6 +24,7 @@ function Transacoes({ usuario }) {
     carregando,
     erroOperacao,
     erroLeitura,
+    tentarNovamente,
     transacoes,
     adicionarTransacao,
     adicionarCompraParcelada,
@@ -97,6 +98,7 @@ function Transacoes({ usuario }) {
       {(erroOperacao || erroLeitura) && (
         <div className="erro-msg" role="alert">
           {erroOperacao || erroLeitura}
+          {erroLeitura && <Button onClick={tentarNovamente} disabled={carregando}>Tentar novamente</Button>}
         </div>
       )}
 
