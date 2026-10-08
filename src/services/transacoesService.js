@@ -1,184 +1,80 @@
-import {
-  collection,
-  addDoc,
-  Timestamp,
-  doc,
-  deleteDoc,
-  updateDoc,
-  query,
-  where,
-  onSnapshot,
-  writeBatch,
-  getDocs,
-} from "firebase/firestore";
+import { addDoc, Timestamp, doc, writeBatch, getDocs, query, where, collection } from "firebase/firestore";
 import { db } from "../config/firebase";
+import { colecaoUsuario, observarPeriodo, gravarExistente, excluirNoBatch } from "./repositorioFinanceiro";
+import { serializarDinheiro, normalizarDinheiro } from "../utils/dinheiro";
+import { mesAtual } from "../utils/periodo";
 
-// Referencia reutilizada em todas as operacoes da colecao.
-const transacaoCollection = collection(db, "transacoes");
-
-export function observarTransacoes(userId, onDados, onErro) {
-  const consulta = query(transacaoCollection, where("userId", "==", userId));
-
-  return onSnapshot(
-    consulta,
-    (snapshot) => {
-      const transacoes = snapshot.docs.map((documento) => ({
-        ...documento.data(),
-        id: documento.id,
-      }));
-      onDados(transacoes);
-    },
-    onErro,
-  );
+function dadosTransacao(dados, uid) {
+  const campos = { ...dados };
+  delete campos.id;
+  const resultado = serializarDinheiro(campos);
+  resultado.userId = uid;
+  resultado.data = typeof dados.data === "string" ? Timestamp.fromDate(new Date(`${dados.data}T12:00:00`)) : dados.data;
+  return resultado;
 }
 
-export async function criarTransacaoNaApi(transacao, userId) {
-  // O input date envia texto; o Firestore armazena a data como Timestamp.
-  const dados = {
-    ...transacao,
-    userId,
-    data: Timestamp.fromDate(new Date(`${transacao.data}T12:00:00`)),
-  };
-
-  const documento = await addDoc(transacaoCollection, dados);
-
-  // Retorna o formato usado pelo estado React, incluindo o ID gerado.
-  return {
-    ...dados,
-    id: documento.id,
-  };
+export function observarTransacoes(uid, onDados, onErro, mes = mesAtual()) {
+  return observarPeriodo(uid, "transacoes", mes, onDados, onErro);
 }
 
-export async function excluirTransacaoNaApi(id) {
-  // Cria a referencia exata do documento antes de exclui-lo.
-  const referencia = doc(db, "transacoes", id);
-  await deleteDoc(referencia);
+export async function criarTransacaoNaApi(transacao, uid) {
+  const dados = dadosTransacao(transacao, uid);
+  const ref = await addDoc(colecaoUsuario(uid, "transacoes"), dados);
+  return { ...normalizarDinheiro(dados), id: ref.id };
 }
 
-export async function editarTransacaoNaApi(id, novosDados) {
-  const referencia = doc(db, "transacoes", id);
-
-  // A data volta do formulario como texto e precisa ser convertida novamente.
-  const dados = {
-    ...novosDados,
-    data: Timestamp.fromDate(new Date(`${novosDados.data}T12:00:00`)),
-  };
-  await updateDoc(referencia, dados);
-
-  // O hook usa este retorno para substituir o item editado no estado.
-  return {
-    ...dados,
-    id,
-  };
-}
-
-export async function criarCompraParceladaNaApi(parcelas, userId) {
+export async function excluirTransacaoNaApi(id, uid) {
   const batch = writeBatch(db);
-  const transacoesCriadas = [];
-
-  for (const parcela of parcelas) {
-    const docRef = doc(transacaoCollection);
-    const dados = {
-      ...parcela,
-      userId,
-      data: Timestamp.fromDate(new Date(`${parcela.data}T12:00:00`)),
-    };
-    batch.set(docRef, dados);
-    transacoesCriadas.push({ ...dados, id: docRef.id });
-  }
-
-  await batch.commit();
-  return transacoesCriadas;
-}
-
-export async function excluirParcelasFuturasNaApi(
-  parcelamentoId,
-  numeroParcelaMinimo,
-  userId,
-) {
-  const consulta = query(
-    transacaoCollection,
-    where("userId", "==", userId),
-    where("parcelamentoId", "==", parcelamentoId),
-  );
-
-  const snapshot = await getDocs(consulta);
-  const batch = writeBatch(db);
-  let totalExcluidos = 0;
-
-  snapshot.docs.forEach((documento) => {
-    const dados = documento.data();
-    if (Number(dados.numeroParcela) >= Number(numeroParcelaMinimo)) {
-      batch.delete(documento.ref);
-      totalExcluidos++;
-    }
-  });
-
-  if (totalExcluidos > 0) {
-    await batch.commit();
-  }
-}
-
-export async function atualizarCompraParceladaNaApi({
-  parcelamentoId,
-  novasParcelas,
-  transacaoUnica,
-  userId,
-}) {
-  const consulta = query(
-    transacaoCollection,
-    where("userId", "==", userId),
-    where("parcelamentoId", "==", parcelamentoId),
-  );
-
-  const snapshot = await getDocs(consulta);
-  const batch = writeBatch(db);
-
-  // Exclui todas as parcelas anteriores da série
-  snapshot.docs.forEach((docSnap) => {
-    batch.delete(docSnap.ref);
-  });
-
-  // Se continua parcelada, insere a nova série recalculada
-  if (novasParcelas && novasParcelas.length > 0) {
-    for (const parcela of novasParcelas) {
-      const docRef = doc(transacaoCollection);
-      batch.set(docRef, {
-        ...parcela,
-        userId,
-        data: Timestamp.fromDate(new Date(`${parcela.data}T12:00:00`)),
-      });
-    }
-  } else if (transacaoUnica) {
-    // Se o usuário desmarcou parcelamento, grava como transação única
-    const docRef = doc(transacaoCollection);
-    batch.set(docRef, {
-      ...transacaoUnica,
-      userId,
-      data: Timestamp.fromDate(new Date(`${transacaoUnica.data}T12:00:00`)),
-    });
-  }
-
+  excluirNoBatch(batch, uid, "transacoes", id);
   await batch.commit();
 }
 
-export async function converterParaParceladaNaApi(
-  transacaoId,
-  novasParcelas,
-  userId,
-) {
+export async function editarTransacaoNaApi(id, novosDados, uid) {
+  const dados = await gravarExistente(uid, "transacoes", id, (original) => dadosTransacao({ ...original, ...novosDados }, uid));
+  return { ...normalizarDinheiro(dados), id };
+}
+
+export async function criarCompraParceladaNaApi(parcelas, uid) {
   const batch = writeBatch(db);
-  const refOriginal = doc(db, "transacoes", transacaoId);
-  batch.delete(refOriginal);
+  const criadas = parcelas.map((parcela) => {
+    const ref = doc(colecaoUsuario(uid, "transacoes"));
+    const dados = dadosTransacao(parcela, uid);
+    batch.set(ref, dados);
+    return { ...normalizarDinheiro(dados), id: ref.id };
+  });
+  await batch.commit();
+  return criadas;
+}
 
-  for (const parcela of novasParcelas) {
-    const docRef = doc(transacaoCollection);
-    batch.set(docRef, {
-      ...parcela,
-      userId,
-      data: Timestamp.fromDate(new Date(`${parcela.data}T12:00:00`)),
-    });
+async function documentosSerie(uid, parcelamentoId) {
+  const consultas = [
+    query(colecaoUsuario(uid, "transacoes"), where("parcelamentoId", "==", parcelamentoId)),
+    query(collection(db, "transacoes"), where("userId", "==", uid), where("parcelamentoId", "==", parcelamentoId)),
+  ];
+  const snapshots = await Promise.all(consultas.map(getDocs));
+  return snapshots.flatMap((snapshot) => snapshot.docs);
+}
+
+export async function excluirParcelasFuturasNaApi(parcelamentoId, numeroParcelaMinimo, uid) {
+  const documentos = await documentosSerie(uid, parcelamentoId);
+  const batch = writeBatch(db);
+  documentos.filter((item) => item.data().numeroParcela >= numeroParcelaMinimo).forEach((item) => batch.delete(item.ref));
+  if (documentos.length) await batch.commit();
+}
+
+export async function atualizarCompraParceladaNaApi({ parcelamentoId, novasParcelas, transacaoUnica, userId }) {
+  const documentos = await documentosSerie(userId, parcelamentoId);
+  const batch = writeBatch(db);
+  documentos.forEach((item) => batch.delete(item.ref));
+  for (const parcela of novasParcelas?.length ? novasParcelas : transacaoUnica ? [transacaoUnica] : []) {
+    batch.set(doc(colecaoUsuario(userId, "transacoes")), dadosTransacao(parcela, userId));
   }
+  await batch.commit();
+}
 
+export async function converterParaParceladaNaApi(transacaoId, novasParcelas, uid) {
+  const batch = writeBatch(db);
+  excluirNoBatch(batch, uid, "transacoes", transacaoId);
+  novasParcelas.forEach((parcela) => batch.set(doc(colecaoUsuario(uid, "transacoes")), dadosTransacao(parcela, uid)));
   await batch.commit();
 }

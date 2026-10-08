@@ -5,7 +5,7 @@ vi.mock("react", async (original) => ({
   ...(await original()),
   useState(inicial) {
     const i = estado.indice++;
-    if (!(i in estado.valores)) estado.valores[i] = inicial;
+    if (!(i in estado.valores)) estado.valores[i] = typeof inicial === "function" ? inicial() : inicial;
     return [estado.valores[i], (valor) => { estado.valores[i] = typeof valor === "function" ? valor(estado.valores[i]) : valor; }];
   },
   useEffect(efeito) { estado.efeito = efeito; },

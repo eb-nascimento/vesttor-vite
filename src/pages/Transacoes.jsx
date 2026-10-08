@@ -25,6 +25,7 @@ function Transacoes({ usuario }) {
     erroOperacao,
     erroLeitura,
     tentarNovamente,
+    mudarPeriodo,
     transacoes,
     adicionarTransacao,
     adicionarCompraParcelada,
@@ -51,7 +52,7 @@ function Transacoes({ usuario }) {
     totalPaginas,
     limparFiltros,
     handleMudarMes,
-  } = useFiltrosTransacoes(transacoes);
+  } = useFiltrosTransacoes(transacoes, mudarPeriodo);
 
   // Estados de Modais
   const [modalFormAberto, setModalFormAberto] = useState(false);
@@ -111,6 +112,8 @@ function Transacoes({ usuario }) {
             receitas={totais.receitas}
             despesas={totais.despesas}
             quantidade={totalItens}
+            temReceitas={totais.temReceitas}
+            temDespesas={totais.temDespesas}
           />
 
           <FiltrosTransacoes
@@ -159,7 +162,7 @@ function Transacoes({ usuario }) {
             paginaAtual={paginaAtual}
             temAnterior={paginaAtual > 1}
             temProxima={paginaAtual < totalPaginas}
-            de={(paginaAtual - 1) * ITENS_POR_PAGINA + 1}
+            de={totalItens ? (paginaAtual - 1) * ITENS_POR_PAGINA + 1 : 0}
             ate={Math.min(paginaAtual * ITENS_POR_PAGINA, totalItens)}
             totalItens={totalItens}
             onMudarPagina={setPaginaAtual}

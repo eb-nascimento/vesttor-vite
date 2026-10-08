@@ -1,3 +1,6 @@
+import { centavosDoItem } from "./dinheiro";
+import { calcularSaldo, calcularReceitas, calcularDespesas } from "./calculos";
+
 function obterMillis(data) {
   if (!data) return 0;
   if (typeof data.toMillis === "function") return data.toMillis();
@@ -112,10 +115,10 @@ export function ordenarTransacoes(transacoes, ordenacao) {
       return obterMillis(b.data) - obterMillis(a.data);
     }
     if (ordenacao === "valor-crescente") {
-      return a.valor - b.valor;
+      return centavosDoItem(a) - centavosDoItem(b);
     }
     if (ordenacao === "valor-decrescente") {
-      return b.valor - a.valor;
+      return centavosDoItem(b) - centavosDoItem(a);
     }
     return 0;
   });
@@ -213,10 +216,10 @@ export function aplicarFiltrosAvancados(transacoes, filtros) {
       return obterMillis(a.data) - obterMillis(b.data);
     }
     if (ord === "valor-decrescente") {
-      return (b.valor || 0) - (a.valor || 0);
+      return centavosDoItem(b) - centavosDoItem(a);
     }
     if (ord === "valor-crescente") {
-      return (a.valor || 0) - (b.valor || 0);
+      return centavosDoItem(a) - centavosDoItem(b);
     }
     return 0;
   });
@@ -241,15 +244,9 @@ export function paginarTransacoes(
  * Calcula totais baseados num array arbitrário de transações
  */
 export function calcularTotais(transacoes) {
-  return transacoes.reduce(
-    (acc, t) => {
-      if (t.tipo === "receita") acc.receitas += t.valor || 0;
-      else if (t.tipo === "despesa") acc.despesas += t.valor || 0;
-      acc.saldo = acc.receitas - acc.despesas;
-      return acc;
-    },
-    { saldo: 0, receitas: 0, despesas: 0 },
-  );
+  return {
+    saldo: calcularSaldo(transacoes), receitas: calcularReceitas(transacoes), despesas: calcularDespesas(transacoes),
+  };
 }
 
 /**

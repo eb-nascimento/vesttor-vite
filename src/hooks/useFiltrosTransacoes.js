@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { deslocarMes } from "../utils/periodo";
 import {
   extrairMesesDisponiveis,
   aplicarFiltrosAvancados,
@@ -8,8 +9,8 @@ import {
 
 export const ITENS_POR_PAGINA = 10;
 
-export function useFiltrosTransacoes(transacoes) {
-  const [filtros, setFiltros] = useState(() => {
+export function useFiltrosTransacoes(transacoes, onMudarPeriodo) {
+  const [filtros, definirFiltros] = useState(() => {
     const hoje = new Date();
     const mesAtualStr = `${hoje.getFullYear()}-${String(
       hoje.getMonth() + 1,
@@ -26,9 +27,19 @@ export function useFiltrosTransacoes(transacoes) {
   const [filtrosAbertos, setFiltrosAbertos] = useState(false);
   const [paginaAtual, setPaginaAtual] = useState(1);
 
+  function setFiltros(valor) {
+    const novos = typeof valor === "function" ? valor(filtros) : valor;
+    definirFiltros(novos);
+    setPaginaAtual(1);
+    if (novos.mesAno !== filtros.mesAno) onMudarPeriodo?.(novos.mesAno);
+  }
+
   const mesesDisponiveis = useMemo(
-    () => extrairMesesDisponiveis(transacoes),
-    [transacoes],
+    () => extrairMesesDisponiveis([
+      ...transacoes,
+      ...[-1, 0, 1].map((deslocamento) => ({ data: `${deslocarMes(filtros.mesAno, deslocamento)}-15` })),
+    ]),
+    [transacoes, filtros.mesAno],
   );
 
   const categoriasDisponiveis = useMemo(() => {
@@ -50,7 +61,10 @@ export function useFiltrosTransacoes(transacoes) {
   }, [transacoes, filtros]);
 
   const totais = useMemo(
-    () => calcularTotais(transacoesFiltradas),
+    () => ({ ...calcularTotais(transacoesFiltradas),
+      temReceitas: transacoesFiltradas.some((item) => item.tipo === "receita"),
+      temDespesas: transacoesFiltradas.some((item) => item.tipo === "despesa"),
+    }),
     [transacoesFiltradas],
   );
 
@@ -85,25 +99,7 @@ export function useFiltrosTransacoes(transacoes) {
   };
 
   const handleMudarMes = (direcao) => {
-    const indexAtual = mesesDisponiveis.findIndex(
-      (m) => m.valor === filtros.mesAno,
-    );
-    if (indexAtual === -1) return;
-
-    let novoIndex = indexAtual;
-    if (direcao === "anterior") {
-      novoIndex = indexAtual + 1; // Passado
-    } else if (direcao === "proximo") {
-      novoIndex = indexAtual - 1; // Futuro
-    }
-
-    if (novoIndex >= 0 && novoIndex < mesesDisponiveis.length) {
-      setFiltros({
-        ...filtros,
-        mesAno: mesesDisponiveis[novoIndex].valor,
-      });
-      setPaginaAtual(1);
-    }
+    setFiltros({ ...filtros, mesAno: deslocarMes(filtros.mesAno, direcao === "anterior" ? -1 : 1) });
   };
 
   return {
@@ -111,7 +107,7 @@ export function useFiltrosTransacoes(transacoes) {
     setFiltros,
     filtrosAbertos,
     setFiltrosAbertos,
-    paginaAtual,
+    paginaAtual: paginaSegura,
     setPaginaAtual,
     mesesDisponiveis,
     categoriasDisponiveis,

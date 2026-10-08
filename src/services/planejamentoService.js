@@ -1,39 +1,18 @@
-import {
-  collection,
-  addDoc,
-  updateDoc,
-  query,
-  where,
-  onSnapshot,
-  doc,
-  serverTimestamp,
-} from "firebase/firestore";
-import { db } from "../config/firebase";
+import { addDoc, serverTimestamp } from "firebase/firestore";
+import { colecaoUsuario, observarPeriodo, gravarExistente } from "./repositorioFinanceiro";
+import { serializarDinheiro } from "../utils/dinheiro";
+import { mesAtual } from "../utils/periodo";
 
-const planejamentoCollection = collection(db, "planejamentos");
-
-// Fica "ouvindo" o Firebase e avisa sempre que um planejamento for criado/alterado
-export function onPlanejamentoChange(userId, onDados, onErro) {
-  const consulta = query(planejamentoCollection, where("userId", "==", userId));
-
-  return onSnapshot(consulta, (snapshot) => {
-    const planejamentos = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    onDados(planejamentos);
-  }, onErro);
+export function onPlanejamentoChange(uid, onDados, onErro, mes = mesAtual()) {
+  return observarPeriodo(uid, "planejamentos", mes, onDados, onErro);
 }
 
-export async function criarPlanejamentoNaApi(planejamento, userId) {
-  await addDoc(planejamentoCollection, {
-    ...planejamento,
-    userId,
-    dataCriacao: serverTimestamp(),
+export async function criarPlanejamentoNaApi(planejamento, uid) {
+  await addDoc(colecaoUsuario(uid, "planejamentos"), {
+    ...serializarDinheiro(planejamento, true), userId: uid, dataCriacao: serverTimestamp(),
   });
 }
 
-export async function atualizarPlanejamentoNaApi(id, dadosAtualizados) {
-  const docRef = doc(db, "planejamentos", id);
-  await updateDoc(docRef, dadosAtualizados);
+export async function atualizarPlanejamentoNaApi(id, alteracoes, uid) {
+  await gravarExistente(uid, "planejamentos", id, (original) => serializarDinheiro({ ...original, ...alteracoes }, true));
 }

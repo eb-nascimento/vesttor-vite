@@ -1,5 +1,6 @@
 import { obterMensagemErroFirestore } from "../utils/errosFirestore";
 import { useEffect, useState } from "react";
+import { mesAtual as obterMesAtual } from "../utils/periodo";
 
 import {
   observarTransacoes,
@@ -25,8 +26,9 @@ export function useTransacoes(userId) {
   const [erroLeitura, setErroLeitura] = useState("");
   const [erroOperacao, setErroOperacao] = useState("");
   const [tentativaLeitura, setTentativaLeitura] = useState(0);
+  const [mesAno, setMesAno] = useState(() => obterMesAtual());
 
-  // Saldo geral acumulado histórico
+  // Totais somente do período carregado; nenhuma consulta depende do histórico inteiro.
   const saldo = calcularSaldo(transacoes);
   const receitas = calcularReceitas(transacoes);
   const despesas = calcularDespesas(transacoes);
@@ -66,10 +68,17 @@ export function useTransacoes(userId) {
         setErroLeitura(obterMensagemErroFirestore(erro));
         setCarregando(false);
       },
+      mesAno,
     );
 
     return cancelarObservacao;
-  }, [userId, tentativaLeitura]);
+  }, [userId, tentativaLeitura, mesAno]);
+
+  function mudarPeriodo(mes) {
+    setCarregando(true);
+    setErroLeitura("");
+    setMesAno(mes);
+  }
 
   function tentarNovamente() {
     setCarregando(true);
@@ -90,7 +99,7 @@ export function useTransacoes(userId) {
   async function excluirTransacao(id) {
     try {
       setErroOperacao("");
-      await excluirTransacaoNaApi(id);
+      await excluirTransacaoNaApi(id, userId);
     } catch (erro) {
       setErroOperacao(obterMensagemErroFirestore(erro, "Não foi possível excluir a transação. Tente novamente."));
       throw erro;
@@ -128,7 +137,7 @@ export function useTransacoes(userId) {
   async function editarTransacao(id, novosDados) {
     try {
       setErroOperacao("");
-      await editarTransacaoNaApi(id, novosDados);
+      await editarTransacaoNaApi(id, novosDados, userId);
     } catch (erro) {
       setErroOperacao(obterMensagemErroFirestore(erro));
       throw erro;
@@ -165,6 +174,8 @@ export function useTransacoes(userId) {
     erroLeitura,
     erroOperacao,
     tentarNovamente,
+    mesAno,
+    mudarPeriodo,
     saldo,
     receitas,
     despesas,

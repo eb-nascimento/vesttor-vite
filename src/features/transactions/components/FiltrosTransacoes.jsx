@@ -88,7 +88,6 @@ function FiltrosTransacoes({
                 value={filtros.mesAno}
                 onChange={(e) => handleChange("mesAno", e.target.value)}
               >
-                <option value="todas">Todos os períodos</option>
                 {mesesDisponiveis.map((m) => (
                   <option key={m.valor} value={m.valor}>
                     {m.label}

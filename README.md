@@ -83,6 +83,14 @@ O deploy usa o secret do GitHub `FIREBASE_SERVICE_ACCOUNT_GESTOR_FINANCEIRO_4343
 
 ## Documentacao do projeto
 
+### Refatoração financeira e migração
+
+Novas gravações financeiras usam `usuarios/{uid}/transacoes` e `usuarios/{uid}/planejamentos`, com valores inteiros em centavos. A leitura mensal mantém compatibilidade com as coleções raiz, sem duplicar IDs. Antes de publicar a aplicação, publicar Rules e índices compatíveis e aguardar os índices ficarem prontos. A execução em produção é uma etapa separada.
+
+`npm run migration:financeiro -- --project PROJETO --uid UID` simula a cópia administrativa; `--apply` executa. Não há remoção da origem nem sobrescrita de destinos divergentes. Relatórios privados e backups ficam em `migration-reports/`, fora do Git. A opção `--rollback RELATORIO.json` também simula por padrão e só reverte cópias intactas com projeto e UID iguais aos do relatório. A ferramenta usa Application Default Credentials, sem ativar Functions.
+
+O procedimento de conferência, transição e rollback está em `docs/migracao-financeira.md`. Os testes de Rules usam `firebase.test.json` na porta 8180, separada do emulador de desenvolvimento.
+
 A documentacao do projeto foi separada em:
 
 - [`docs/requisitos.md`](docs/requisitos.md): requisitos, escopo, regras de negocio e criterios de aceite;
