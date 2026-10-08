@@ -43,7 +43,7 @@ function Home({ usuario }) {
           />
         </aside>
 
-        <main className="home-coluna-painel">
+        <div className="home-coluna-painel">
           <ContainerResumo
             saldo={saldoMesAtual}
             receitas={receitasMesAtual}
@@ -76,7 +76,7 @@ function Home({ usuario }) {
               onEditar={iniciarEdicao}
             />
           )}
-        </main>
+        </div>
       </div>
     </section>
   );

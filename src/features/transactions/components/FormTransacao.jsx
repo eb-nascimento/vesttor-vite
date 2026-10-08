@@ -407,6 +407,7 @@ function Form({
         </div>
 
         {/* 2. DATA */}
+        <div className="form-data-valor">
         <div className="form-item">
           <label htmlFor="data">
             <Calendar size={13} aria-hidden="true" />
@@ -441,6 +442,7 @@ function Form({
         </div>
 
         {/* 4. MÉTODO DE PAGAMENTO (apenas para despesas) */}
+        </div>
         {isDespesa && (
           <div className="form-item">
             <label htmlFor="metodoPagamento">

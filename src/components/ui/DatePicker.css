@@ -51,7 +51,8 @@
   top: calc(100% + 6px);
   left: 0;
   z-index: 100;
-  width: 290px;
+  width: min(290px, calc(100vw - 72px));
+  box-sizing: border-box;
   background: var(--color-surface, #0b1f33);
   border: 1px solid var(--color-border, #1e4666);
   border-radius: 14px;
