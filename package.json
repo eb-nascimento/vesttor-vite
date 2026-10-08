@@ -3,16 +3,22 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=24.18.0 <25"
+  },
   "scripts": {
     "dev": "vite",
     "dev:emulator": "vite --mode emulator",
-    "emulators": "npx -y firebase-tools@latest emulators:start --only auth,firestore",
+    "emulators": "npx -y firebase-tools@latest emulators:start --only auth,firestore --project demo-vesttor",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest",
     "test:run": "vitest run --exclude firestore.rules.test.js",
-    "test:rules": "npx -y firebase-tools@latest emulators:exec --only firestore \"vitest run firestore.rules.test.js\""
+    "test:rules": "npx -y firebase-tools@latest emulators:exec --only firestore --project demo-vesttor-rules \"vitest run firestore.rules.test.js\"",
+    "deploy:hosting": "npm run build && npx -y firebase-tools@latest deploy --only hosting",
+    "deploy:rules": "npx -y firebase-tools@latest deploy --only firestore:rules",
+    "deploy:indexes": "npx -y firebase-tools@latest deploy --only firestore:indexes"
   },
   "dependencies": {
     "firebase": "^12.14.0",

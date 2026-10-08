@@ -11,10 +11,18 @@ A unica excecao permitida e a atualizacao de documentacao do projeto quando isso
 
 ## Ambiente e deploy
 
+### Versão do Node
+
+Use **Node 24.18.0 LTS**, fixado em `.nvmrc` e `.node-version`. Os workflows de Hosting usam `.nvmrc`; `package.json` aceita a linha 24 a partir dessa versão. A versão foi validada no ambiente local. Veja a [publicação oficial do Node](https://nodejs.org/en/blog/release/v24.18.0).
+
+Com nvm, execute `nvm install 24.18.0` e `nvm use 24.18.0`; depois `npm ci`. Para testar Security Rules, instale Java 21 ou superior e confirme que `java -version` funciona no terminal.
+
 ### Qualidade local
 
 ```bash
 npm run lint
+npm run test:run
+npm run test:rules
 ```
 
 O lint usa ESLint com regras recomendadas para JavaScript, React Hooks e Vite. A etapa atual de qualidade considera o lint sem erros como criterio minimo antes de seguir para novos estudos.
@@ -22,6 +30,17 @@ O lint usa ESLint com regras recomendadas para JavaScript, React Hooks e Vite. A
 A configuracao do Firebase fica em `.env`, que nao deve ser versionado. O arquivo `.env.example` documenta as variaveis necessarias sem valores reais.
 
 As variaveis precisam usar o prefixo `VITE_`, pois a aplicacao roda no frontend com Vite.
+
+O build valida `API_KEY`, `AUTHDOMAIN`, `PROJECTID`, `STORAGEBUCKET`, `MESSAGINGSENDERID` e `APPID`, todos com o prefixo `VITE_FIREBASE_`. Ausências, valores vazios e o placeholder `-` interrompem o build com os nomes das variáveis a preencher. `VITE_FIREBASE_MEASUREMENTID` é opcional. Configure as mesmas variáveis no CI antes de publicar. A validação respeita os arquivos e a prioridade do ambiente [documentados pelo Vite](https://vite.dev/guide/env-and-mode).
+
+Para desenvolvimento isolado, em dois terminais:
+
+```bash
+npm run emulators
+npm run dev:emulator
+```
+
+Esse modo usa o projeto fictício `demo-vesttor` e valores de configuração próprios em `.env.emulator`. Os testes de Rules usam `demo-vesttor-rules`, sem acesso ao banco de produção.
 
 ### Build de producao
 
@@ -34,7 +53,9 @@ O build gera os arquivos finais na pasta `dist`.
 ### Deploy manual com Firebase Hosting
 
 ```bash
-firebase deploy
+npm run deploy:hosting
+npm run deploy:rules
+npm run deploy:indexes
 ```
 
 Configuracao atual do Hosting:
@@ -42,6 +63,8 @@ Configuracao atual do Hosting:
 - projeto Firebase: `gestor-financeiro-43435`;
 - pasta publica: `dist`;
 - fallback de SPA habilitado para React Router, redirecionando rotas para `/index.html`.
+
+Os três comandos são independentes. Hosting executa o build validado antes da publicação; Rules e índices publicam apenas seus respectivos recursos. A configuração ativa não contém Functions nem predeploy de Functions. O scaffold da pasta `functions` permanece inativo para rastreabilidade; a proposta está em `docs/cloud-functions.md` e pertence ao pós-MVP. O MVP usa Auth e Firestore com Security Rules no plano Spark. Não execute scripts do scaffold como parte do MVP.
 
 ### Deploy automatico com GitHub Actions
 
