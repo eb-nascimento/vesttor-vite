@@ -1,9 +1,5 @@
-function Payments() {
-  return (
-    <div>
-      <h1>Payments</h1>
-    </div>
-  );
-}
+import EmConstrucao from "../components/ui/EmConstrucao";
 
-export default Payments;
+export default function Payments() {
+  return <EmConstrucao titulo="Meios financeiros" descricao="Aqui você poderá gerenciar seus meios financeiros e métodos de pagamento." />;
+}

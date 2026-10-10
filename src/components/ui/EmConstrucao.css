@@ -1,0 +1,31 @@
+.construcao-page { padding-block: 28px 48px; }
+.construcao-card {
+  box-sizing: border-box;
+  max-width: 680px;
+  margin: 40px auto;
+  padding: clamp(24px, 6vw, 56px);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 24px;
+  box-shadow: var(--shadow-card);
+  text-align: center;
+}
+.construcao-icone {
+  display: grid;
+  place-items: center;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 24px;
+  border-radius: 24px;
+  color: var(--color-accent);
+  background: var(--color-surface-alt);
+}
+.construcao-etiqueta { color: var(--color-accent); font-weight: 600; }
+.construcao-card h2 { font-family: var(--font-family-title); font-size: clamp(22px, 4vw, 30px); }
+.construcao-card p { color: var(--color-text-muted); line-height: 1.7; margin-bottom: 28px; }
+.construcao-retorno { display: inline-flex; gap: 10px; text-decoration: none; max-width: 100%; box-sizing: border-box; }
+.construcao-retorno:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; }
+@media (max-width: 480px) {
+  .construcao-page { padding-top: 20px; }
+  .construcao-card { margin-block: 24px; border-radius: 16px; }
+}

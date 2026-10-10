@@ -1,10 +1,5 @@
-function Categories() {
-  return (
-    <div>
-      <h1>Categorias</h1>
-      <p>Esta é a página de categorias.</p>
-    </div>
-  );
-}
+import EmConstrucao from "../components/ui/EmConstrucao";
 
-export default Categories;
+export default function Categories() {
+  return <EmConstrucao titulo="Categorias" descricao="Aqui você poderá organizar as categorias das suas movimentações." />;
+}

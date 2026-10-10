@@ -371,3 +371,11 @@ Decisao vigente: manter o MVP no plano Spark. A implementacao, os testes e o dep
 - [x] Impedir fechamento do modal durante a gravação.
 - [ ] Estender processamento e confirmação de sucesso às exclusões e ao planejamento.
 - Alteração local na branch codex/estado-processamento-transacoes; publicação e atualização do Notion permanecem separadas.
+
+
+### Revisão de categorias — 07/10/2026
+
+- [x] Revisar regras locais, propriedade e contrato alvo de categorias.
+- [x] Registrar matriz de acesso e cenários de aceite em docs/categorias-seguranca.md.
+- [ ] Implementar e testar Rules, catálogo e preferências no emulador.
+- Revisão documental concluída; funcionalidade, regras publicadas e status do Notion não alterados.
