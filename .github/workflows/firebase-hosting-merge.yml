@@ -13,7 +13,7 @@ jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
 
-    environment: ${{ github.ref_name == 'main' && 'prod' || 'dev' }}
+    environment: ${{ github.ref_name == 'main' && 'prd' || 'dev' }}
 
     env:
       VITE_FIREBASE_API_KEY: ${{ vars.VITE_FIREBASE_API_KEY }}
