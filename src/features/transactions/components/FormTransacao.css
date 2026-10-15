@@ -57,7 +57,8 @@ form {
   .form-data-valor .datepicker-texto-data { font-size: 12px; }
 }
 
-.form-item label {
+.form-item label,
+.form-item-label {
   display: inline-flex;
   align-items: center;
   gap: 6px;

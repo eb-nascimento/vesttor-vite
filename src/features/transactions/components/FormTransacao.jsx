@@ -388,8 +388,9 @@ function Form({
         <fieldset disabled={processando} className="form-campos">
         {/* 1. SELETOR DE TIPO (DESPESA / RECEITA) */}
         <div className="form-item">
-          <label htmlFor="tipo">Tipo</label>
+          <span id="tipo-label" className="form-item-label">Tipo</span>
           <TipoSwitcher
+            aria-labelledby="tipo-label"
             opcoes={[
               {
                 valor: "despesa",

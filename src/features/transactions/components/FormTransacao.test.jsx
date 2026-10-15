@@ -44,6 +44,14 @@ function fill(props) {
 beforeEach(() => { state.values = []; state.refs = []; });
 
 describe("envio de transações", () => {
+  it("associa o título Tipo ao grupo de opções sem um label para campo inexistente", () => {
+    const tree = render({ onAdd: vi.fn() });
+    expect(find(tree, (node) => node.type === "label" && node.props.htmlFor === "tipo")).toBeUndefined();
+    const titulo = field(tree, "tipo-label");
+    expect(titulo.props.children).toBe("Tipo");
+    expect(find(tree, (node) => node.props?.["aria-labelledby"] === "tipo-label")).toBeDefined();
+  });
+
   it("aguarda a gravação e bloqueia um segundo envio antes de limpar os campos", async () => {
     let concluir;
     const onAdd = vi.fn(() => new Promise((resolve) => { concluir = resolve; }));
