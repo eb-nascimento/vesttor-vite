@@ -1,6 +1,6 @@
 # Cloud Functions no Vesttor
 
-> **Situação em 26/09/2026: Fora do escopo atual.** O MVP continuará usando o SDK Web do Firestore protegido por Security Rules e não exigirá plano Blaze. Functions só serão reavaliadas depois do MVP para exclusão integral de conta, convites de ambientes, notificações ou tarefas que realmente exijam execução privilegiada no servidor. A pasta e o predeploy atuais são um scaffold incompleto e não devem participar de uma publicação geral.
+> **Situação em 08/10/2026: Fora do escopo atual.** O MVP continuará usando o SDK Web do Firestore protegido por Security Rules e não exigirá plano Blaze. Functions só serão reavaliadas depois do MVP para exclusão integral de conta, convites de ambientes, notificações ou tarefas que realmente exijam execução privilegiada no servidor. O bloco e o predeploy de Functions foram retirados de `firebase.json`. A pasta `functions` permanece como scaffold incompleto e inativo para rastreabilidade; seus scripts não fazem parte da instalação, build, emulação ou deploy do MVP.
 
 O Vesttor funciona sem Functions para autenticação, transações, parcelamentos em lote, planejamento, catálogos de leitura, atraso derivado e recorrências determinísticas. Publicações devem ser direcionadas por recurso.
 

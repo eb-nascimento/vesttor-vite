@@ -1,4 +1,6 @@
+import { obterMensagemErroFirestore } from "../utils/errosFirestore";
 import { useEffect, useState } from "react";
+import { mesAtual as obterMesAtual } from "../utils/periodo";
 
 import {
   observarTransacoes,
@@ -23,8 +25,10 @@ export function useTransacoes(userId) {
   const [carregando, setCarregando] = useState(true);
   const [erroLeitura, setErroLeitura] = useState("");
   const [erroOperacao, setErroOperacao] = useState("");
+  const [tentativaLeitura, setTentativaLeitura] = useState(0);
+  const [mesAno, setMesAno] = useState(() => obterMesAtual());
 
-  // Saldo geral acumulado histórico
+  // Totais somente do período carregado; nenhuma consulta depende do histórico inteiro.
   const saldo = calcularSaldo(transacoes);
   const receitas = calcularReceitas(transacoes);
   const despesas = calcularDespesas(transacoes);
@@ -57,23 +61,37 @@ export function useTransacoes(userId) {
       userId,
       (dados) => {
         setTransacoes(dados);
+        setErroLeitura("");
         setCarregando(false);
       },
       (erro) => {
-        setErroLeitura(erro.message);
+        setErroLeitura(obterMensagemErroFirestore(erro));
         setCarregando(false);
       },
+      mesAno,
     );
 
     return cancelarObservacao;
-  }, [userId]);
+  }, [userId, tentativaLeitura, mesAno]);
+
+  function mudarPeriodo(mes) {
+    setCarregando(true);
+    setErroLeitura("");
+    setMesAno(mes);
+  }
+
+  function tentarNovamente() {
+    setCarregando(true);
+    setErroLeitura("");
+    setTentativaLeitura((tentativa) => tentativa + 1);
+  }
 
   async function adicionarTransacao(nova) {
     try {
       setErroOperacao("");
       await criarTransacaoNaApi(nova, userId);
     } catch (erro) {
-      setErroOperacao(erro.message);
+      setErroOperacao(obterMensagemErroFirestore(erro));
       throw erro;
     }
   }
@@ -81,9 +99,10 @@ export function useTransacoes(userId) {
   async function excluirTransacao(id) {
     try {
       setErroOperacao("");
-      await excluirTransacaoNaApi(id);
+      await excluirTransacaoNaApi(id, userId);
     } catch (erro) {
-      setErroOperacao(erro.message);
+      setErroOperacao(obterMensagemErroFirestore(erro, "Não foi possível excluir a transação. Tente novamente."));
+      throw erro;
     }
   }
 
@@ -92,7 +111,7 @@ export function useTransacoes(userId) {
       setErroOperacao("");
       await criarCompraParceladaNaApi(parcelas, userId);
     } catch (erro) {
-      setErroOperacao(erro.message);
+      setErroOperacao(obterMensagemErroFirestore(erro));
       throw erro;
     }
   }
@@ -106,7 +125,8 @@ export function useTransacoes(userId) {
         userId,
       );
     } catch (erro) {
-      setErroOperacao(erro.message);
+      setErroOperacao(obterMensagemErroFirestore(erro, "Não foi possível excluir as parcelas. Confira os dados e tente novamente."));
+      throw erro;
     }
   }
 
@@ -117,9 +137,9 @@ export function useTransacoes(userId) {
   async function editarTransacao(id, novosDados) {
     try {
       setErroOperacao("");
-      await editarTransacaoNaApi(id, novosDados);
+      await editarTransacaoNaApi(id, novosDados, userId);
     } catch (erro) {
-      setErroOperacao(erro.message);
+      setErroOperacao(obterMensagemErroFirestore(erro));
       throw erro;
     }
   }
@@ -129,7 +149,7 @@ export function useTransacoes(userId) {
       setErroOperacao("");
       await atualizarCompraParceladaNaApi({ ...dados, userId });
     } catch (erro) {
-      setErroOperacao(erro.message);
+      setErroOperacao(obterMensagemErroFirestore(erro));
       throw erro;
     }
   }
@@ -139,7 +159,7 @@ export function useTransacoes(userId) {
       setErroOperacao("");
       await converterParaParceladaNaApi(transacaoId, novasParcelas, userId);
     } catch (erro) {
-      setErroOperacao(erro.message);
+      setErroOperacao(obterMensagemErroFirestore(erro));
       throw erro;
     }
   }
@@ -153,6 +173,9 @@ export function useTransacoes(userId) {
     carregando,
     erroLeitura,
     erroOperacao,
+    tentarNovamente,
+    mesAno,
+    mudarPeriodo,
     saldo,
     receitas,
     despesas,

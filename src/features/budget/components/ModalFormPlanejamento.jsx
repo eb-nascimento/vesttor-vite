@@ -8,6 +8,7 @@ import { normalizarInputValor } from "../../../utils/transacao";
 import "../../../features/transactions/components/ModalFormTransacao.css";
 import "./ModalFormPlanejamento.css";
 import "../../../features/transactions/components/FormTransacao.css";
+import { useOperacaoAssincrona } from "../../../hooks/useOperacaoAssincrona";
 
 const CATEGORIAS = [
   "Alimentação",
@@ -32,6 +33,10 @@ function ModalFormPlanejamento({
   mesAno,
   itemEditando,
 }) {
+  const { processando, erro, executar, emCurso } = useOperacaoAssincrona(
+    "Não foi possível salvar o orçamento. Seus dados foram preservados. Tente novamente.",
+  );
+  const fechar = () => { if (!emCurso.current) onClose(); };
   const [form, setForm] = useState({
     categoria: "Alimentação",
     tipo: "Variável",
@@ -40,21 +45,22 @@ function ModalFormPlanejamento({
 
   useEffect(() => {
     if (itemEditando) {
-            setForm({
+      setForm({
         categoria: itemEditando.categoria,
         tipo: itemEditando.tipo,
         planejado: itemEditando.planejado.toString(),
       });
     } else {
-            setForm({ categoria: "Alimentação", tipo: "Variável", planejado: "" });
+      setForm({ categoria: "Alimentação", tipo: "Variável", planejado: "" });
     }
   }, [itemEditando, isOpen]);
 
   const atualizarCampo = (campo, valor) => {
+    if (emCurso.current) return;
     if (campo === "planejado") {
-            setForm({ ...form, [campo]: normalizarInputValor(valor) });
+      setForm({ ...form, [campo]: normalizarInputValor(valor) });
     } else {
-            setForm({ ...form, [campo]: valor });
+      setForm({ ...form, [campo]: valor });
     }
   };
 
@@ -62,22 +68,25 @@ function ModalFormPlanejamento({
     e.preventDefault();
     const valorNumerico = Number(String(form.planejado).replace(",", "."));
 
-    if (itemEditando && !itemEditando.isUnplanned) {
-      await onUpdate(itemEditando.id, {
-        categoria: form.categoria,
-        tipo: form.tipo,
-        planejado: valorNumerico,
-      });
-    } else {
-      await onSave({
-        categoria: form.categoria,
-        tipo: form.tipo,
-        planejado: valorNumerico,
-        mesAno,
-      });
-    }
+    const sucesso = await executar(async () => {
+      if (itemEditando && !itemEditando.isUnplanned) {
+        await onUpdate(itemEditando.id, {
+          categoria: form.categoria,
+          tipo: form.tipo,
+          planejado: valorNumerico,
+        });
+      } else {
+        await onSave({
+          categoria: form.categoria,
+          tipo: form.tipo,
+          planejado: valorNumerico,
+          mesAno,
+        });
+      }
+    });
+    if (!sucesso) return;
 
-          setForm({ categoria: "Alimentação", tipo: "Variável", planejado: "" });
+    setForm({ categoria: "Alimentação", tipo: "Variável", planejado: "" });
     onClose();
   };
 
@@ -86,26 +95,28 @@ function ModalFormPlanejamento({
   return (
     <ModalBase
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={fechar}
       ariaLabelledby="modal-form-planejamento"
     >
       <div className="modal-planejamento-content">
         <button
           className="btn-fechar-modal"
-          onClick={onClose}
+          onClick={fechar}
+          disabled={processando}
           aria-label="Fechar modal"
         >
           <X size={20} />
         </button>
         <section className="form-container">
           <div className="form-header">
-            <h2>Novo Orçamento</h2>
+            <h2 id="modal-form-planejamento">{itemEditando ? "Editar Orçamento" : "Novo Orçamento"}</h2>
             <p className="form-subtitulo">
               Defina um limite de gastos ou meta de receita.
             </p>
           </div>
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} aria-busy={processando}>
+            <fieldset disabled={processando} className="form-campos">
             <div className="form-item">
               <label htmlFor="categoria">
                 <Tag size={13} aria-hidden="true" />
@@ -143,10 +154,12 @@ function ModalFormPlanejamento({
             </div>
 
             <div className="form-acoes">
-              <button type="submit" className="btn-submit">
-                Salvar Orçamento
+              <button type="submit" className="btn-submit" disabled={processando}>
+                {processando ? "Salvando..." : "Salvar Orçamento"}
               </button>
             </div>
+            </fieldset>
+            {erro && <p className="erro-msg" role="alert">{erro}</p>}
           </form>
         </section>
       </div>

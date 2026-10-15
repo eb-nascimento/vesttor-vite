@@ -1,17 +1,11 @@
+import { centavosDoItem } from "./dinheiro";
+
 export function calcularSaldo(transacoes) {
-  return transacoes.reduce((acc, item) => {
-    return item.tipo === "receita" ? acc + item.valor : acc - item.valor;
-  }, 0);
+  return transacoes.reduce((total, item) => total + (item.tipo === "receita" ? 1 : -1) * centavosDoItem(item), 0) / 100;
 }
-
 export function calcularReceitas(transacoes) {
-  return transacoes
-    .filter((item) => item.tipo === "receita")
-    .reduce((acc, item) => acc + item.valor, 0);
+  return transacoes.filter((item) => item.tipo === "receita").reduce((total, item) => total + centavosDoItem(item), 0) / 100;
 }
-
 export function calcularDespesas(transacoes) {
-  return transacoes
-    .filter((item) => item.tipo === "despesa")
-    .reduce((acc, item) => acc + item.valor, 0);
+  return transacoes.filter((item) => item.tipo === "despesa").reduce((total, item) => total + centavosDoItem(item), 0) / 100;
 }

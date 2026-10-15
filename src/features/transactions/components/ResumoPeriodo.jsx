@@ -1,7 +1,7 @@
 import "./ResumoPeriodo.css";
 import StatCard from "../../../components/ui/StatCard";
 
-function ResumoPeriodo({ saldo, receitas, despesas, quantidade }) {
+function ResumoPeriodo({ saldo, receitas, despesas, quantidade, temReceitas = receitas > 0, temDespesas = despesas > 0 }) {
   const formatCurrency = (val) =>
     new Intl.NumberFormat("pt-BR", {
       style: "currency",
@@ -10,24 +10,24 @@ function ResumoPeriodo({ saldo, receitas, despesas, quantidade }) {
 
   return (
     <section className="resumo-periodo-container">
-      <StatCard
-        title="Saldo no período"
+      {temReceitas && temDespesas && <StatCard
+        title="Resultado filtrado"
         balance={formatCurrency(saldo)}
         type="saldo"
         subtitle="Balanço do recorte atual"
-      />
-      <StatCard
-        title="Receitas"
+      />}
+      {temReceitas && <StatCard
+        title="Receitas filtradas"
         balance={formatCurrency(receitas)}
         type="receita"
         subtitle="Total de entradas"
-      />
-      <StatCard
-        title="Despesas"
+      />}
+      {temDespesas && <StatCard
+        title="Despesas filtradas"
         balance={formatCurrency(despesas)}
         type="despesa"
         subtitle="Total de saídas"
-      />
+      />}
       <StatCard
         title="Movimentações"
         balance={`${quantidade} registro${quantidade !== 1 ? "s" : ""}`}
