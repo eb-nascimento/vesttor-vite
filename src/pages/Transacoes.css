@@ -33,3 +33,11 @@
     display: none;
   }
 }
+
+@media (min-width: 768px) { .transacoes-page .desktop-only { display: block; } }
+@media (max-width: 767px) { .transacoes-page .desktop-only { display: none; } }
+
+@media (max-width: 767px) {
+  .transacoes-page .page-header-actions .paginador-mes { display: none; }
+  .transacoes-page .page-header-actions > .btn-ui { background: var(--color-primary-end, #2f70ff); color: var(--color-bg); }
+}

@@ -9,6 +9,12 @@ function ResumoPeriodo({ saldo, receitas, despesas, quantidade, temReceitas = re
     }).format(val || 0);
 
   return (
+    <>
+    <section className="resumo-periodo-mobile" aria-label="Resumo do período filtrado">
+      <span>Saldo no período</span>
+      <strong>{formatCurrency(saldo)}</strong>
+      <div><span className="receita">+ {formatCurrency(receitas)}</span><span className="despesa">− {formatCurrency(despesas)}</span></div>
+    </section>
     <section className="resumo-periodo-container">
       {temReceitas && temDespesas && <StatCard
         title="Resultado filtrado"
@@ -35,6 +41,7 @@ function ResumoPeriodo({ saldo, receitas, despesas, quantidade, temReceitas = re
         subtitle="Quantidade filtrada"
       />
     </section>
+    </>
   );
 }
 

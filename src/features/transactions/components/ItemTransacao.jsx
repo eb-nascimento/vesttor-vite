@@ -75,6 +75,7 @@ function ItemTransacao({
       </div>
 
       <div className="transacao-direita">
+        <span className="transacao-natureza-mobile">{isReceita ? "Receita" : "Despesa"}</span>
         <span
           className={`transacao-valor ${isReceita ? "receita" : "despesa"}`}
         >
@@ -89,7 +90,7 @@ function ItemTransacao({
             onClick={() => onEditar(item)}
             aria-label={`Editar transação ${item.descricao}`}
           >
-            <Pencil size={15} aria-hidden="true" />
+            <Pencil size={15} aria-hidden="true" /><span className="acao-mobile-label">Editar</span>
           </button>
           <button
             type="button"
@@ -98,7 +99,7 @@ function ItemTransacao({
             onClick={handleExcluir}
             aria-label={`Excluir transação ${item.descricao}`}
           >
-            <Trash2 size={15} aria-hidden="true" />
+            <Trash2 size={15} aria-hidden="true" /><span className="acao-mobile-label">Excluir</span>
           </button>
         </div>
       </div>

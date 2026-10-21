@@ -4,6 +4,8 @@ import CustomSelect from "../../../components/ui/CustomSelect";
 
 function FiltrosTransacoes({
   filtros,
+  quantidade,
+  periodo,
   onFiltroChange,
   limparFiltros,
   mesesDisponiveis,
@@ -19,14 +21,16 @@ function FiltrosTransacoes({
   return (
     <div className={`filtros-transacoes-container ${isOpen ? "open" : ""}`}>
       <div className="filtros-header">
+        <div className="filtros-resumo-mobile"><h3>{quantidade} transações</h3><p>{periodo}</p></div>
         <button
           className="btn-toggle-filtros"
           onClick={onToggle}
+          aria-label={isOpen ? "Ocultar filtros" : "Abrir filtros"}
           aria-expanded={isOpen}
           aria-controls="filtros-panel"
         >
           <Filter size={16} />
-          {isOpen ? "Ocultar filtros" : "Abrir filtros"}
+          <span className="filtros-toggle-texto">{isOpen ? "Ocultar filtros" : "Abrir filtros"}</span>
         </button>
       </div>
 

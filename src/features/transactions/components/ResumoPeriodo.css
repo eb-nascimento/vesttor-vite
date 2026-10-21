@@ -4,3 +4,13 @@
   gap: 16px;
   margin-bottom: 24px;
 }
+
+.resumo-periodo-mobile { display: none; }
+@media (max-width: 767px) {
+  .resumo-periodo-container { display: none; }
+  .resumo-periodo-mobile { display: flex; flex-direction: column; gap: 8px; padding: 16px; margin: 20px 0; border: 1px solid var(--color-border); border-radius: 16px; background: var(--color-surface); color: var(--color-text-muted); font-size: 12px; }
+  .resumo-periodo-mobile strong { color: var(--color-primary); font-size: 24px; overflow-wrap: anywhere; }
+  .resumo-periodo-mobile > div { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+  .resumo-periodo-mobile .receita { color: var(--color-growth); }
+  .resumo-periodo-mobile .despesa { color: var(--color-error); }
+}

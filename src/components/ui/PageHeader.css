@@ -35,3 +35,16 @@
     justify-content: space-between;
   }
 }
+
+@media (max-width: 767px) {
+  .page-header-texts, .page-header-actions { min-width: 0; max-width: 100%; }
+  .page-header-actions { flex-wrap: wrap; gap: 12px; }
+  .page-header-actions > * { min-width: 0; max-width: 100%; }
+  .page-header-actions .paginador-mes { flex: 1 1 100%; }
+  .page-header-actions > .btn-ui { width: 100%; min-height: 44px; }
+  .page-header-actions .mes-texto { flex: 1; min-width: 0; padding: 0 8px; }
+}
+
+@media (max-width: 767px) {
+  .page-header-actions .btn-paginador { min-width: 44px; min-height: 44px; }
+}
