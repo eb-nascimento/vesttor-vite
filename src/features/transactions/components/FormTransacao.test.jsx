@@ -44,6 +44,14 @@ function fill(props) {
 beforeEach(() => { state.values = []; state.refs = []; });
 
 describe("envio de transações", () => {
+  it("associa o título Tipo ao grupo de opções sem um label para campo inexistente", () => {
+    const tree = render({ onAdd: vi.fn() });
+    expect(find(tree, (node) => node.type === "label" && node.props.htmlFor === "tipo")).toBeUndefined();
+    const titulo = field(tree, "tipo-label");
+    expect(titulo.props.children).toBe("Tipo");
+    expect(find(tree, (node) => node.props?.["aria-labelledby"] === "tipo-label")).toBeDefined();
+  });
+
   it("aguarda a gravação e bloqueia um segundo envio antes de limpar os campos", async () => {
     let concluir;
     const onAdd = vi.fn(() => new Promise((resolve) => { concluir = resolve; }));
@@ -67,7 +75,7 @@ describe("envio de transações", () => {
     const tree = render(props);
     expect(field(tree, "descricao").props.value).toBe("Compra de teste");
     expect(field(tree, "valor").props.value).toBe("120");
-    expect(find(tree, (node) => node.props?.role === "alert").props.children).toBe("Falha na gravação");
+    expect(find(tree, (node) => node.props?.role === "alert").props.children).toBe("Não foi possível salvar. Tente novamente.");
     expect(find(tree, (node) => node.type === "fieldset").props.disabled).toBe(false);
     await submit(tree);
     expect(onAdd).toHaveBeenCalledTimes(2);

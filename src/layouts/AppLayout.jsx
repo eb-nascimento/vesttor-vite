@@ -5,7 +5,7 @@ export function AppLayout() {
   return (
     <>
       <Header />
-      <main>
+      <main className="app-main">
         <Outlet />
       </main>
     </>

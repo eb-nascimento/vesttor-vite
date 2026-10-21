@@ -16,6 +16,17 @@
   border-radius: 12px;
 }
 
+.tabela-transacoes-container > [role="alert"],
+.tabela-transacoes-container > [role="status"] {
+  margin: 0;
+  padding: 16px;
+}
+
+.btn-acao:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
 .tabela-vazia {
   text-align: center;
   padding: 40px 20px;

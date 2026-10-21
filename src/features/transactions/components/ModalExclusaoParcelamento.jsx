@@ -2,6 +2,7 @@ import "./ModalExclusaoParcelamento.css";
 import { Trash2 } from "lucide-react";
 import ConfirmModal from "../../../components/ui/ConfirmModal";
 import Button from "../../../components/ui/Button";
+import { useOperacaoAssincrona } from "../../../hooks/useOperacaoAssincrona";
 
 function ModalExclusaoParcelamento({
   transacao,
@@ -9,6 +10,13 @@ function ModalExclusaoParcelamento({
   onExcluirSerie,
   onFechar,
 }) {
+  const { processando, erro, executar, emCurso } = useOperacaoAssincrona(
+    "Não foi possível concluir a exclusão. Confira as parcelas e tente novamente.",
+  );
+  const fechar = () => { if (!emCurso.current) onFechar(); };
+  const excluir = async (operacao) => {
+    if (await executar(operacao)) onFechar();
+  };
   if (!transacao) return null;
 
   const valorFormatado = transacao.valor?.toLocaleString("pt-BR", {
@@ -23,7 +31,8 @@ function ModalExclusaoParcelamento({
   return (
     <ConfirmModal
       isOpen={true}
-      onClose={onFechar}
+      onClose={fechar}
+      processando={processando}
       title="Excluir compra parcelada"
       subtitle={`Esta movimentação faz parte de um parcelamento em ${totalParcelas}x.`}
       variant="danger"
@@ -48,7 +57,8 @@ function ModalExclusaoParcelamento({
         <button
           type="button"
           className="btn-modal-opcao btn-opcao-avulsa"
-          onClick={onExcluirApenasEsta}
+          onClick={() => excluir(onExcluirApenasEsta)}
+          disabled={processando}
         >
           <Trash2 size={16} aria-hidden="true" />
           <div className="btn-opcao-textos">
@@ -63,7 +73,8 @@ function ModalExclusaoParcelamento({
         <button
           type="button"
           className="btn-modal-opcao btn-opcao-serie"
-          onClick={onExcluirSerie}
+          onClick={() => excluir(onExcluirSerie)}
+          disabled={processando}
         >
           <Trash2 size={16} aria-hidden="true" />
           <div className="btn-opcao-textos">
@@ -79,6 +90,9 @@ function ModalExclusaoParcelamento({
         </button>
       </div>
 
+      {processando && <p role="status">Excluindo...</p>}
+      {erro && <p className="erro-msg" role="alert">{erro}</p>}
+
       <div
         style={{
           display: "flex",
@@ -86,7 +100,7 @@ function ModalExclusaoParcelamento({
           marginTop: "4px",
         }}
       >
-        <Button variant="secondary" onClick={onFechar}>
+        <Button variant="secondary" onClick={fechar} disabled={processando}>
           Cancelar
         </Button>
       </div>

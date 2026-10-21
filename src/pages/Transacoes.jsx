@@ -24,6 +24,8 @@ function Transacoes({ usuario }) {
     carregando,
     erroOperacao,
     erroLeitura,
+    tentarNovamente,
+    mudarPeriodo,
     transacoes,
     adicionarTransacao,
     adicionarCompraParcelada,
@@ -50,7 +52,7 @@ function Transacoes({ usuario }) {
     totalPaginas,
     limparFiltros,
     handleMudarMes,
-  } = useFiltrosTransacoes(transacoes);
+  } = useFiltrosTransacoes(transacoes, mudarPeriodo);
 
   // Estados de Modais
   const [modalFormAberto, setModalFormAberto] = useState(false);
@@ -63,7 +65,7 @@ function Transacoes({ usuario }) {
   };
 
   const handleExcluirNormal = (id) => {
-    excluirTransacao(id);
+    return excluirTransacao(id);
   };
 
   const handleSolicitarExclusaoParcelamento = (item) => {
@@ -97,6 +99,7 @@ function Transacoes({ usuario }) {
       {(erroOperacao || erroLeitura) && (
         <div className="erro-msg" role="alert">
           {erroOperacao || erroLeitura}
+          {erroLeitura && <Button onClick={tentarNovamente} disabled={carregando}>Tentar novamente</Button>}
         </div>
       )}
 
@@ -109,6 +112,8 @@ function Transacoes({ usuario }) {
             receitas={totais.receitas}
             despesas={totais.despesas}
             quantidade={totalItens}
+            temReceitas={totais.temReceitas}
+            temDespesas={totais.temDespesas}
           />
 
           <FiltrosTransacoes
@@ -157,7 +162,7 @@ function Transacoes({ usuario }) {
             paginaAtual={paginaAtual}
             temAnterior={paginaAtual > 1}
             temProxima={paginaAtual < totalPaginas}
-            de={(paginaAtual - 1) * ITENS_POR_PAGINA + 1}
+            de={totalItens ? (paginaAtual - 1) * ITENS_POR_PAGINA + 1 : 0}
             ate={Math.min(paginaAtual * ITENS_POR_PAGINA, totalItens)}
             totalItens={totalItens}
             onMudarPagina={setPaginaAtual}
@@ -182,16 +187,12 @@ function Transacoes({ usuario }) {
       {transacaoParaExcluir && (
         <ModalExclusaoParcelamento
           transacao={transacaoParaExcluir}
-          onExcluirApenasEsta={() => {
-            excluirTransacao(transacaoParaExcluir.id);
-            setTransacaoParaExcluir(null);
-          }}
+          onExcluirApenasEsta={() => excluirTransacao(transacaoParaExcluir.id)}
           onExcluirSerie={() => {
-            excluirParcelasFuturas(
+            return excluirParcelasFuturas(
               transacaoParaExcluir.parcelamentoId,
               transacaoParaExcluir.numeroParcela,
             );
-            setTransacaoParaExcluir(null);
           }}
           onFechar={() => setTransacaoParaExcluir(null)}
         />

@@ -24,6 +24,15 @@
 
 @media (max-width: 900px) {
   .resumo-container {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .resumo-container .card.saldo {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+  .resumo-container .card { padding: 16px; }
+  .resumo-container .card-valor {
+    font-size: clamp(1rem, 4.8vw, 1.45rem);
+    overflow-wrap: anywhere;
   }
 }

@@ -30,7 +30,7 @@ Qualidade: ESLint · Vitest · testes de Security Rules com Firebase Emulator Su
 
 ### Execução local
 
-Utilize Node.js 22, versão utilizada pelo workflow de build, e npm.
+Utilize Node.js 24.18.0, fixado em `.nvmrc` e `.node-version`, e npm. Os workflows usam a versão de `.nvmrc`.
 
 ```bash
 git clone https://github.com/eb-nascimento/vesttor-vite.git
@@ -60,7 +60,19 @@ O build é gerado em `dist/`. O comando `npm run test:run` exclui os testes de S
 npm run test:rules
 ```
 
-Os testes de regras dependem dos pré-requisitos do Firebase Emulator Suite, incluindo Java compatível.
+Os testes de regras dependem dos pré-requisitos do Firebase Emulator Suite, incluindo Java 21 ou superior.
+
+### Ambiente isolado e validação
+
+O build verifica as seis variáveis obrigatórias `VITE_FIREBASE_*`; valores ausentes, vazios ou `-` impedem a geração. `VITE_FIREBASE_MEASUREMENTID` é opcional. Os arquivos de ambiente ficam em `config/env/`; o CI fornece as mesmas variáveis pelo ambiente.
+
+Para desenvolvimento isolado, execute `npm run emulators` e `npm run dev:emulator` em terminais separados. Esse modo usa `demo-vesttor`; os testes de regras usam `demo-vesttor-rules`, com `firebase.test.json` e porta 8180.
+
+### Refatoração financeira e publicação
+
+Novas gravações usam `usuarios/{uid}/transacoes` e `usuarios/{uid}/planejamentos`, com valores inteiros em centavos. A leitura mensal mantém compatibilidade com as coleções raiz. Consulte [migração financeira](docs/migracao-financeira.md) antes da transição. `npm run migration:financeiro -- --project PROJETO --uid UID` simula a migração; gravações exigem `--apply`. Relatórios privados ficam em `migration-reports/`, ignorados pelo Git.
+
+`deploy:hosting`, `deploy:rules` e `deploy:indexes` publicam recursos separadamente. Rules e índices compatíveis devem ser publicados e os índices devem estar prontos antes da publicação da aplicação. Nenhuma publicação ou migração em produção faz parte desta mesclagem. A configuração ativa não inclui Functions; a pasta `functions/` preserva o scaffold para referência futura.
 
 ### Estágio do projeto
 
@@ -82,7 +94,7 @@ Parte da documentação contém registros históricos. Confira os avisos de cada
 - `config/`: configurações de Vite e ESLint; `config/env/` contém os arquivos de ambiente.
 - `src/`: código da aplicação e testes próximos dos componentes, hooks e utilitários.
 - `public/`: arquivos públicos servidos diretamente.
-- `functions/`: código e dependências das Cloud Functions.
+- `functions/`: scaffold inativo de Cloud Functions, preservado para referência futura.
 - `firebase/`: regras de segurança e índices do Firestore, referenciados em `firebase.json`.
 - `tests/firestore/`: testes das regras executados com o emulador.
 - `docs/`: documentação técnica; consulte o [índice](docs/README.md) para distinguir fontes atuais e históricas.
@@ -124,7 +136,7 @@ Quality tooling: ESLint · Vitest · Security Rules tests with Firebase Emulator
 
 ### Local setup
 
-Use Node.js 22, the version used by the build workflow, and npm.
+Use Node.js 24.18.0, pinned in `.nvmrc` and `.node-version`, and npm. The workflows use `.nvmrc`.
 
 ```bash
 git clone https://github.com/eb-nascimento/vesttor-vite.git
@@ -154,7 +166,7 @@ Build output is generated in `dist/`. The `npm run test:run` command excludes Se
 npm run test:rules
 ```
 
-Rules tests require Firebase Emulator Suite prerequisites, including a compatible Java installation.
+Rules tests require Firebase Emulator Suite prerequisites, including Java 21 or newer.
 
 ### Project status
 
