@@ -117,6 +117,8 @@ function Transacoes({ usuario }) {
           />
 
           <FiltrosTransacoes
+            quantidade={totalItens}
+            periodo={mesesDisponiveis.find((m) => m.valor === filtros.mesAno)?.label}
             filtros={filtros}
             onFiltroChange={setFiltros}
             limparFiltros={limparFiltros}

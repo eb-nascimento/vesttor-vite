@@ -7,9 +7,7 @@ import { useFiltrosTransacoes } from "../hooks/useFiltrosTransacoes";
 import { usePlanejamentos } from "../hooks/usePlanejamentos";
 
 import Button from "../components/ui/Button";
-import { Plus } from "lucide-react";
 import EquacaoMes from "../features/budget/components/EquacaoMes";
-import PageHeader from "../components/ui/PageHeader";
 import StatePanel from "../components/ui/StatePanel";
 import { centavosDoItem, paraCentavos } from "../utils/dinheiro";
 import TabelaPlanejamentos from "../features/budget/components/TabelaPlanejamentos";
@@ -23,7 +21,7 @@ function Budget({ usuario }) {
   const { transacoes, mesAno, mudarPeriodo, carregando: carregandoTransacoes, erroLeitura: erroTransacoes, tentarNovamente: tentarTransacoes } = useTransacoes(usuario?.uid);
   const { planejamentos, criarPlanejamento, atualizarPlanejamento, carregando, erroLeitura, tentarNovamente } =
     usePlanejamentos(usuario?.uid, mesAno);
-  const { filtros, mesesDisponiveis, handleMudarMes } =
+  const { filtros, setFiltros, mesesDisponiveis, handleMudarMes } =
     useFiltrosTransacoes(transacoes, mudarPeriodo);
 
   // 1. Filtra as transações do mês selecionado
@@ -141,6 +139,11 @@ function Budget({ usuario }) {
     });
   };
 
+  function abrirNovoPlanejamento() {
+    setPlanejamentoEditando(null);
+    setModalFormAberto(true);
+  }
+
   const handleEditPlanejamento = (item) => {
     setPlanejamentoEditando(item);
     setModalFormAberto(true);
@@ -182,27 +185,19 @@ function Budget({ usuario }) {
 
   return (
     <section className="budget-page">
-      <PageHeader
-        title="Planejamento Financeiro"
-        subtitle="Visão operacional do mês e dos próximos compromissos."
-      >
-        <PaginadorMes
-          mesAtual={
-            mesesDisponiveis.find((m) => m.valor === filtros.mesAno)?.label
-          }
-          onMudarMes={handleMudarMes}
-        />
-
-        <Button
-          icon={Plus}
-          onClick={() => {
-            setPlanejamentoEditando(null);
-            setModalFormAberto(true);
-          }}
-        >
-          Novo Orçamento
-        </Button>
-      </PageHeader>
+      <header className="budget-header">
+        <div className="budget-header-textos">
+          <h2>Planejamento<span className="budget-desktop-label"> Financeiro</span></h2>
+          <p className="budget-desktop-label">Visão operacional do mês e dos próximos compromissos.</p>
+          <select className="budget-periodo-compacto" aria-label="Competência do planejamento" value={filtros.mesAno} onChange={(event) => setFiltros({ ...filtros, mesAno: event.target.value })}>
+            {mesesDisponiveis.map((mes) => <option key={mes.valor} value={mes.valor}>{mes.label}</option>)}
+          </select>
+        </div>
+        <div className="budget-header-acoes">
+          <div className="budget-periodo-detalhado"><PaginadorMes mesAtual={mesesDisponiveis.find((mes) => mes.valor === filtros.mesAno)?.label} onMudarMes={handleMudarMes} /></div>
+          <Button onClick={abrirNovoPlanejamento}><span className="budget-desktop-label">Novo Orçamento</span><span className="budget-compacto-label">+ Novo</span></Button>
+        </div>
+      </header>
       <EquacaoMes
         entradasPlanejadas={entradasPlanejadas}
         entradasRealizadas={entradasRealizadas}
@@ -216,12 +211,10 @@ function Budget({ usuario }) {
       <div className="area-operacional">
         <TabelaPlanejamentos
           itens={todosPlanejamentos}
+          proximosVencimentos={proximosVencimentos}
           onApprove={handleApproveUnplanned}
           onEdit={handleEditPlanejamento}
-          onAdd={() => {
-            setPlanejamentoEditando(null);
-            setModalFormAberto(true);
-          }}
+          onAdd={abrirNovoPlanejamento}
         />
         <PainelLateralPlanejamento
           saldoProjetado={saldoProjetado}

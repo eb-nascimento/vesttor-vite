@@ -31,7 +31,7 @@ function TabelaTransacoes({
   );
   if (!transacoes || transacoes.length === 0) {
     return (
-      <div className="tabela-vazia">
+      <div className="tabela-vazia desktop-only">
         Nenhuma transação encontrada no período.
       </div>
     );

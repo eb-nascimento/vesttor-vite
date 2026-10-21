@@ -63,15 +63,14 @@
   flex-shrink: 0;
 }
 
-@media (max-width: 768px) {
-  .equacao-mes-container {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 16px;
-    gap: 12px;
-  }
-
-  .operador-matematico {
-    display: none; /* Em mobile podemos esconder os operadores para ficar mais limpo */
-  }
+.fluxo-saidas { display: none; }
+@media (max-width: 900px) {
+  .equacao-mes-container { display: flex; flex-direction: column; padding: 12px; gap: 8px; }
+  .fluxo-coluna { flex: auto; width: 100%; flex-direction: row; align-items: center; justify-content: space-between; gap: 12px; }
+  .fluxo-fixos, .fluxo-variaveis, .operador-matematico, .fluxo-subtitulo { display: none; }
+  .fluxo-saidas { display: flex; }
+  .fluxo-titulo { font-size: 11px; }
+  .fluxo-valor { font-size: 13px; text-align: right; }
+  .fluxo-saldo { border-top: 1px solid var(--color-border); padding-top: 12px; }
+  .fluxo-saldo .fluxo-valor { font-size: 20px; }
 }
