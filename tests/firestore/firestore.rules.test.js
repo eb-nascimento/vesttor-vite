@@ -40,7 +40,7 @@ beforeAll(async () => {
     firestore: {
       host,
       port: Number(portText),
-      rules: readFileSync("firestore.rules", "utf8"),
+      rules: readFileSync(new URL("../../firebase/firestore.rules", import.meta.url), "utf8"),
     },
   });
 });

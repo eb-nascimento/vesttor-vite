@@ -291,7 +291,7 @@ Decisao vigente: manter o MVP no plano Spark. A implementacao, os testes e o dep
 - [x] Implementar calculo visual e interativo de parcelamento com selecao de parcelas em tempo real.
 - [x] Atualizar controles de transacoes com pills de filtro e seletor de ordenacao estilizado.
 - [x] Adicionar subtitulos informativos e rodape de historico aos cards e a lista de movimentacoes.
-- [x] Atualizar `firestore.rules` com validacao tipada para campos opcionais (`categoria`, `metodoPagamento`, `parcelado`, `parcelas`).
+- [x] Atualizar `firebase/firestore.rules` com validacao tipada para campos opcionais (`categoria`, `metodoPagamento`, `parcelado`, `parcelas`).
 - [x] Garantir higienizacao de codigo: 0 erros de ESLint, 0 regras CSS orfas e 100% de testes Vitest aprovados.
 
 ### Planejamento e Especificação de Parcelamento
@@ -310,7 +310,7 @@ Decisao vigente: manter o MVP no plano Spark. A implementacao, os testes e o dep
 
 - [x] Criar utilitários matemáticos de divisão de centavos e projeção de calendário em `src/utils/parcelamento.js`.
 - [x] Criar suíte de testes unitários com Vitest em `src/utils/parcelamento.test.js` (9 testes cobrindo divisão, restos, alternância de modos e clamping de meses bissextos/curtos).
-- [x] Atualizar `firestore.rules` com validação de esquema estrito (`hasOnly`) para campos `parcelamentoId`, `numeroParcela`, `totalParcelas`, `valorTotalCompra`.
+- [x] Atualizar `firebase/firestore.rules` com validação de esquema estrito (`hasOnly`) para campos `parcelamentoId`, `numeroParcela`, `totalParcelas`, `valorTotalCompra`.
 - [x] Implementar funções em lote (`writeBatch`) em `src/services/transacoesService.js` (`criarCompraParceladaNaApi` e `excluirParcelasFuturasNaApi`).
 - [x] Integrar `useTransacoes` com cálculo em tempo real do mês atual (`saldoMesAtual`, `receitasMesAtual`, `despesasMesAtual`) e operações parceladas.
 - [x] Integrar `Form.jsx` com switcher de modo ("Valor total" vs "Valor por parcela"), input numérico aberto, atalhos em botões (pills) e resumo de cálculo em tempo real com sobra de centavos.

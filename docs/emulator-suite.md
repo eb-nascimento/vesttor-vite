@@ -5,7 +5,7 @@
 
 ## Cobertura atual
 
-A suíte `firestore.rules.test.js` executa no emulador do Firestore e valida isolamento de `transacoes` e `planejamentos`. Na última verificação registrada, foram aprovados 5 testes de regras e 30 testes Vitest da aplicação.
+A suíte `tests/firestore/firestore.rules.test.js` executa no emulador do Firestore e valida isolamento de `transacoes` e `planejamentos`. Na última verificação registrada, foram aprovados 5 testes de regras e 30 testes Vitest da aplicação.
 
 Os cenários incluem autenticação, proprietário correto, acesso de outra conta, formatos aceitos no contrato legado e campos protegidos. Java está disponível no ambiente atual; a anotação antiga de emulador indisponível está obsoleta.
 

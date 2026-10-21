@@ -140,14 +140,14 @@ vite-vesttor/
 |   `-- test/transactions/
 |-- src/config/functions.js
 |-- src/services/transacoesService.js
-|-- firestore.rules
-|-- firestore.indexes.json
+|-- firebase/firestore.rules
+|-- firebase/firestore.indexes.json
 `-- firebase.json
 ```
 
 ## Plano incremental
 
-1. Baseline: versionar e testar `firestore.rules`, confirmar isolamento com duas contas e auditar documentos sem `userId`.
+1. Baseline: versionar e testar `firebase/firestore.rules`, confirmar isolamento com duas contas e auditar documentos sem `userId`.
 2. Backend: inicializar Functions 2nd gen, Admin SDK, validadores, erros e emuladores.
 3. Escritas: implementar idempotencia e migrar primeiro criacao, depois edicao e exclusao; somente entao negar escrita direta.
 4. Endurecimento: habilitar App Check, revisar IAM, logs, alertas e custos; usar Secret Manager quando necessario.

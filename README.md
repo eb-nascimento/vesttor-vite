@@ -1,85 +1,174 @@
-# React + Vite
+# Vesttor Vite
 
-## Modo de acompanhamento com assistente
+[Português](#português) · [English](#english)
 
-Este projeto e conduzido como estudo acompanhado. O assistente deve atuar como guia tecnico: explicar conceitos, sugerir caminhos, revisar raciocinios, apontar riscos e atualizar documentacao quando combinado.
+## Português
 
-O assistente nao deve implementar codigo da aplicacao, criar arquivos de codigo, editar componentes, services, hooks, rotas, estilos ou configuracoes do projeto. As alteracoes de codigo devem ser feitas pelo estudante.
+Aplicação web de controle e planejamento financeiro pessoal, desenvolvida com React, Vite e Firebase.
 
-A unica excecao permitida e a atualizacao de documentacao do projeto quando isso for solicitado ou quando uma etapa/bloco de estudo for encerrado. Por padrao, ao final de cada etapa concluida, o assistente deve atualizar os documentos relevantes e indicar os proximos passos de estudo.
+O Vesttor nasceu da busca por uma melhor organização financeira. Esta versão dá continuidade ao [estudo inicial com HTML, CSS e JavaScript](https://github.com/eb-nascimento/vesttor), aprofundando o desenvolvimento com componentes React, hooks, rotas e persistência de dados.
 
+### Objetivo
 
-## Ambiente e deploy
+Facilitar o acompanhamento de receitas, despesas e saldo, conectando o registro das movimentações ao planejamento mensal. O projeto também faz parte da minha evolução em desenvolvimento web, com atenção à organização do código, à experiência de uso e à acessibilidade.
 
-### Qualidade local
+### Funcionalidades presentes
+
+- Cadastro e login com e-mail e senha, login com Google e recuperação de senha.
+- Cadastro, edição e exclusão de receitas e despesas.
+- Registro e gerenciamento de despesas parceladas.
+- Resumo de receitas, despesas e saldo do mês na página inicial.
+- Consulta de transações com filtros, ordenação e paginação.
+- Tela de planejamento mensal que relaciona valores planejados e movimentações registradas.
+- Persistência com Cloud Firestore e consultas vinculadas ao usuário autenticado.
+
+### Tecnologias
+
+React · Vite · JavaScript · CSS · React Router · Firebase Authentication · Cloud Firestore · Lucide React
+
+Qualidade: ESLint · Vitest · testes de Security Rules com Firebase Emulator Suite.
+
+### Execução local
+
+Utilize Node.js 22, versão utilizada pelo workflow de build, e npm.
+
+```bash
+git clone https://github.com/eb-nascimento/vesttor-vite.git
+cd vesttor-vite
+npm ci
+```
+
+Copie `config/env/.env.example` para `config/env/.env` e substitua os valores de exemplo pela configuração do seu projeto Firebase. Habilite os provedores de autenticação necessários, configure os domínios autorizados e prepare o Firestore com as regras de acesso do projeto.
+
+```bash
+npm run dev
+```
+
+Acesse o endereço informado pelo Vite no terminal. As variáveis `VITE_*` são incorporadas ao frontend; credenciais administrativas e chaves privadas devem permanecer fora delas. O arquivo `.env` não deve ser versionado.
+
+### Verificações e build
 
 ```bash
 npm run lint
-```
-
-O lint usa ESLint com regras recomendadas para JavaScript, React Hooks e Vite. A etapa atual de qualidade considera o lint sem erros como criterio minimo antes de seguir para novos estudos.
-### Variaveis de ambiente
-A configuracao do Firebase fica em `.env`, que nao deve ser versionado. O arquivo `.env.example` documenta as variaveis necessarias sem valores reais.
-
-As variaveis precisam usar o prefixo `VITE_`, pois a aplicacao roda no frontend com Vite.
-
-### Build de producao
-
-```bash
+npm run test:run
 npm run build
 ```
 
-O build gera os arquivos finais na pasta `dist`.
-
-### Deploy manual com Firebase Hosting
+O build é gerado em `dist/`. O comando `npm run test:run` exclui os testes de Security Rules, executados separadamente:
 
 ```bash
-firebase deploy
+npm run test:rules
 ```
 
-Configuracao atual do Hosting:
+Os testes de regras dependem dos pré-requisitos do Firebase Emulator Suite, incluindo Java compatível.
 
-- projeto Firebase: `gestor-financeiro-43435`;
-- pasta publica: `dist`;
-- fallback de SPA habilitado para React Router, redirecionando rotas para `/index.html`.
+### Estágio do projeto
 
-### Deploy automatico com GitHub Actions
+Aplicação em desenvolvimento. As páginas dedicadas a dashboard, categorias e meios financeiros ainda apresentam avisos de construção na versão consultada. Recursos descritos nos documentos de planejamento não devem ser interpretados automaticamente como entregues.
 
-O Firebase CLI criou workflows em `.github/workflows`:
+### Documentação
 
-- `firebase-hosting-merge.yml`: publica no canal live quando houver push na branch `main`;
-- `firebase-hosting-pull-request.yml`: cria preview de Hosting em pull requests do proprio repositorio.
+- [Índice da documentação e fontes atuais](docs/README.md).
+- [Especificação funcional](docs/especificacao-funcional.md) e [arquitetura atual](docs/arquitetura-v2.md).
+- [Proposta de backend com Cloud Functions](docs/cloud-functions.md).
+- [Temas e identidade visual](docs/temas.md).
+- [Ambientes e publicação](docs/ambientes-e-deploy.md).
+- [Uso de IA e modo de estudo acompanhado](docs/uso-de-ia.md).
 
-Os workflows executam:
+Parte da documentação contém registros históricos. Confira os avisos de cada documento e o código atual antes de utilizar decisões antigas como referência de implementação.
+
+## Organização das pastas
+
+- `config/`: configurações de Vite e ESLint; `config/env/` contém os arquivos de ambiente.
+- `src/`: código da aplicação e testes próximos dos componentes, hooks e utilitários.
+- `public/`: arquivos públicos servidos diretamente.
+- `functions/`: código e dependências das Cloud Functions.
+- `firebase/`: regras de segurança e índices do Firestore, referenciados em `firebase.json`.
+- `tests/firestore/`: testes das regras executados com o emulador.
+- `docs/`: documentação técnica; consulte o [índice](docs/README.md) para distinguir fontes atuais e históricas.
+- `docs/academico/` e `docs/entregas/`: referências acadêmicas e documentos de entrega.
+- `docs/imagens/`: capturas de tela da documentação.
+- `docs/planejamento/`: anotações e tarefas de acompanhamento.
+- `.tmp/` e `output/`: arquivos temporários e saídas locais, ignorados pelo Git.
+- `dist/`, `node_modules/` e `.firebase/`: saídas de build, dependências e cache das ferramentas.
+
+As configurações de Vite e ESLint ficam em `config/`, e os arquivos `.env*` em `config/env/`. Use os scripts `npm run dev`, `npm run lint`, `npm run build`, `npm run preview` e `npm run test:run`, que já apontam para os novos caminhos. Os workflows usam esses scripts e continuam recebendo as variáveis pelo ambiente. `firebase.json`, `.firebaserc`, `.gitignore`, `package.json` e `package-lock.json` permanecem na raiz para o fluxo atual das ferramentas, junto ao `README.md`. A entrada HTML está em `src/index.html`; o Vite usa `src/` como raiz, lê os arquivos públicos de `public/` e continua gerando `dist/`. O Vitest mantém a raiz de testes no diretório do repositório. O glossário está em `docs/CONTEXT.md`. `config/skills-lock.json` preserva o registro anterior das skills; o instalador poderá gerar um novo lockfile na raiz, pois não descobre automaticamente a cópia arquivada. O Firebase pode voltar a gerar logs na raiz; arquivos `*.log` já são ignorados. A decisão existente de ignorar novos documentos em `docs/` foi preservada; documentos já versionados continuam sendo acompanhados pelo Git.
+
+---
+
+## English
+
+A personal finance tracking and planning web application built with React, Vite, and Firebase.
+
+Vesttor grew from the need to better organize personal finances. This version builds on the [initial HTML, CSS, and JavaScript study](https://github.com/eb-nascimento/vesttor), expanding the work with React components, hooks, routing, and data persistence.
+
+### Purpose
+
+Make it easier to track income, expenses, and balance while connecting recorded transactions to monthly planning. The project is also part of my growth in web development, with attention to code organization, usability, and accessibility.
+
+### Features present in the implementation
+
+- Email and password registration and login, Google login, and password recovery.
+- Creating, editing, and deleting income and expense transactions.
+- Recording and managing installment expenses.
+- Current-month income, expense, and balance summary on the home page.
+- Transaction browsing with filters, sorting, and pagination.
+- A monthly planning page connecting planned amounts and recorded transactions.
+- Cloud Firestore persistence and queries scoped to the authenticated user.
+
+### Technologies
+
+React · Vite · JavaScript · CSS · React Router · Firebase Authentication · Cloud Firestore · Lucide React
+
+Quality tooling: ESLint · Vitest · Security Rules tests with Firebase Emulator Suite.
+
+### Local setup
+
+Use Node.js 22, the version used by the build workflow, and npm.
 
 ```bash
-npm ci && npm run build
+git clone https://github.com/eb-nascimento/vesttor-vite.git
+cd vesttor-vite
+npm ci
 ```
 
-O deploy usa o secret do GitHub `FIREBASE_SERVICE_ACCOUNT_GESTOR_FINANCEIRO_43435`, criado pelo Firebase CLI. Esse secret fica no GitHub e nao deve ser salvo no codigo.
+Copy `config/env/.env.example` to `config/env/.env` and replace the example values with your Firebase project configuration. Enable the required authentication providers, configure authorized domains, and prepare Firestore with the project's access rules.
 
-## Documentacao do projeto
+```bash
+npm run dev
+```
 
-A documentacao do projeto foi separada em:
+Open the address shown by Vite in the terminal. `VITE_*` variables are included in the frontend bundle; keep administrative credentials and private keys out of them. Do not commit `.env`.
 
-- [`docs/requisitos.md`](docs/requisitos.md): requisitos, escopo, regras de negocio e criterios de aceite;
-- [`docs/arquitetura.md`](docs/arquitetura.md): arquitetura, implementacao, rotas, hooks, Firebase e decisoes tecnicas;
-- [`docs/cloud-functions.md`](docs/cloud-functions.md): arquitetura alvo de backend, seguranca, contratos e migracao incremental para Cloud Functions;
-- [`docs/temas.md`](docs/temas.md): temas claro e escuro, tokens CSS, logos, icones, calendario e futura troca de preferencia.
+### Checks and build
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+```bash
+npm run lint
+npm run test:run
+npm run build
+```
 
-Currently, two official plugins are available:
+Build output is generated in `dist/`. The `npm run test:run` command excludes Security Rules tests, which run separately:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm run test:rules
+```
 
-## React Compiler
+Rules tests require Firebase Emulator Suite prerequisites, including a compatible Java installation.
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+### Project status
 
-Note: This will impact Vite dev & build performances.
+The application is under development. Dedicated dashboard, category, and payment-method pages still display construction notices in the reviewed version. Features described in planning documents should not automatically be treated as delivered.
 
-## Expanding the ESLint configuration
+### Documentation
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+The following documents are primarily in Portuguese:
+
+- [Documentation index and current sources](docs/README.md).
+- [Functional specification](docs/especificacao-funcional.md) and [current architecture](docs/arquitetura-v2.md).
+- [Proposed Cloud Functions backend](docs/cloud-functions.md).
+- [Themes and visual identity](docs/temas.md).
+- [Environments and deployment](docs/ambientes-e-deploy.md).
+- [AI usage and guided study workflow](docs/uso-de-ia.md).
+
+Some documentation contains historical records. Check each document's notices and the current source code before using older decisions as implementation guidance.

@@ -6,8 +6,8 @@
 
 O projeto possui duas identidades visuais, clara e escura, baseadas nas imagens:
 
-- `docs/Documentação/identidade-visual-claro.png`;
-- `docs/Documentação/identidade-visual-escuro.png`.
+- `docs/academico/identidade-visual-claro.png`;
+- `docs/academico/identidade-visual-escuro.png`.
 
 O tema escuro é o padrão atual. O tema claro anterior foi preservado para uma futura configuração de preferência, sem duplicar regras de layout nos componentes.
 
