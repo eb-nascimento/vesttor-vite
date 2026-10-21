@@ -46,6 +46,10 @@ npm run dev
 
 Acesse o endereço informado pelo Vite no terminal. As variáveis `VITE_*` são incorporadas ao frontend; credenciais administrativas e chaves privadas devem permanecer fora delas. O arquivo `.env` não deve ser versionado.
 
+### Versionamento
+
+A versão é revisada ao concluir cada conjunto de alterações. Consulte a [convenção de versionamento](docs/versionamento.md).
+
 ### Verificações e build
 
 ```bash

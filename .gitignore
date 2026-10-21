@@ -69,3 +69,6 @@ output/
 
 # Relatórios de migração contêm cópias privadas dos dados.
 /migration-reports/
+
+# Convenção de versionamento compartilhada pelo projeto
+!/docs/versionamento.md
