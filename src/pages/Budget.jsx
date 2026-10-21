@@ -10,6 +10,8 @@ import Button from "../components/ui/Button";
 import { Plus } from "lucide-react";
 import EquacaoMes from "../features/budget/components/EquacaoMes";
 import PageHeader from "../components/ui/PageHeader";
+import StatePanel from "../components/ui/StatePanel";
+import { centavosDoItem, paraCentavos } from "../utils/dinheiro";
 import TabelaPlanejamentos from "../features/budget/components/TabelaPlanejamentos";
 import PainelLateralPlanejamento from "../features/budget/components/PainelLateralPlanejamento";
 import ModalFormPlanejamento from "../features/budget/components/ModalFormPlanejamento";
@@ -18,11 +20,11 @@ function Budget({ usuario }) {
   const [modalFormAberto, setModalFormAberto] = useState(false);
   const [planejamentoEditando, setPlanejamentoEditando] = useState(null);
 
-  const { transacoes } = useTransacoes(usuario?.uid);
-  const { planejamentos, criarPlanejamento, atualizarPlanejamento } =
-    usePlanejamentos(usuario?.uid);
+  const { transacoes, mesAno, mudarPeriodo, carregando: carregandoTransacoes, erroLeitura: erroTransacoes, tentarNovamente: tentarTransacoes } = useTransacoes(usuario?.uid);
+  const { planejamentos, criarPlanejamento, atualizarPlanejamento, carregando, erroLeitura, tentarNovamente } =
+    usePlanejamentos(usuario?.uid, mesAno);
   const { filtros, mesesDisponiveis, handleMudarMes } =
-    useFiltrosTransacoes(transacoes);
+    useFiltrosTransacoes(transacoes, mudarPeriodo);
 
   // 1. Filtra as transações do mês selecionado
   const transacoesDoMes = transacoes.filter((t) => {
@@ -42,10 +44,10 @@ function Budget({ usuario }) {
       (t) => t.categoria === plan.categoria,
     );
     const valorRealizado = transacoesDaCategoria.reduce(
-      (soma, t) => soma + t.valor,
+      (soma, t) => soma + centavosDoItem(t),
       0,
     );
-    return { ...plan, valorRealizado };
+    return { ...plan, valorRealizado: valorRealizado / 100 };
   });
 
   // 3. Caça os gastos Não Planejados (Unplanned)
@@ -77,7 +79,7 @@ function Budget({ usuario }) {
           fixo: TIPO_POR_CATEGORIA[t.fixo] || false,
         };
       }
-      unplannedMap[t.categoria].valorRealizado += Number(t.valor);
+      unplannedMap[t.categoria].valorRealizado = (paraCentavos(unplannedMap[t.categoria].valorRealizado) + centavosDoItem(t)) / 100;
     }
   });
 
@@ -96,22 +98,22 @@ function Budget({ usuario }) {
 
   todosPlanejamentos.forEach((plan) => {
     if (plan.categoria === "Entrada" || plan.tipo === "Entrada") {
-      entradasPlanejadas += Number(plan.planejado || 0);
-      entradasRealizadas += Number(plan.valorRealizado || 0);
+      entradasPlanejadas += centavosDoItem(plan, "planejado");
+      entradasRealizadas += paraCentavos(plan.valorRealizado || 0);
     } else if (plan.tipo === "Fixo") {
-      fixosPlanejados += Number(plan.planejado || 0);
-      fixosRealizados += Number(plan.valorRealizado || 0);
+      fixosPlanejados += centavosDoItem(plan, "planejado");
+      fixosRealizados += paraCentavos(plan.valorRealizado || 0);
     } else {
-      variaveisPlanejados += Number(plan.planejado || 0);
-      variaveisRealizados += Number(plan.valorRealizado || 0);
+      variaveisPlanejados += centavosDoItem(plan, "planejado");
+      variaveisRealizados += paraCentavos(plan.valorRealizado || 0);
     }
   });
 
   const saldoProjetado =
-    entradasPlanejadas - fixosPlanejados - variaveisPlanejados;
+    (entradasPlanejadas - fixosPlanejados - variaveisPlanejados) / 100;
   const porcentagemSaldo =
     entradasPlanejadas > 0
-      ? Math.round((saldoProjetado / entradasPlanejadas) * 100)
+      ? Math.round((saldoProjetado * 100 / entradasPlanejadas) * 100)
       : 0;
   // Quanto do orçamento já foi engolido por despesas?
   const despesasPlanejadas = fixosPlanejados + variaveisPlanejados;
@@ -126,6 +128,9 @@ function Budget({ usuario }) {
     porcentagemComprometida = 101;
   }
 
+  entradasPlanejadas /= 100; entradasRealizadas /= 100;
+  fixosPlanejados /= 100; fixosRealizados /= 100;
+  variaveisPlanejados /= 100; variaveisRealizados /= 100;
   // 6. Função para aprovar o gasto não planejado no banco de dados
   const handleApproveUnplanned = async (item) => {
     await criarPlanejamento({
@@ -165,6 +170,15 @@ function Budget({ usuario }) {
         : new Date(`${b.data}T12:00:00`);
       return dataA - dataB;
     });
+
+  if (carregando || carregandoTransacoes) {
+    return <StatePanel state="loading" message="Carregando planejamento financeiro..." />;
+  }
+  if (erroLeitura || erroTransacoes) {
+    return <StatePanel state="error" message={erroLeitura || erroTransacoes}>
+      <Button onClick={() => { tentarNovamente(); tentarTransacoes(); }}>Tentar novamente</Button>
+    </StatePanel>;
+  }
 
   return (
     <section className="budget-page">
@@ -216,6 +230,7 @@ function Budget({ usuario }) {
         />
       </div>
       <ModalFormPlanejamento
+        key={`${modalFormAberto}-${planejamentoEditando?.id || "novo"}`}
         isOpen={modalFormAberto}
         onClose={() => {
           setModalFormAberto(false);

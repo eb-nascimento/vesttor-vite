@@ -26,7 +26,7 @@ Foram considerados:
 - `docs/SDD.md`;
 - `docs/transacoes-v2.md`;
 - `docs/parcelamento.md`;
-- as referências visuais clara e escura da pasta `docs/Documentação`;
+- as referências visuais clara e escura da pasta `docs/academico`;
 - as decisões tomadas durante a revisão das telas.
 
 Em caso de conflito, prevalecem as decisões mais recentes:

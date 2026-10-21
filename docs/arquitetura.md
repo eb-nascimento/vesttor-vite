@@ -720,7 +720,7 @@ A pagina `Home.jsx` e o formulario de transacoes foram reformulados conforme a e
   - Categorias contextuais: a lista de categorias adapta seus itens dinamicamente de acordo com o tipo da transacao.
   - Calculo de parcelas em tempo real com seletor de parcelas e resumo formatado em BRL.
   - Higienizacao de payload: receitas nao incluem metodo de pagamento ou dados de parcelamento no envio a camada de dados.
-- **Regras do Firestore (`firestore.rules`)**:
+- **Regras do Firestore (`firebase/firestore.rules`)**:
   - A funcao `isValidTransaction` valida tipos dos campos opcionais (`categoria`, `metodoPagamento`, `parcelado`, `parcelas`) preservando a obrigatoriedade dos campos basicos e o isolamento por usuario.
 - **Controles de exibicao (`ControlesTransacoes.jsx`)**:
   - Filtros rapidos apresentados em formato de pilulas interativas mantendo o estado sincronizado na URL via query params.
@@ -747,7 +747,7 @@ Para viabilizar compras parceladas sem distorcer o fluxo de caixa inicial, a arq
   - Normalização monetária impedindo mais de 2 números decimais após a vírgula/ponto com suporte nativo pt-BR;
   - Controle stepper de parcelas (`[ − ]` e `[ + ]`) com digitação numérica livre (sem bloqueio de Backspace no `onChange`) e clamping seguro (2 a 72) no `onBlur` e submit;
   - Remoção de spin buttons nativos dos navegadores via CSS.
-- **Segurança e Validação de Esquema (`firestore.rules`)**:
+- **Segurança e Validação de Esquema (`firebase/firestore.rules`)**:
   - Regras auditadas pela skill `firebase-security-rules-auditor`, assegurando tipagem estrita, limites de tamanho de strings (<= 50/100 chars), intervalo de parcelas (1 a 72), `hasOnly` e autorização por `isOwner`.
 
 ### 16.17. Arquitetura da Página Transações V2 (Extrato Completo)

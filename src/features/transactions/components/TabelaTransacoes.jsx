@@ -1,5 +1,6 @@
 import "./TabelaTransacoes.css";
 import { Pencil, Trash2 } from "lucide-react";
+import { useOperacaoAssincrona } from "../../../hooks/useOperacaoAssincrona";
 
 const formatarMetodo = (metodo) => {
   if (!metodo) return "-";
@@ -25,6 +26,9 @@ function TabelaTransacoes({
   onExcluir,
   onSolicitarExclusaoParcelamento,
 }) {
+  const { processando, erro, executar } = useOperacaoAssincrona(
+    "Não foi possível excluir a transação. Tente novamente.",
+  );
   if (!transacoes || transacoes.length === 0) {
     return (
       <div className="tabela-vazia">
@@ -37,12 +41,14 @@ function TabelaTransacoes({
     if (item.parcelamentoId && onSolicitarExclusaoParcelamento) {
       onSolicitarExclusaoParcelamento(item);
     } else {
-      onExcluir(item.id);
+      executar(() => onExcluir(item.id));
     }
   };
 
   return (
     <div className="tabela-transacoes-container desktop-only">
+      {processando && <p role="status">Excluindo transação...</p>}
+      {erro && <p className="erro-msg" role="alert">{erro}</p>}
       <table className="tabela-transacoes">
         <thead>
           <tr>
@@ -110,6 +116,7 @@ function TabelaTransacoes({
                   <div className="acoes-wrapper">
                     <button
                       className="btn-acao editar"
+                      disabled={processando}
                       aria-label={`Editar ${item.descricao}`}
                       onClick={() => onEditar(item)}
                     >
@@ -117,6 +124,7 @@ function TabelaTransacoes({
                     </button>
                     <button
                       className="btn-acao excluir"
+                      disabled={processando}
                       aria-label={`Excluir ${item.descricao}`}
                       onClick={() => handleExcluir(item)}
                     >

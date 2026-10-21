@@ -15,13 +15,14 @@ export default function ConfirmModal({
   confirmText = "Confirmar",
   cancelText = "Cancelar",
   hideFooter = false,
+  processando = false,
 }) {
   if (!isOpen) return null;
 
   return (
     <ModalBase
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={() => { if (!processando) onClose(); }}
       ariaLabelledby="modal-confirm-titulo"
     >
       <div className="confirm-modal-card" onClick={(e) => e.stopPropagation()}>
@@ -29,6 +30,7 @@ export default function ConfirmModal({
           type="button"
           className="confirm-modal-btn-fechar"
           onClick={onClose}
+          disabled={processando}
           aria-label="Fechar janela"
         >
           <X size={18} aria-hidden="true" />
@@ -48,11 +50,11 @@ export default function ConfirmModal({
 
         {!hideFooter && (
           <div className="confirm-modal-footer">
-            <Button variant="secondary" onClick={onClose}>
+            <Button variant="secondary" onClick={onClose} disabled={processando}>
               {cancelText}
             </Button>
             {onConfirm && (
-              <Button variant={variant} onClick={onConfirm}>
+              <Button variant={variant} onClick={onConfirm} disabled={processando}>
                 {confirmText}
               </Button>
             )}

@@ -1,0 +1,192 @@
+rules_version = '2';
+
+// Assumed data model:
+// transacoes/{transactionId}
+// - userId: string, required and immutable
+// - data: timestamp, required
+// - descricao: string, required, 1-100 characters
+// - valor: number, required and positive
+// - tipo: "receita" or "despesa", required
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function uidUnchanged() {
+      return isOwner(request.resource.data.userId);
+    }
+
+    function uidNotModified() {
+      return request.resource.data.userId == resource.data.userId;
+    }
+
+    function isValidTransaction(data) {
+      return data.keys().hasAll([
+          'userId',
+          'data',
+          'descricao',
+          'tipo'
+        ])
+        && data.keys().hasOnly([
+          'userId',
+          'data',
+          'descricao',
+          'valor',
+          'valorCentavos',
+          'tipo',
+          'categoria',
+          'metodoPagamento',
+          'parcelado',
+          'parcelas',
+          'parcelamentoId',
+          'numeroParcela',
+          'totalParcelas',
+          'valorTotalCompra',
+          'valorTotalCentavos'
+        ])
+        && data.userId is string
+        && data.userId.size() > 0
+        && data.userId.size() <= 128
+        && data.data is timestamp
+        && data.descricao is string
+        && data.descricao.size() > 0
+        && data.descricao.size() <= 100
+        && (('valorCentavos' in data && data.valorCentavos is int && data.valorCentavos > 0 && data.valorCentavos <= 9007199254740991)
+          || (!('valorCentavos' in data) && data.valor is number && data.valor > 0))
+        && data.tipo in ['receita', 'despesa']
+        && (!('categoria' in data) || (data.categoria is string && data.categoria.size() <= 50))
+        && (!('metodoPagamento' in data) || (data.metodoPagamento is string && data.metodoPagamento.size() <= 50))
+        && (!('parcelado' in data) || data.parcelado is bool)
+        && (!('parcelas' in data) || (data.parcelas is int && data.parcelas >= 1 && data.parcelas <= 72))
+        && (!('parcelamentoId' in data) || (data.parcelamentoId is string && data.parcelamentoId.size() <= 100))
+        && (!('numeroParcela' in data) || (data.numeroParcela is int && data.numeroParcela >= 1 && data.numeroParcela <= 72))
+        && (!('totalParcelas' in data) || (data.totalParcelas is int && data.totalParcelas >= 2 && data.totalParcelas <= 72))
+        && (!('numeroParcela' in data) || ('totalParcelas' in data && 'parcelamentoId' in data && data.numeroParcela <= data.totalParcelas))
+        && (!('valorTotalCentavos' in data) || (data.valorTotalCentavos is int && data.valorTotalCentavos > 0 && data.valorTotalCentavos <= 9007199254740991))
+        && (!('valorTotalCompra' in data) || (data.valorTotalCompra is number && data.valorTotalCompra > 0));
+    }
+
+    function isValidPlanning(data) {
+      return data.keys().hasAll([
+          'userId',
+          'categoria',
+          'tipo',
+          'mesAno',
+          'dataCriacao'
+        ])
+        && data.keys().hasOnly([
+          'userId',
+          'categoria',
+          'tipo',
+          'planejado',
+          'planejadoCentavos',
+          'mesAno',
+          'dataCriacao'
+        ])
+        && data.userId is string
+        && data.userId.size() > 0
+        && data.userId.size() <= 128
+        && data.categoria is string
+        && data.categoria.size() > 0
+        && data.categoria.size() <= 50
+        && data.tipo in ['Entrada', 'Fixo', 'Variável']
+        && (('planejadoCentavos' in data && data.planejadoCentavos is int && data.planejadoCentavos >= 0 && data.planejadoCentavos <= 9007199254740991)
+          || (!('planejadoCentavos' in data) && data.planejado is number && data.planejado >= 0))
+        && data.mesAno is string
+        && data.mesAno.matches('^\\d{4}-(0[1-9]|1[0-2])$')
+        && (data.dataCriacao is timestamp
+          || (data.dataCriacao is string
+            && data.dataCriacao.size() > 0
+            && data.dataCriacao.size() <= 40));
+    }
+
+    match /transacoes/{transactionId} {
+      allow read: if isOwner(resource.data.userId);
+
+      allow create: if uidUnchanged()
+        && isValidTransaction(request.resource.data);
+
+      allow update: if isOwner(resource.data.userId)
+        && uidNotModified()
+        && isValidTransaction(request.resource.data);
+
+      allow delete: if isAuthenticated() && (!exists(/databases/$(database)/documents/transacoes/$(transactionId)) || isOwner(resource.data.userId));
+    }
+
+    match /planejamentos/{planningId} {
+      allow read: if isOwner(resource.data.userId);
+
+      allow create: if uidUnchanged()
+        && isValidPlanning(request.resource.data);
+
+      allow update: if isOwner(resource.data.userId)
+        && uidNotModified()
+        && isValidPlanning(request.resource.data);
+
+      allow delete: if isAuthenticated() && (!exists(/databases/$(database)/documents/planejamentos/$(planningId)) || isOwner(resource.data.userId));
+    }
+
+    // Destino da migração: contrato atual, dinheiro inteiro e propriedade no caminho.
+    match /usuarios/{uid}/transacoes/{id} {
+      allow read, delete: if isOwner(uid);
+      allow create: if isOwner(uid) && request.resource.data.userId == uid
+        && isValidTransaction(request.resource.data)
+        && 'valorCentavos' in request.resource.data && !('valor' in request.resource.data)
+        && !('valorTotalCompra' in request.resource.data);
+      allow update: if isOwner(uid) && request.resource.data.userId == uid && uidNotModified()
+        && isValidTransaction(request.resource.data)
+        && 'valorCentavos' in request.resource.data && !('valor' in request.resource.data)
+        && !('valorTotalCompra' in request.resource.data);
+    }
+    match /usuarios/{uid}/planejamentos/{id} {
+      allow read, delete: if isOwner(uid);
+      allow create: if isOwner(uid) && request.resource.data.userId == uid
+        && isValidPlanning(request.resource.data) && 'planejadoCentavos' in request.resource.data
+        && !('planejado' in request.resource.data);
+      allow update: if isOwner(uid) && request.resource.data.userId == uid && uidNotModified()
+        && isValidPlanning(request.resource.data) && 'planejadoCentavos' in request.resource.data
+        && !('planejado' in request.resource.data)
+        && request.resource.data.dataCriacao == resource.data.dataCriacao;
+    }
+
+    function isValidCatalog(data, uid) {
+      return data.keys().hasAll(['userId', 'nome', 'naturezasPermitidas', 'ativo', 'criadoEm', 'atualizadoEm', 'revisao'])
+        && data.keys().hasOnly(['userId', 'nome', 'naturezasPermitidas', 'ativo', 'criadoEm', 'atualizadoEm', 'revisao', 'chaveComparacao', 'ordem'])
+        && data.userId == uid && data.nome is string && data.nome.size() > 0 && data.nome.size() <= 60
+        && data.naturezasPermitidas is list && data.naturezasPermitidas.size() > 0 && data.naturezasPermitidas.size() <= 2
+        && data.naturezasPermitidas.hasOnly(['receita', 'despesa'])
+        && data.ativo is bool && data.criadoEm is timestamp && data.atualizadoEm is timestamp
+        && data.revisao is int && data.revisao > 0
+        && (!('chaveComparacao' in data) || (data.chaveComparacao is string && data.chaveComparacao.size() <= 100))
+        && (!('ordem' in data) || (data.ordem is int && data.ordem >= 0));
+    }
+    match /{catalogo}/{id} {
+      allow read: if catalogo in ['categoriasUniversais', 'meiosFinanceirosUniversais', 'versoesCatalogo'] && isAuthenticated();
+      // Não há permissão de escrita para o frontend nos catálogos universais.
+    }
+    match /usuarios/{uid}/{catalogo}/{id} {
+      allow read: if isOwner(uid) && catalogo in ['categoriasPersonalizadas', 'meiosFinanceirosPersonalizados'];
+      allow create: if isOwner(uid) && catalogo in ['categoriasPersonalizadas', 'meiosFinanceirosPersonalizados']
+        && isValidCatalog(request.resource.data, uid) && request.resource.data.revisao == 1
+        && request.resource.data.criadoEm == request.time && request.resource.data.atualizadoEm == request.time;
+      allow update: if isOwner(uid) && catalogo in ['categoriasPersonalizadas', 'meiosFinanceirosPersonalizados']
+        && isValidCatalog(request.resource.data, uid) && uidNotModified()
+        && request.resource.data.criadoEm == resource.data.criadoEm
+        && request.resource.data.atualizadoEm == request.time
+        && request.resource.data.revisao == resource.data.revisao + 1;
+      // Itens personalizados são desativados, preservando referências históricas.
+    }
+    match /usuarios/{uid}/{preferencias}/{id} {
+      allow read, delete: if isOwner(uid) && preferencias in ['preferenciasCategorias', 'preferenciasMeios'];
+      allow create, update: if isOwner(uid) && preferencias in ['preferenciasCategorias', 'preferenciasMeios']
+        && request.resource.data.keys().hasAll(['oculto', 'atualizadoEm'])
+        && request.resource.data.keys().hasOnly(['oculto', 'atualizadoEm'])
+        && request.resource.data.oculto is bool && request.resource.data.atualizadoEm == request.time;
+    }
+  }
+}

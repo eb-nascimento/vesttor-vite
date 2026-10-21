@@ -1,5 +1,5 @@
 .home-page {
-  width: min(1440px, calc(100% - 48px));
+  width: 100%;
   margin: 0 auto;
   padding: 32px 0 48px;
   box-sizing: border-box;
@@ -7,14 +7,15 @@
 
 .home-grid {
   display: grid;
-  grid-template-columns: 460px 1fr;
+  grid-template-columns: minmax(0, 520px) minmax(0, 1fr);
   align-items: flex-start;
   gap: 32px;
 }
 
 .home-coluna-form {
   position: sticky;
-  top: 24px;
+  top: 96px;
+  min-width: 0;
 }
 
 .home-coluna-painel {
@@ -33,14 +34,14 @@
 
 @media (max-width: 1040px) {
   .home-grid {
-    grid-template-columns: 400px 1fr;
+    grid-template-columns: minmax(0, 400px) minmax(0, 1fr);
     gap: 24px;
   }
 }
 
-@media (max-width: 880px) {
+@media (max-width: 1024px) {
   .home-page {
-    width: min(100% - 32px);
+    width: 100%;
     padding: 20px 0 36px;
   }
 

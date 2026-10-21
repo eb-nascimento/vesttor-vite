@@ -1,3 +1,4 @@
+import { obterMensagemErroFirestore } from "../../../utils/errosFirestore";
 import "./FormTransacao.css";
 import { useState, useMemo, useRef } from "react";
 import DatePicker from "../../../components/ui/DatePicker";
@@ -362,7 +363,7 @@ function Form({
         erro: "",
       });
     } catch (erro) {
-      atualizarCampo("erro", erro.message || "Não foi possível salvar. Tente novamente.");
+      atualizarCampo("erro", obterMensagemErroFirestore(erro, "Não foi possível salvar. Tente novamente."));
     } finally {
       envioEmCurso.current = false;
       setProcessando(false);
@@ -387,8 +388,9 @@ function Form({
         <fieldset disabled={processando} className="form-campos">
         {/* 1. SELETOR DE TIPO (DESPESA / RECEITA) */}
         <div className="form-item">
-          <label htmlFor="tipo">Tipo</label>
+          <span id="tipo-label" className="form-item-label">Tipo</span>
           <TipoSwitcher
+            aria-labelledby="tipo-label"
             opcoes={[
               {
                 valor: "despesa",
@@ -407,6 +409,7 @@ function Form({
         </div>
 
         {/* 2. DATA */}
+        <div className="form-data-valor">
         <div className="form-item">
           <label htmlFor="data">
             <Calendar size={13} aria-hidden="true" />
@@ -441,6 +444,7 @@ function Form({
         </div>
 
         {/* 4. MÉTODO DE PAGAMENTO (apenas para despesas) */}
+        </div>
         {isDespesa && (
           <div className="form-item">
             <label htmlFor="metodoPagamento">

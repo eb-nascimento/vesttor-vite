@@ -1,5 +1,8 @@
 #env
 .env
+/config/env/.env*
+!/config/env/.env.example
+!/config/env/.env.emulator
 
 #Skills
 .agents
@@ -35,4 +38,40 @@ ui-debug.log
 
 .claude
 
-/docs
+/docs/**
+# Artefatos locais e temporarios
+.tmp/
+output/
+
+# Preservar a visibilidade dos documentos versionados que foram movidos
+!/docs/academico/
+!/docs/planejamento/
+!/docs/academico/Documentos Base/
+!/docs/academico/Documentos Base/1-Docs Iniciais/
+!/docs/academico/Documentos Base/2-Artefatos PIB/
+!/docs/academico/Documentos Base/Banca Final/
+!/docs/academico/Briefing Projetos PIB - Vesttor.docx
+!/docs/academico/Documentos Base/1-Docs Iniciais/1-Proposta de Projeto PIB.docx
+!/docs/academico/Documentos Base/1-Docs Iniciais/2-Briefing Projetos PIB.docx
+!/docs/academico/Documentos Base/1-Docs Iniciais/Matriz de Eisenhower PIB.docx
+!/docs/academico/Documentos Base/2-Artefatos PIB/01 Proposta Formal.docx
+!/docs/academico/Documentos Base/2-Artefatos PIB/02 Especificação Funcional UC.doc
+!/docs/academico/Documentos Base/2-Artefatos PIB/03 Modelo de Dados.doc
+!/docs/academico/Documentos Base/2-Artefatos PIB/04 Artigo Formal Template.docx
+!/docs/academico/Documentos Base/Banca Final/Apresentação PIB Exemplo.pptx
+!/docs/academico/Documentos Base/Banca Final/Dicas para montar a apresentação PIB.pdf
+!/docs/academico/identidade-visual-claro.png
+!/docs/academico/identidade-visual-escuro.png
+!/docs/planejamento/task.md
+
+# Documentos versionados movidos da raiz
+!/docs/CONTEXT.md
+
+# Relatórios de migração contêm cópias privadas dos dados.
+/migration-reports/
+
+# Convenção de versionamento compartilhada pelo projeto
+!/docs/versionamento.md
+
+# Evidência do QA de regressão
+!/docs/qa-regressao-2026-10-21.md

@@ -1,8 +1,8 @@
 
 
-function TipoSwitcher({ opcoes, valorAtual, onChange }) {
+function TipoSwitcher({ opcoes, valorAtual, onChange, "aria-labelledby": ariaLabelledby }) {
   return (
-    <div className="tipo-switcher" role="group">
+    <div className="tipo-switcher" role="group" aria-labelledby={ariaLabelledby}>
       {opcoes.map((opcao) => (
         <button
           key={opcao.valor}

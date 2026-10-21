@@ -1,5 +1,6 @@
 import { Pencil, Trash2 } from "lucide-react";
 import "./ItemTransacao.css";
+import { useOperacaoAssincrona } from "../../../hooks/useOperacaoAssincrona";
 
 function ItemTransacao({
   item,
@@ -7,6 +8,9 @@ function ItemTransacao({
   onExcluir,
   onSolicitarExclusaoParcelamento,
 }) {
+  const { processando, erro, executar } = useOperacaoAssincrona(
+    "Não foi possível excluir a transação. Tente novamente.",
+  );
   const isReceita = item.tipo === "receita";
   const dataFormatada = item.data?.toDate
     ? item.data.toDate().toLocaleDateString("pt-BR")
@@ -54,7 +58,7 @@ function ItemTransacao({
     if (item.parcelamentoId && onSolicitarExclusaoParcelamento) {
       onSolicitarExclusaoParcelamento(item);
     } else {
-      onExcluir(item.id);
+      executar(() => onExcluir(item.id));
     }
   }
 
@@ -81,6 +85,7 @@ function ItemTransacao({
           <button
             type="button"
             className="btn-acao btn-editar"
+            disabled={processando}
             onClick={() => onEditar(item)}
             aria-label={`Editar transação ${item.descricao}`}
           >
@@ -89,6 +94,7 @@ function ItemTransacao({
           <button
             type="button"
             className="btn-acao btn-excluir"
+            disabled={processando}
             onClick={handleExcluir}
             aria-label={`Excluir transação ${item.descricao}`}
           >
@@ -96,6 +102,8 @@ function ItemTransacao({
           </button>
         </div>
       </div>
+      {processando && <span role="status">Excluindo...</span>}
+      {erro && <p className="erro-msg" role="alert">{erro}</p>}
     </div>
   );
 }
