@@ -139,9 +139,9 @@ describe("migração e services no Firestore real emulado", () => {
   let appAdmin;
   let dbAdmin;
   beforeAll(async () => {
-    vi.doMock("./src/config/firebase", () => ({ db: testEnv.authenticatedContext("usuario-1").firestore() }));
-    servicos = await import("./src/services/transacoesService");
-    servicosPlanejamento = await import("./src/services/planejamentoService");
+    vi.doMock("../../src/config/firebase", () => ({ db: testEnv.authenticatedContext("usuario-1").firestore() }));
+    servicos = await import("../../src/services/transacoesService");
+    servicosPlanejamento = await import("../../src/services/planejamentoService");
     appAdmin = initializeAdminApp({ projectId: PROJECT_ID }, "migracao-testes");
     dbAdmin = getAdminFirestore(appAdmin);
   });
@@ -184,19 +184,40 @@ describe("migração e services no Firestore real emulado", () => {
     const planos = await dbAdmin.collection("usuarios/usuario-1/planejamentos").get();
     expect(planos.docs.map((item) => item.data().planejadoCentavos).sort((a, b) => a - b)).toEqual([0, 101]);
   });
+  it("assinatura mensal acompanha criação, edição e exclusão sem recarregar", async () => {
+    let itens;
+    let erro;
+    const cancelar = servicos.observarTransacoes("usuario-1", (dados) => { itens = dados; }, (falha) => { erro = falha; }, "2026-10");
+    try {
+      await vi.waitFor(() => { expect(erro).toBeUndefined(); expect(itens).toEqual([]); });
+      const nova = await servicos.criarTransacaoNaApi({ tipo: "receita", descricao: "Tempo real", valor: 10.25, data: "2026-10-08" }, "usuario-1");
+      await vi.waitFor(() => { expect(erro).toBeUndefined(); expect(itens).toHaveLength(1); expect(itens[0]).toMatchObject({ id: nova.id, valor: 10.25 }); });
+      await servicos.editarTransacaoNaApi(nova.id, { descricao: "Atualizada", valor: 20.5 }, "usuario-1");
+      await vi.waitFor(() => { expect(erro).toBeUndefined(); expect(itens[0]).toMatchObject({ id: nova.id, descricao: "Atualizada", valor: 20.5 }); });
+      await servicos.excluirTransacaoNaApi(nova.id, "usuario-1");
+      await vi.waitFor(() => { expect(erro).toBeUndefined(); expect(itens).toEqual([]); });
+    } finally {
+      cancelar();
+    }
+  });
   it("leitura mensal junta as fontes sem duplicar IDs nem carregar outros meses", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       await setDoc(doc(context.firestore(), "transacoes/t1"), { userId: "usuario-1", tipo: "receita", descricao: "Legado", valor: 0.1, data: Timestamp.fromDate(new Date("2026-10-08")) });
       await setDoc(doc(context.firestore(), "usuarios/usuario-1/transacoes/t1"), transacaoCentavos({ valorCentavos: 20 }));
       await setDoc(doc(context.firestore(), "usuarios/usuario-1/transacoes/outro-mes"), transacaoCentavos({ data: Timestamp.fromDate(new Date("2026-11-08")) }));
     });
-    let cancelar;
-    const itens = await new Promise((resolve, reject) => {
-      cancelar = servicos.observarTransacoes("usuario-1", resolve, reject, "2026-10");
-    });
-    cancelar();
-    expect(itens).toHaveLength(1);
-    expect(itens[0]).toMatchObject({ id: "t1", valor: 0.2, valorCentavos: 20 });
+    let itens;
+    let erro;
+    const cancelar = servicos.observarTransacoes("usuario-1", (dados) => { itens = dados; }, (falha) => { erro = falha; }, "2026-10");
+    try {
+      await vi.waitFor(() => {
+        expect(erro).toBeUndefined();
+        expect(itens).toHaveLength(1);
+        expect(itens[0]).toMatchObject({ id: "t1", valor: 0.2, valorCentavos: 20 });
+      });
+    } finally {
+      cancelar();
+    }
   });
 });
 

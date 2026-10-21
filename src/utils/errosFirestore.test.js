@@ -8,6 +8,8 @@ describe("mensagens seguras do Firestore", () => {
     ["unavailable", "conexão"],
     ["aborted", "alterados"],
     ["invalid-argument", "Revise"],
+    ["out-of-range", "intervalo permitido"],
+    ["cancelled", "interrompida"],
     ["already-exists", "já existe"],
     ["failed-precondition", "estado atual"],
     ["not-found", "não está mais disponível"],

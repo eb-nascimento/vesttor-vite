@@ -72,3 +72,6 @@ output/
 
 # Convenção de versionamento compartilhada pelo projeto
 !/docs/versionamento.md
+
+# Evidência do QA de regressão
+!/docs/qa-regressao-2026-10-21.md
