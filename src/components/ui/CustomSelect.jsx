@@ -9,6 +9,7 @@ export default function CustomSelect({
   placeholder,
   disabled,
   id,
+  ariaLabel,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -97,6 +98,8 @@ export default function CustomSelect({
       <button
         type="button"
         id={id}
+        aria-label={ariaLabel}
+        disabled={disabled}
         className={`custom-select-trigger ${isOpen ? "open" : ""}`}
         onClick={handleToggle}
         aria-haspopup="listbox"

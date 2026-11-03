@@ -1,3 +1,4 @@
+import Select from "../../../components/ui/Select";
 import "./FiltrosTransacoes.css";
 import { Search, Filter, X } from "lucide-react";
 import CustomSelect from "../../../components/ui/CustomSelect";
@@ -87,7 +88,7 @@ function FiltrosTransacoes({
           <div className="filtros-grid">
             <div className="filtro-item">
               <label htmlFor="filtro-competencia">Competência</label>
-              <select
+              <Select
                 id="filtro-competencia"
                 value={filtros.mesAno}
                 onChange={(e) => handleChange("mesAno", e.target.value)}
@@ -97,7 +98,7 @@ function FiltrosTransacoes({
                     {m.label}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
 
             <div className="filtro-item">
@@ -158,3 +159,4 @@ function FiltrosTransacoes({
 }
 
 export default FiltrosTransacoes;
+

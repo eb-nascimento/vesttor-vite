@@ -1,3 +1,4 @@
+import Select from "../components/ui/Select";
 import PaginadorMes from "../components/ui/PaginadorMes";
 import { useState } from "react";
 import "./Budget.css";
@@ -189,9 +190,9 @@ function Budget({ usuario }) {
         <div className="budget-header-textos">
           <h2>Planejamento<span className="budget-desktop-label"> Financeiro</span></h2>
           <p className="budget-desktop-label">Visão operacional do mês e dos próximos compromissos.</p>
-          <select className="budget-periodo-compacto" aria-label="Competência do planejamento" value={filtros.mesAno} onChange={(event) => setFiltros({ ...filtros, mesAno: event.target.value })}>
+          <Select className="budget-periodo-compacto" aria-label="Competência do planejamento" value={filtros.mesAno} onChange={(event) => setFiltros({ ...filtros, mesAno: event.target.value })}>
             {mesesDisponiveis.map((mes) => <option key={mes.valor} value={mes.valor}>{mes.label}</option>)}
-          </select>
+          </Select>
         </div>
         <div className="budget-header-acoes">
           <div className="budget-periodo-detalhado"><PaginadorMes mesAtual={mesesDisponiveis.find((mes) => mes.valor === filtros.mesAno)?.label} onMudarMes={handleMudarMes} /></div>
@@ -239,3 +240,4 @@ function Budget({ usuario }) {
 }
 
 export default Budget;
+
