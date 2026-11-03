@@ -76,7 +76,7 @@
 .category-columns,
 .category-row {
   display: grid;
-  grid-template-columns: 2fr 1fr 0.8fr 1fr;
+  grid-template-columns: 2fr 1fr 0.8fr;
   gap: 16px;
   align-items: center;
   padding-inline: 20px;
@@ -278,4 +278,5 @@
 .category-actions[hidden] {
   display: none;
 }
+
 

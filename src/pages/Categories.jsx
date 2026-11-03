@@ -1,3 +1,4 @@
+import { CATALOGO_CATEGORIAS } from "../data/categorias";
 import Select from "../components/ui/Select";
 import { useState } from "react";
 import PageHeader from "../components/ui/PageHeader";
@@ -5,24 +6,8 @@ import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
 import ModalBase from "../components/ui/ModalBase";
 import "./Categories.css";
-const dados = ["Alimentação", "Moradia", "Transporte", "Salário"].map(
-  (nome, i) => ({
-    id: nome,
-    nome,
-    tipo: i === 3 ? "Receitas" : "Despesas",
-    ativa: true,
-    registros: [24, 8, 16, 6][i],
-    cor: [
-      "var(--color-error)",
-      "var(--color-accent)",
-      "var(--color-warning)",
-      "var(--color-growth)",
-    ][i],
-    universal: true,
-  }),
-);
 export default function Categories() {
-  const [categorias, setCategorias] = useState(dados);
+  const [categorias, setCategorias] = useState(CATALOGO_CATEGORIAS);
   const [busca, setBusca] = useState("");
   const [tipo, setTipo] = useState("Todas");
   const [filtros, setFiltros] = useState(false);
@@ -131,7 +116,7 @@ export default function Categories() {
           <span>Categoria</span>
           <span>Tipo</span>
           <span>Status</span>
-          <span>Transações</span>
+          
           <span hidden>Ações</span>
         </div>
         {categorias
@@ -153,7 +138,7 @@ export default function Categories() {
               <span className={`category-status ${c.ativa ? "active" : ""}`}>
                 {c.ativa ? "Ativa" : c.universal ? "Oculta" : "Inativa"}
               </span>
-              <span className="category-count">{c.registros} registros</span>
+              
               <div className="category-actions" hidden>
                 {!c.universal && (
                   <button onClick={() => setForm({ ...c })}>Editar</button>
@@ -188,7 +173,7 @@ export default function Categories() {
         )}
       </div>
       <p className="categories-preview">
-        Prévia com dados de exemplo. Criação e gerenciamento de categorias estarão disponíveis futuramente.
+        Catálogo padrão disponível em transações e planejamento. Criação e gerenciamento de categorias estarão disponíveis futuramente.
       </p>
       <ModalBase
         isOpen={!!form}
@@ -260,6 +245,7 @@ export default function Categories() {
     </section>
   );
 }
+
 
 
 

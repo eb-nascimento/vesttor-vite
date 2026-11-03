@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/set-state-in-effect */
+import { CATEGORIAS } from "../../../data/categorias";
 import { useState, useEffect } from "react";
 import { X, DollarSign, Tag } from "lucide-react";
 import ModalBase from "../../../components/ui/ModalBase";
@@ -10,20 +11,7 @@ import "./ModalFormPlanejamento.css";
 import "../../../features/transactions/components/FormTransacao.css";
 import { useOperacaoAssincrona } from "../../../hooks/useOperacaoAssincrona";
 
-const CATEGORIAS = [
-  "Alimentação",
-  "Moradia",
-  "Transporte",
-  "Lazer",
-  "Saúde",
-  "Educação",
-  "Contas & Serviços",
-  "Salário",
-  "Investimentos",
-  "Freelance",
-  "Reembolso",
-  "Outros",
-];
+
 
 function ModalFormPlanejamento({
   isOpen,
@@ -168,3 +156,4 @@ function ModalFormPlanejamento({
 }
 
 export default ModalFormPlanejamento;
+

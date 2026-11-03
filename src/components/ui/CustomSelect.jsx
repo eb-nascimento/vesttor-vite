@@ -1,136 +1,56 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useId } from "react";
 import { ChevronDown } from "lucide-react";
 import "./CustomSelect.css";
 
-export default function CustomSelect({
-  options,
-  value,
-  onChange,
-  placeholder,
-  disabled,
-  id,
-  ariaLabel,
-}) {
+const normalizar = texto => String(texto).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("pt-BR");
+
+export default function CustomSelect({ options, value, onChange, placeholder, disabled, id, ariaLabel }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [busca, setBusca] = useState("");
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const selectRef = useRef(null);
   const listRef = useRef(null);
-
-  const selectedOption = options.find((opt) => opt.valor === value);
-  const displayValue = selectedOption
-    ? selectedOption.label
-    : placeholder || "Selecione...";
+  const inputRef = useRef(null);
+  const listId = useId();
+  const selectedOption = options.find(opt => opt.valor === value);
+  const filtradas = options.filter(opt => normalizar(opt.label).includes(normalizar(busca)));
+  const indiceAtivo = highlightedIndex >= 0 && highlightedIndex < filtradas.length ? highlightedIndex : -1;
+  const fechar = () => { setIsOpen(false); setBusca(""); setHighlightedIndex(-1); };
+  const abrir = () => { if (!disabled) { setBusca(""); setHighlightedIndex(-1); setIsOpen(true); } };
+  const escolher = option => { onChange(option.valor); fechar(); inputRef.current?.focus(); };
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (selectRef.current && !selectRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    const fora = event => { if (!selectRef.current?.contains(event.target)) { setIsOpen(false); setBusca(""); setHighlightedIndex(-1); } };
+    document.addEventListener("mousedown", fora);
+    return () => document.removeEventListener("mousedown", fora);
   }, []);
-
-  const handleToggle = () => {
-    if (disabled) return;
-    if (!isOpen) {
-      const index = options.findIndex((opt) => opt.valor === value);
-      setHighlightedIndex(index >= 0 ? index : 0);
-    }
-    setIsOpen(!isOpen);
-  };
-
   useEffect(() => {
-    if (isOpen && highlightedIndex >= 0 && listRef.current) {
-      const item = listRef.current.children[highlightedIndex];
-      if (item) {
-        item.scrollIntoView({ block: "nearest" });
-      }
-    }
-  }, [highlightedIndex, isOpen]);
+    if (isOpen && indiceAtivo >= 0) listRef.current?.children[indiceAtivo]?.scrollIntoView?.({ block: "nearest" });
+  }, [indiceAtivo, isOpen]);
 
-  const handleKeyDown = (e) => {
-    if (disabled) return;
-
-    if (!isOpen) {
-      if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown") {
-        e.preventDefault();
-        const index = options.findIndex((opt) => opt.valor === value);
-        setHighlightedIndex(index >= 0 ? index : 0);
-        setIsOpen(true);
-      }
-      return;
-    }
-
-    if (e.key === "ArrowDown") {
+  function teclado(e) {
+    if (e.nativeEvent.isComposing) return;
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
       e.preventDefault();
-      setHighlightedIndex((prev) =>
-        prev < options.length - 1 ? prev + 1 : prev,
-      );
-    } else if (e.key === "ArrowUp") {
+      if (!isOpen) { abrir(); return; }
+      setHighlightedIndex(atual => e.key === "ArrowDown" ? Math.min(atual + 1, filtradas.length - 1) : Math.max(atual - 1, 0));
+    } else if (e.key === "Enter") {
       e.preventDefault();
-      setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : prev));
-    } else if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      if (highlightedIndex >= 0 && highlightedIndex < options.length) {
-        onChange(options[highlightedIndex].valor);
-        setIsOpen(false);
-      }
-    } else if (e.key === "Escape") {
-      e.preventDefault();
-      setIsOpen(false);
-    }
-  };
-
-  const handleBlur = (e) => {
-    if (selectRef.current && !selectRef.current.contains(e.relatedTarget)) {
-      setTimeout(() => setIsOpen(false), 150);
-    }
-  };
-
-  return (
-    <div
-      className={`custom-select ${disabled ? "disabled" : ""}`}
-      ref={selectRef}
-      onKeyDown={handleKeyDown}
-      onBlur={handleBlur}
-    >
-      <button
-        type="button"
-        id={id}
-        aria-label={ariaLabel}
-        disabled={disabled}
-        className={`custom-select-trigger ${isOpen ? "open" : ""}`}
-        onClick={handleToggle}
-        aria-haspopup="listbox"
-        aria-expanded={isOpen}
-      >
-        <span className="custom-select-value">{displayValue}</span>
-        <ChevronDown
-          size={16}
-          className={`custom-select-icon ${isOpen ? "open" : ""}`}
-        />
-      </button>
-
-      {isOpen && (
-        <ul className="custom-select-list" role="listbox" ref={listRef}>
-          {options.map((option, index) => (
-            <li
-              key={option.valor}
-              className={`custom-select-item ${option.valor === value ? "selected" : ""} ${highlightedIndex === index ? "highlighted" : ""}`}
-              role="option"
-              aria-selected={option.valor === value}
-              onClick={() => {
-                onChange(option.valor);
-                setIsOpen(false);
-              }}
-              onMouseEnter={() => setHighlightedIndex(index)}
-            >
-              {option.label}
-            </li>
-          ))}
-        </ul>
-      )}
+      if (!isOpen) abrir();
+      else if (indiceAtivo >= 0) escolher(filtradas[indiceAtivo]);
+      else if (filtradas.length === 1) escolher(filtradas[0]);
+    } else if (e.key === "Escape" && isOpen) {
+      e.preventDefault(); e.stopPropagation(); fechar();
+    } else if (e.key === "Tab") fechar();
+  }
+  return <div className={`custom-select ${disabled ? "disabled" : ""}`} ref={selectRef} onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget)) fechar(); }}>
+    <div className={`custom-select-trigger ${isOpen ? "open" : ""}`}>
+      <input ref={inputRef} id={id} aria-label={ariaLabel} disabled={disabled} className="custom-select-input" role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-expanded={isOpen} aria-controls={listId} aria-activedescendant={isOpen && indiceAtivo >= 0 ? `${listId}-${indiceAtivo}` : undefined} autoComplete="off" placeholder={isOpen ? "Digite para buscar..." : placeholder || "Selecione..."} value={isOpen ? busca : selectedOption?.label || ""} onFocus={abrir} onClick={() => { if (!isOpen) abrir(); }} onChange={e => { setBusca(e.target.value); setHighlightedIndex(-1); setIsOpen(true); }} onKeyDown={teclado} />
+      <ChevronDown size={16} aria-hidden="true" className={`custom-select-icon ${isOpen ? "open" : ""}`} />
     </div>
-  );
+    {isOpen && <ul id={listId} className="custom-select-list" role="listbox" aria-label={ariaLabel || "Opções"} ref={listRef}>
+      {filtradas.map((option, index) => <li id={`${listId}-${index}`} key={option.valor} className={`custom-select-item ${option.valor === value ? "selected" : ""} ${indiceAtivo === index ? "highlighted" : ""}`} role="option" aria-selected={option.valor === value} onMouseDown={e => e.preventDefault()} onClick={() => escolher(option)} onMouseEnter={() => setHighlightedIndex(index)}>{option.label}</li>)}
+      {!filtradas.length && <li className="custom-select-empty" role="presentation">Nenhuma opção encontrada.</li>}
+    </ul>}
+  </div>;
 }
