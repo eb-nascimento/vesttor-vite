@@ -16,6 +16,25 @@ body {
   background: var(--color-bg);
 }
 
+/* Aplica o tema também às opções dos selects atuais e futuros. */
+select option,
+select optgroup {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-family-base);
+}
+
+select option:checked {
+  background-color: var(--color-input-bg);
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+select option:disabled,
+select optgroup:disabled {
+  color: var(--color-text-muted);
+}
+
 .app-main {
   width: min(1312px, calc(100% - 128px));
   margin-inline: auto;

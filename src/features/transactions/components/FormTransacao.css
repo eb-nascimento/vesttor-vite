@@ -150,7 +150,7 @@ form {
 }
 
 /* 3. Inputs e Selects */
-.form-container input,
+.form-container input:not(.custom-select-input),
 .form-container select {
   width: 100%;
   box-sizing: border-box;
@@ -167,7 +167,7 @@ form {
     background-color 0.2s ease;
 }
 
-.form-container input::placeholder {
+.form-container input:not(.custom-select-input)::placeholder {
   color: var(--color-text-muted, #9fb0c3);
   opacity: 0.6;
 }
@@ -177,7 +177,7 @@ form {
   opacity: 0.75;
 }
 
-.form-container input:focus,
+.form-container input:not(.custom-select-input):focus,
 .form-container select:focus {
   border-color: var(--color-accent, #20aeff);
   outline: none;
@@ -465,3 +465,4 @@ form {
   cursor: wait;
   transform: none;
 }
+

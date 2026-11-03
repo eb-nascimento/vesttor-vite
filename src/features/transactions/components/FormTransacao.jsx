@@ -1,3 +1,4 @@
+import { CATEGORIAS_DESPESA, CATEGORIAS_RECEITA } from "../../../data/categorias";
 import { obterMensagemErroFirestore } from "../../../utils/errosFirestore";
 import "./FormTransacao.css";
 import { useState, useMemo, useRef } from "react";
@@ -25,25 +26,7 @@ function obterDataAtual() {
   return new Date().toISOString().split("T")[0];
 }
 
-const CATEGORIAS_DESPESA = [
-  "Alimentação",
-  "Moradia",
-  "Transporte",
-  "Lazer",
-  "Saúde",
-  "Educação",
-  "Contas & Serviços",
-  "Outros",
-];
 
-const CATEGORIAS_RECEITA = [
-  "Salário",
-  "Investimentos",
-  "Freelance",
-  "Benefícios",
-  "Reembolso",
-  "Outros",
-];
 
 function obterPlaceholderDescricao(categoria, tipo) {
   if (tipo === "receita") {
@@ -680,3 +663,4 @@ function Form({
 }
 
 export default Form;
+
