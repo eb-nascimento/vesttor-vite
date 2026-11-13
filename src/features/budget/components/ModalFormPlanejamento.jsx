@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import { CATEGORIAS } from "../../../data/categorias";
+import { CATEGORIAS, CATEGORIAS_DESPESA, CATEGORIAS_RECEITA, tipoPadraoOrcamento } from "../../../data/categorias";
 import { useState, useEffect } from "react";
 import { X, DollarSign, Tag } from "lucide-react";
 import ModalBase from "../../../components/ui/ModalBase";
@@ -47,6 +47,8 @@ function ModalFormPlanejamento({
     if (emCurso.current) return;
     if (campo === "planejado") {
       setForm({ ...form, [campo]: normalizarInputValor(valor) });
+    } else if (campo === "categoria") {
+      setForm({ ...form, categoria: valor, tipo: tipoPadraoOrcamento(valor, form.tipo) });
     } else {
       setForm({ ...form, [campo]: valor });
     }
@@ -119,6 +121,23 @@ function ModalFormPlanejamento({
                   label: cat,
                 }))}
               />
+            </div>
+
+            <div className="form-item">
+              <label htmlFor="classificacao-orcamento">Classificação</label>
+              <CustomSelect
+                id="classificacao-orcamento"
+                value={form.tipo}
+                onChange={(val) => atualizarCampo("tipo", val)}
+                options={[
+                  ...(CATEGORIAS_RECEITA.includes(form.categoria) ? [{ valor: "Entrada", label: "Entrada" }] : []),
+                  ...(CATEGORIAS_DESPESA.includes(form.categoria) ? [
+                    { valor: "Fixo", label: "Fixo" },
+                    { valor: "Variável", label: "Variável" },
+                  ] : []),
+                ]}
+              />
+              <small>Classificação sugerida pela categoria. Ajuste conforme seu orçamento.</small>
             </div>
 
             <div className="form-item">

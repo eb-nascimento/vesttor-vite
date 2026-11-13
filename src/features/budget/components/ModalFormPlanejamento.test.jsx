@@ -39,6 +39,28 @@ const submit = (tree) => find(tree, (node) => node.type === "form").props.onSubm
 beforeEach(() => { state.values = []; state.refs = []; });
 
 describe("salvamento do orçamento", () => {
+  it("preenche o default da categoria e permite trocar Fixo por Variável", async () => {
+    const props = { isOpen: true, mesAno: "2026-11", onSave: vi.fn(), onClose: vi.fn() };
+    const select = (id) => find(render(Form, props), (node) => node.props?.id === id);
+    select("categoria").props.onChange("Moradia");
+    expect(select("classificacao-orcamento").props.value).toBe("Fixo");
+    select("classificacao-orcamento").props.onChange("Variável");
+    field(render(Form, props)).props.onChange({ target: { value: "100" } });
+    await submit(render(Form, props));
+    expect(props.onSave).toHaveBeenCalledWith(expect.objectContaining({ categoria: "Moradia", tipo: "Variável" }));
+  });
+  it("preenche Entrada para receita e mantém as três opções em categoria híbrida", () => {
+    const props = { isOpen: true };
+    const select = (id) => find(render(Form, props), (node) => node.props?.id === id);
+    select("categoria").props.onChange("Salário");
+    expect(select("classificacao-orcamento").props.value).toBe("Entrada");
+    expect(select("classificacao-orcamento").props.options.map((item) => item.valor)).toEqual(["Entrada"]);
+    select("categoria").props.onChange("Outros");
+    expect(select("classificacao-orcamento").props.value).toBe("Entrada");
+    expect(select("classificacao-orcamento").props.options.map((item) => item.valor)).toEqual(["Entrada", "Fixo", "Variável"]);
+    select("categoria").props.onChange("Alimentação");
+    expect(select("classificacao-orcamento").props.value).toBe("Variável");
+  });
   it("propaga a edição e preserva o valor quando atualizar falha", async () => {
     const props = { isOpen: true, itemEditando: { id: "plan-1" }, onClose: vi.fn(), onUpdate: vi.fn().mockRejectedValue(new Error("Falha")) };
     field(render(Form, props)).props.onChange({ target: { value: "240" } });
