@@ -80,7 +80,7 @@ Novas gravações usam `usuarios/{uid}/transacoes` e `usuarios/{uid}/planejament
 
 ### Estágio do projeto
 
-Aplicação em desenvolvimento. As páginas dedicadas a dashboard, categorias e meios financeiros ainda apresentam avisos de construção na versão consultada. Recursos descritos nos documentos de planejamento não devem ser interpretados automaticamente como entregues.
+MVP funcional concluído e aceito pelo responsável em 13/11/2026. Inclui autenticação, transações, planejamento mensal, 110 categorias padrão e 26 métodos de pagamento. Os catálogos têm cadastro desativado neste MVP. Consulte o [registro de fechamento do MVP](MVP.md) para escopo, decisões, validações e evolução futura. A conferência visual final e a preparação da publicação e das entregas acadêmicas permanecem etapas de entrega.
 
 ### Documentação
 
@@ -174,7 +174,7 @@ Rules tests require Firebase Emulator Suite prerequisites, including Java 21 or 
 
 ### Project status
 
-The application is under development. Dedicated dashboard, category, and payment-method pages still display construction notices in the reviewed version. Features described in planning documents should not automatically be treated as delivered.
+The functional MVP was accepted by the project owner on November 13, 2026. It includes authentication, transactions, monthly planning, 110 predefined categories and 26 payment methods. Custom catalog creation is disabled for this MVP. See the [MVP closure record](MVP.md) for scope, validation, delivery activities and future work. Final browser visual checks and release preparation remain delivery steps.
 
 ### Documentation
 
