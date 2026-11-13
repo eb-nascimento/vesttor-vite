@@ -1,3 +1,4 @@
+import { METODOS_PAGAMENTO } from "../../../data/metodosPagamento";
 import { CATEGORIAS_DESPESA, CATEGORIAS_RECEITA } from "../../../data/categorias";
 import { obterMensagemErroFirestore } from "../../../utils/errosFirestore";
 import "./FormTransacao.css";
@@ -438,14 +439,7 @@ function Form({
               id="metodoPagamento"
               value={form.metodoPagamento}
               onChange={(val) => atualizarCampo("metodoPagamento", val)}
-              options={[
-                { valor: "pix", label: "Pix" },
-                { valor: "cartao_credito", label: "Cartão de Crédito" },
-                { valor: "cartao_debito", label: "Cartão de Débito" },
-                { valor: "dinheiro", label: "Dinheiro" },
-                { valor: "boleto", label: "Boleto" },
-                { valor: "transferencia", label: "Transferência" },
-              ]}
+              options={METODOS_PAGAMENTO}
             />
           </div>
         )}
@@ -663,4 +657,5 @@ function Form({
 }
 
 export default Form;
+
 

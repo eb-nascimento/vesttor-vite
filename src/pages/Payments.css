@@ -1,0 +1,6 @@
+.payments-page .payment-initial { color: var(--color-accent); }
+.payments-page .categories-summary div:nth-child(3) strong { color: var(--color-accent); }
+@media (max-width: 768px) {
+  .payments-page .category-status { grid-column: 2; grid-row: 2; }
+  .payments-page .category-row { min-height: 100px; box-sizing: border-box; }
+}

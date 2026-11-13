@@ -1,3 +1,4 @@
+import { METODOS_PAGAMENTO } from "../../../data/metodosPagamento";
 import { Pencil, Trash2 } from "lucide-react";
 import "./ItemTransacao.css";
 import { useOperacaoAssincrona } from "../../../hooks/useOperacaoAssincrona";
@@ -33,7 +34,7 @@ function ItemTransacao({
       boleto: "Boleto",
       transferencia: "Transferência",
     };
-    return mapa[metodo] || metodo;
+    return mapa[metodo] || METODOS_PAGAMENTO.find(item => item.valor === metodo)?.label || metodo;
   };
 
   const infoParcela = item.parcelamentoId
@@ -110,3 +111,4 @@ function ItemTransacao({
 }
 
 export default ItemTransacao;
+
