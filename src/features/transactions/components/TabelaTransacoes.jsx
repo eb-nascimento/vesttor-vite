@@ -1,3 +1,4 @@
+import { METODOS_PAGAMENTO } from "../../../data/metodosPagamento";
 import "./TabelaTransacoes.css";
 import { Pencil, Trash2 } from "lucide-react";
 import { useOperacaoAssincrona } from "../../../hooks/useOperacaoAssincrona";
@@ -12,7 +13,7 @@ const formatarMetodo = (metodo) => {
     boleto: "Boleto",
     transferencia: "Transferência",
   };
-  return mapa[metodo] || metodo;
+  return mapa[metodo] || METODOS_PAGAMENTO.find(item => item.valor === metodo)?.label || metodo;
 };
 
 const obterDataFormatada = (data) => {
@@ -142,3 +143,4 @@ function TabelaTransacoes({
 }
 
 export default TabelaTransacoes;
+
