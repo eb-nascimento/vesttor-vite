@@ -1,5 +1,5 @@
 const mensagens = {
-  "planejamento-duplicado": "Já existe um orçamento para essa categoria e natureza neste mês. Edite o orçamento existente.",
+  "planejamento-duplicado": "Já existe um orçamento para essa categoria e classificação neste mês. Edite o orçamento existente.",
   "permission-denied": "Você não tem permissão para acessar ou alterar esses dados. Confira a conta conectada.",
   unauthenticated: "Sua sessão expirou. Entre novamente para continuar.",
   unavailable: "O serviço está indisponível. Confira sua conexão e tente novamente em instantes.",

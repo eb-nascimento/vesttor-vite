@@ -121,12 +121,16 @@ export const CATEGORIAS = [
 // Sugestão inicial, sem restringir a classificação escolhida no orçamento.
 export const CATEGORIAS_FIXAS_PADRAO = ["Moradia", "Contas & Serviços", "Educação"];
 
+export function classificacaoPadraoDespesa(categoria) {
+  return CATEGORIAS_FIXAS_PADRAO.includes(categoria) ? "Fixo" : "Variável";
+}
+
 export function tipoPadraoOrcamento(categoria, tipoAtual = "Variável") {
   const receita = CATEGORIAS_RECEITA.includes(categoria);
   const despesa = CATEGORIAS_DESPESA.includes(categoria);
   if (receita && despesa) return tipoAtual;
   if (receita) return "Entrada";
-  return CATEGORIAS_FIXAS_PADRAO.includes(categoria) ? "Fixo" : "Variável";
+  return classificacaoPadraoDespesa(categoria);
 }
 
 export const CATALOGO_CATEGORIAS = CATEGORIAS.map((nome) => {

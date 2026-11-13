@@ -1,13 +1,19 @@
 import { centavosDoItem } from "./dinheiro";
-import { tipoPadraoOrcamento } from "../data/categorias";
+import { classificacaoPadraoDespesa } from "../data/categorias";
 
 export const naturezaPlanejamento = (item) => item.tipo === "Entrada" ? "receita" : "despesa";
-export const chavePlanejamento = (item) => JSON.stringify([item.categoria, naturezaPlanejamento(item)]);
+export const chavePlanejamento = (item) => JSON.stringify([item.categoria, item.tipo]);
+
+export function classificacaoTransacao(item) {
+  if (item.tipo === "receita") return "Entrada";
+  return item.classificacao === "Fixo" || item.classificacao === "Variável"
+    ? item.classificacao : classificacaoPadraoDespesa(item.categoria);
+}
 
 export function cruzarPlanejamentos(planejamentos, transacoes) {
   const totais = new Map();
   for (const transacao of transacoes) {
-    const chave = JSON.stringify([transacao.categoria, transacao.tipo]);
+    const chave = JSON.stringify([transacao.categoria, classificacaoTransacao(transacao)]);
     totais.set(chave, (totais.get(chave) || 0) + centavosDoItem(transacao));
   }
   const planejados = new Set();
@@ -20,10 +26,10 @@ export function cruzarPlanejamentos(planejamentos, transacoes) {
   });
   for (const [chave, centavos] of totais) {
     if (planejados.has(chave)) continue;
-    const [categoria, natureza] = JSON.parse(chave);
+    const [categoria, tipo] = JSON.parse(chave);
     itens.push({
       id: `unplanned-${chave}`, categoria,
-      tipo: natureza === "receita" ? "Entrada" : tipoPadraoOrcamento(categoria),
+      tipo,
       planejado: 0, valorRealizado: centavos / 100, isUnplanned: true,
     });
   }

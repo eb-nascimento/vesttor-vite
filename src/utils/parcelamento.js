@@ -1,3 +1,5 @@
+import { classificacaoPadraoDespesa } from "../data/categorias";
+
 /**
  * Utilitários matemáticos e de calendário para compras parceladas no Vesttor.
  */
@@ -97,6 +99,7 @@ export function gerarSerieTransacoes({
   numParcelas,
   modo = "total",
   categoria = "Outros",
+  classificacao = classificacaoPadraoDespesa(categoria),
   metodoPagamento = "cartao_credito",
   userId = "",
 }) {
@@ -124,6 +127,7 @@ export function gerarSerieTransacoes({
       valor: valorParcela,
       tipo: "despesa",
       categoria: categoria || "Outros",
+      classificacao,
       metodoPagamento: metodoPagamento || "cartao_credito",
       parcelamentoId,
       numeroParcela,

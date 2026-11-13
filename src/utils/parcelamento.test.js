@@ -69,6 +69,10 @@ describe("calcularVencimentos", () => {
 });
 
 describe("gerarSerieTransacoes", () => {
+  it("propaga a classificação escolhida para todas as parcelas", () => {
+    const serie = gerarSerieTransacoes({ data: "2026-11-13", descricao: "Passe", valor: 300, numParcelas: 3, categoria: "Transporte", classificacao: "Fixo" });
+    expect(serie.every((parcela) => parcela.classificacao === "Fixo")).toBe(true);
+  });
   it("gera a série completa com metadados e IDs consistentes", () => {
     const serie = gerarSerieTransacoes({
       data: "2026-10-15",

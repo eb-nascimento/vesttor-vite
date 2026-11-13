@@ -1,7 +1,7 @@
 import { collection, doc, getDocs, query, where, runTransaction, serverTimestamp } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { colecaoUsuario, observarPeriodo } from "./repositorioFinanceiro";
-import { chavePlanejamento, naturezaPlanejamento } from "../utils/planejamento";
+import { chavePlanejamento } from "../utils/planejamento";
 import { serializarDinheiro } from "../utils/dinheiro";
 import { mesAtual } from "../utils/periodo";
 
@@ -40,7 +40,9 @@ async function salvarPlanejamento(alteracoes, uid, id) {
     falhar("planejamento-duplicado");
   }
   // Mesmo destino para criações simultâneas: só uma transação pode criá-lo.
-  const chave = `orcamento-${dados.mesAno}-${naturezaPlanejamento(dados)}-${encodeURIComponent(dados.categoria)}`;
+  const classificacoes = { Entrada: "receita", Fixo: "fixo", Variável: "variavel" };
+  if (!Object.hasOwn(classificacoes, dados.tipo)) falhar("invalid-argument");
+  const chave = `orcamento-${dados.mesAno}-${classificacoes[dados.tipo]}-${encodeURIComponent(dados.categoria)}`;
   const destino = doc(privados, chave);
   await runTransaction(db, async (transacao) => {
     const atual = await transacao.get(destino);
@@ -51,6 +53,7 @@ async function salvarPlanejamento(alteracoes, uid, id) {
     if (atual.exists() && chave !== id) falhar("planejamento-duplicado");
     const origem = privada?.exists() ? privada : legada;
     if (id && !origem?.exists()) falhar("not-found");
+    if (origem && (chavePlanejamento(origem.data()) !== chavePlanejamento(original) || origem.data().mesAno !== original.mesAno)) falhar("aborted");
     const registro = serializarDinheiro({
       ...(origem?.data() || {}), ...alteracoes,
       userId: uid, dataCriacao: origem?.data().dataCriacao ?? serverTimestamp(),

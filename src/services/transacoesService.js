@@ -3,10 +3,13 @@ import { db } from "../config/firebase";
 import { colecaoUsuario, observarPeriodo, gravarExistente, excluirNoBatch } from "./repositorioFinanceiro";
 import { serializarDinheiro, normalizarDinheiro } from "../utils/dinheiro";
 import { mesAtual } from "../utils/periodo";
+import { classificacaoPadraoDespesa } from "../data/categorias";
 
 function dadosTransacao(dados, uid) {
   const campos = { ...dados };
   delete campos.id;
+  if (campos.tipo === "receita") delete campos.classificacao;
+  else if (campos.classificacao === undefined) campos.classificacao = classificacaoPadraoDespesa(campos.categoria);
   const resultado = serializarDinheiro(campos);
   resultado.userId = uid;
   resultado.data = typeof dados.data === "string" ? Timestamp.fromDate(new Date(`${dados.data}T12:00:00`)) : dados.data;

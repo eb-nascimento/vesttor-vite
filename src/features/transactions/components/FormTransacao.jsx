@@ -1,5 +1,6 @@
 import { METODOS_PAGAMENTO } from "../../../data/metodosPagamento";
-import { CATEGORIAS_DESPESA, CATEGORIAS_RECEITA } from "../../../data/categorias";
+import { CATEGORIAS_DESPESA, CATEGORIAS_RECEITA, classificacaoPadraoDespesa } from "../../../data/categorias";
+import { classificacaoTransacao } from "../../../utils/planejamento";
 import { obterMensagemErroFirestore } from "../../../utils/errosFirestore";
 import "./FormTransacao.css";
 import { useState, useMemo, useRef } from "react";
@@ -69,6 +70,7 @@ function criarEstadoInicial(transacaoEditando) {
       descricao: descricaoLimpa,
       valor: valorInicial,
       tipo: transacaoEditando.tipo || "despesa",
+      classificacao: isDespesa ? classificacaoTransacao(transacaoEditando) : "Variável",
       metodoPagamento: transacaoEditando.metodoPagamento || "pix",
       categoria:
         transacaoEditando.categoria || (isDespesa ? "Alimentação" : "Salário"),
@@ -88,6 +90,7 @@ function criarEstadoInicial(transacaoEditando) {
     tipo: "despesa",
     metodoPagamento: "pix",
     categoria: "Alimentação",
+    classificacao: classificacaoPadraoDespesa("Alimentação"),
     parcelado: false,
     parcelas: 2,
     erro: "",
@@ -135,6 +138,10 @@ function Form({
             atualizado.categoria = "Alimentação";
           }
         }
+      }
+
+      if (campo === "categoria" || (campo === "tipo" && valor === "despesa")) {
+        atualizado.classificacao = classificacaoPadraoDespesa(atualizado.categoria);
       }
 
       return atualizado;
@@ -239,6 +246,7 @@ function Form({
       valor: valorNumerico,
       tipo: form.tipo,
       categoria: form.categoria,
+      ...(form.tipo === "despesa" ? { classificacao: form.classificacao } : {}),
       ...(form.tipo === "despesa" && form.metodoPagamento
         ? { metodoPagamento: form.metodoPagamento }
         : {}),
@@ -263,6 +271,7 @@ function Form({
               numParcelas: numParcelasValidas,
               modo: "total",
               categoria: form.categoria,
+              classificacao: form.classificacao,
               metodoPagamento: form.metodoPagamento,
             });
             await onEditParcelado({
@@ -281,6 +290,7 @@ function Form({
               false,
               1,
             );
+            if (payload.tipo === "despesa") transacaoUnica.classificacao = form.classificacao;
             await onEditParcelado({
               parcelamentoId: transacaoEditando.parcelamentoId,
               novasParcelas: null,
@@ -300,6 +310,7 @@ function Form({
             numParcelas: numParcelasValidas,
             modo: "total",
             categoria: form.categoria,
+            classificacao: form.classificacao,
             metodoPagamento: form.metodoPagamento,
           });
           await onConverterParaParcelado(transacaoEditando.id, novaSerie);
@@ -317,6 +328,7 @@ function Form({
           numParcelas: numParcelasValidas,
           modo: "total",
           categoria: form.categoria,
+          classificacao: form.classificacao,
           metodoPagamento: form.metodoPagamento,
         });
         await onAddParcelado(serie);
@@ -331,7 +343,7 @@ function Form({
           payload.parcelado,
           payload.parcelas || 1,
         );
-        await onAdd(nova);
+        await onAdd({ ...nova, ...(form.tipo === "despesa" ? { classificacao: form.classificacao } : {}) });
       }
 
       // Reset para o estado inicial
@@ -342,6 +354,7 @@ function Form({
         tipo: "despesa",
         metodoPagamento: "pix",
         categoria: "Alimentação",
+        classificacao: classificacaoPadraoDespesa("Alimentação"),
         parcelado: false,
         parcelas: 2,
         erro: "",
@@ -603,6 +616,20 @@ function Form({
             }))}
           />
         </div>
+
+        {isDespesa && <div className="form-item">
+          <label htmlFor="classificacao-transacao">Classificação</label>
+          <CustomSelect
+            id="classificacao-transacao"
+            value={form.classificacao}
+            onChange={(val) => atualizarCampo("classificacao", val)}
+            options={[
+              { valor: "Fixo", label: "Fixo" },
+              { valor: "Variável", label: "Variável" },
+            ]}
+          />
+          <small>Define qual orçamento desta categoria recebe o gasto.</small>
+        </div>}
 
         {/* 7. DESCRIÇÃO */}
         <div className="form-item">

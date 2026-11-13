@@ -2,6 +2,7 @@ import { METODOS_PAGAMENTO } from "../../../data/metodosPagamento";
 import { Pencil, Trash2 } from "lucide-react";
 import "./ItemTransacao.css";
 import { useOperacaoAssincrona } from "../../../hooks/useOperacaoAssincrona";
+import { classificacaoTransacao } from "../../../utils/planejamento";
 
 function ItemTransacao({
   item,
@@ -45,7 +46,7 @@ function ItemTransacao({
 
   const metaPartes = [
     dataFormatada,
-    item.categoria || (isReceita ? "Receita" : "Despesa"),
+    `${item.categoria || (isReceita ? "Receita" : "Despesa")}${!isReceita ? ` (${classificacaoTransacao(item).toLocaleLowerCase("pt-BR")})` : ""}`,
     formatarMetodo(item.metodoPagamento),
     infoParcela,
   ].filter(Boolean);

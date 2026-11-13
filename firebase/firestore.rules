@@ -40,6 +40,7 @@ service cloud.firestore {
           'valorCentavos',
           'tipo',
           'categoria',
+          'classificacao',
           'metodoPagamento',
           'parcelado',
           'parcelas',
@@ -59,6 +60,7 @@ service cloud.firestore {
         && (('valorCentavos' in data && data.valorCentavos is int && data.valorCentavos > 0 && data.valorCentavos <= 9007199254740991)
           || (!('valorCentavos' in data) && data.valor is number && data.valor > 0))
         && data.tipo in ['receita', 'despesa']
+        && (!('classificacao' in data) || (data.tipo == 'despesa' && data.classificacao in ['Fixo', 'Variável']))
         && (!('categoria' in data) || (data.categoria is string && data.categoria.size() <= 50))
         && (!('metodoPagamento' in data) || (data.metodoPagamento is string && data.metodoPagamento.size() <= 50))
         && (!('parcelado' in data) || data.parcelado is bool)

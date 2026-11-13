@@ -1,6 +1,17 @@
 # Validação técnica do MVP — 13/11/2026
 
-## Etapa 1 para revisão — classificação no formulário (v0.6.3)
+## Etapa 2 para revisão — orçamentos híbridos (v0.7.0)
+
+- A identidade do orçamento agora considera mês, categoria e classificação (Entrada/Fixo/Variável). Fixo e variável da mesma categoria podem coexistir. Duplicatas da mesma classificação continuam bloqueadas, inclusive em criações concorrentes pelo serviço da aplicação.
+- As despesas têm um novo campo opcional `classificacao` (`Fixo` ou `Variável`). O formulário sugere o padrão da categoria, aceita alteração e preserva a escolha na edição. Receitas não carregam esse campo. Compras parceladas propagam a classificação para a série, sem alterar nesta etapa a lógica das datas.
+- O realizado cruza categoria e classificação, sem compartilhar gastos entre os dois orçamentos. As listas de transações mostram a classificação junto à categoria.
+- Lançamentos antigos sem o campo usam o padrão da categoria na leitura, inclusive se havia um orçamento com outra classificação; podem ser reclassificados por edição. A tela avisa esse fallback. Não houve migração nem regravação de dados de produção.
+- IDs de orçamento antigos continuam sendo lidos; a edição move o documento para o ID canônico correspondente à classificação, preservando sua data de criação. Criar a outra classificação não remove o registro anterior.
+- Security Rules locais aceitam o campo opcional apenas em despesas e rejeitam classificações desconhecidas. As regras precisam ser publicadas antes do uso desta versão contra o Firebase publicado. Não houve deploy nem commit.
+- Validação: 145 testes de aplicação aprovados, incluindo interações com React real, e 37 testes de Rules/serviços aprovados com Firestore real emulado no projeto `demo-vesttor-rules`, porta 8180. O emulador já instalado foi iniciado diretamente com Java 26, sem baixar a CLI. A primeira execução teve timeout no teste administrativo de migração durante a inicialização; a suíte completa passou com `--testTimeout 20000` e `GCLOUD_PROJECT=demo-vesttor-rules`. Testes confirmam coexistência, realizado separado, duplicidade concorrente, conversão despesa/receita e validação do novo campo.
+- Versão anterior 0.6.4 → 0.7.0 por funcionalidade compatível com campo opcional novo. A correção do calendário das parcelas e o limite de descrição permanecem para as próximas etapas.
+
+## Etapa 1 para revisão - classificação no formulário (v0.6.3)
 
 O formulário de orçamento agora apresenta Classificação: despesas aceitam Fixo ou Variável; receitas usam Entrada; Outros permite as três opções. Ao selecionar uma categoria, o formulário preenche sua sugestão padrão, permitindo alteração manual. A edição preserva a classificação salva. Os defaults existentes (Moradia, Contas & Serviços e Educação como fixos) foram centralizados no catálogo em código e compartilhados com o cálculo dos itens não planejados. Não houve alteração no schema ou nas Rules.
 

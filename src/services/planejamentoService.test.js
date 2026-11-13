@@ -40,9 +40,20 @@ describe("unicidade de orçamento", () => {
     await criarPlanejamentoNaApi({ ...novo, mesAno: "2026-12" }, "u1");
     expect(state.writes).toHaveLength(2);
   });
-  it("impede Fixo e Variável duplicados na mesma categoria e mês", async () => {
+  it("permite fixo e variável na mesma categoria, inclusive com o ID antigo", async () => {
     state.privados = [item("existente", { ...novo, tipo: "Fixo" })];
-    await expect(criarPlanejamentoNaApi({ ...novo, tipo: "Variável" }, "u1")).rejects.toMatchObject({ code: "planejamento-duplicado" });
+    await criarPlanejamentoNaApi({ ...novo, tipo: "Variável" }, "u1");
+    expect(state.writes).toHaveLength(1);
+    expect(state.writes[0]).toContain("-variavel-");
+  });
+  it.each(["Fixo", "Variável"])("rejeita duplicata da mesma classificação %s", async (tipo) => {
+    state.privados = [item("existente", { ...novo, tipo })];
+    await expect(criarPlanejamentoNaApi({ ...novo, tipo }, "u1")).rejects.toMatchObject({ code: "planejamento-duplicado" });
+    expect(state.writes).toHaveLength(0);
+  });
+  it("cria um fixo e um variável simultaneamente em documentos separados", async () => {
+    await Promise.all(["Fixo", "Variável"].map((tipo) => criarPlanejamentoNaApi({ ...novo, tipo }, "u1")));
+    expect(new Set(state.writes).size).toBe(2);
   });
   it("criações concorrentes disputam o mesmo documento", async () => {
     const results = await Promise.allSettled([criarPlanejamentoNaApi(novo, "u1"), criarPlanejamentoNaApi(novo, "u1")]);

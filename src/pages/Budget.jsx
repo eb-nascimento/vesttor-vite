@@ -152,6 +152,9 @@ function Budget({ usuario }) {
           <Button onClick={abrirNovoPlanejamento}><span className="budget-desktop-label">Novo Orçamento</span><span className="budget-compacto-label">+ Novo</span></Button>
         </div>
       </header>
+      {transacoesDoMes.some((item) => item.tipo === "despesa" && !item.classificacao) && (
+        <p className="budget-classificacao-aviso">Despesas antigas sem classificação usam o padrão da categoria. Edite o lançamento para escolher fixo ou variável.</p>
+      )}
       <EquacaoMes
         entradasPlanejadas={entradasPlanejadas}
         entradasRealizadas={entradasRealizadas}
