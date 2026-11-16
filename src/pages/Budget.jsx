@@ -6,6 +6,7 @@ import "./Budget.css";
 import { useTransacoes } from "../hooks/useTransacoes";
 import { useFiltrosTransacoes } from "../hooks/useFiltrosTransacoes";
 import { usePlanejamentos } from "../hooks/usePlanejamentos";
+import { cruzarPlanejamentos } from "../utils/planejamento";
 
 import Button from "../components/ui/Button";
 import EquacaoMes from "../features/budget/components/EquacaoMes";
@@ -37,55 +38,7 @@ function Budget({ usuario }) {
     );
   });
 
-  // 2. Cruza os planejamentos que você já criou com as transações realizadas
-  const planejamentosCruzados = planejamentos.map((plan) => {
-    const transacoesDaCategoria = transacoesDoMes.filter(
-      (t) => t.categoria === plan.categoria,
-    );
-    const valorRealizado = transacoesDaCategoria.reduce(
-      (soma, t) => soma + centavosDoItem(t),
-      0,
-    );
-    return { ...plan, valorRealizado: valorRealizado / 100 };
-  });
-
-  // 3. Caça os gastos Não Planejados (Unplanned)
-  const plannedCats = planejamentos.map((p) => p.categoria);
-  const unplannedMap = {};
-
-  // Mapeamento provisório das categorias até termos a tela de Categorias
-  const TIPO_POR_CATEGORIA = {
-    Salário: "Entrada",
-    Freelance: "Entrada",
-    Reembolso: "Entrada",
-    Moradia: "Fixo",
-    "Contas & Serviços": "Fixo",
-    Educação: "Fixo",
-    Investimentos: "Fixo",
-    Fixo: true,
-  };
-
-  transacoesDoMes.forEach((t) => {
-    if (!plannedCats.includes(t.categoria)) {
-      if (!unplannedMap[t.categoria]) {
-        unplannedMap[t.categoria] = {
-          id: `unplanned-${t.categoria}`,
-          categoria: t.categoria,
-          tipo: TIPO_POR_CATEGORIA[t.categoria] || "Variável",
-          planejado: 0,
-          valorRealizado: 0,
-          isUnplanned: true, // Aqui marcamos que é órfão
-          fixo: TIPO_POR_CATEGORIA[t.fixo] || false,
-        };
-      }
-      unplannedMap[t.categoria].valorRealizado = (paraCentavos(unplannedMap[t.categoria].valorRealizado) + centavosDoItem(t)) / 100;
-    }
-  });
-
-  const unplannedItems = Object.values(unplannedMap);
-
-  // 4. Junta os planejamentos normais com os não planejados
-  const todosPlanejamentos = [...planejamentosCruzados, ...unplannedItems];
+  const todosPlanejamentos = cruzarPlanejamentos(planejamentos, transacoesDoMes);
 
   // 5. Matemática da Equação do Mês
   let entradasPlanejadas = 0,
@@ -96,7 +49,7 @@ function Budget({ usuario }) {
     variaveisRealizados = 0;
 
   todosPlanejamentos.forEach((plan) => {
-    if (plan.categoria === "Entrada" || plan.tipo === "Entrada") {
+    if (plan.tipo === "Entrada") {
       entradasPlanejadas += centavosDoItem(plan, "planejado");
       entradasRealizadas += paraCentavos(plan.valorRealizado || 0);
     } else if (plan.tipo === "Fixo") {
@@ -199,6 +152,9 @@ function Budget({ usuario }) {
           <Button onClick={abrirNovoPlanejamento}><span className="budget-desktop-label">Novo Orçamento</span><span className="budget-compacto-label">+ Novo</span></Button>
         </div>
       </header>
+      {transacoesDoMes.some((item) => item.tipo === "despesa" && !item.classificacao) && (
+        <p className="budget-classificacao-aviso">Despesas antigas sem classificação usam o padrão da categoria. Edite o lançamento para escolher fixo ou variável.</p>
+      )}
       <EquacaoMes
         entradasPlanejadas={entradasPlanejadas}
         entradasRealizadas={entradasRealizadas}

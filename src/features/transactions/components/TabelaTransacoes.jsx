@@ -1,4 +1,5 @@
 import { METODOS_PAGAMENTO } from "../../../data/metodosPagamento";
+import { classificacaoTransacao } from "../../../utils/planejamento";
 import "./TabelaTransacoes.css";
 import { Pencil, Trash2 } from "lucide-react";
 import { useOperacaoAssincrona } from "../../../hooks/useOperacaoAssincrona";
@@ -101,7 +102,7 @@ function TabelaTransacoes({
                     </div>
                   </div>
                 </td>
-                <td className="td-categoria">{item.categoria || "-"}</td>
+                <td className="td-categoria">{item.categoria || "-"}{!isReceita ? ` (${classificacaoTransacao(item).toLocaleLowerCase("pt-BR")})` : ""}</td>
                 <td className="td-metodo">
                   {formatarMetodo(item.metodoPagamento)}
                 </td>

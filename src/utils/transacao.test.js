@@ -150,6 +150,11 @@ describe("normalizarInputValor", () => {
 });
 
 describe("validarTransacao", () => {
+  it.each([1, 2, 12, 72])("aceita até 200 caracteres na descrição para %i parcelas", (parcelas) => {
+    const dados = { data: "2026-11-16", tipo: "despesa", valor: 10, parcelas };
+    expect(validarTransacao({ ...dados, descricao: "a".repeat(200) })).toBe("");
+    expect(validarTransacao({ ...dados, descricao: "a".repeat(201) })).toContain("máximo 200 caracteres");
+  });
   it("aceita valor com vírgula e até 2 casas decimais", () => {
     const erro = validarTransacao({
       data: "2026-09-17",

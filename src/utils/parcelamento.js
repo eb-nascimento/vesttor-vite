@@ -1,3 +1,18 @@
+import { classificacaoPadraoDespesa } from "../data/categorias";
+
+export function prepararAtualizacaoParcelas(documentos, novasParcelas, parcelamentoId) {
+  const falhar = () => { throw Object.assign(new Error("Não foi possível preservar a série"), { code: "parcelamento-alteracao-indisponivel" }); };
+  if (!documentos.length || !novasParcelas?.length) falhar();
+  const porNumero = new Map(novasParcelas.map((parcela) => [parcela.numeroParcela, parcela]));
+  if (porNumero.size !== novasParcelas.length) falhar();
+  return documentos.map((documento) => {
+    const anterior = documento.data();
+    const nova = porNumero.get(anterior.numeroParcela);
+    if (!nova || anterior.parcelamentoId !== parcelamentoId || anterior.totalParcelas !== novasParcelas.length || !anterior.data) falhar();
+    return { documento, parcela: { ...nova, data: anterior.data, parcelamentoId } };
+  });
+}
+
 /**
  * Utilitários matemáticos e de calendário para compras parceladas no Vesttor.
  */
@@ -97,6 +112,7 @@ export function gerarSerieTransacoes({
   numParcelas,
   modo = "total",
   categoria = "Outros",
+  classificacao = classificacaoPadraoDespesa(categoria),
   metodoPagamento = "cartao_credito",
   userId = "",
 }) {
@@ -124,6 +140,7 @@ export function gerarSerieTransacoes({
       valor: valorParcela,
       tipo: "despesa",
       categoria: categoria || "Outros",
+      classificacao,
       metodoPagamento: metodoPagamento || "cartao_credito",
       parcelamentoId,
       numeroParcela,

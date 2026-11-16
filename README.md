@@ -74,7 +74,7 @@ Para desenvolvimento isolado, execute `npm run emulators` e `npm run dev:emulato
 
 ### Refatoração financeira e publicação
 
-Novas gravações usam `usuarios/{uid}/transacoes` e `usuarios/{uid}/planejamentos`, com valores inteiros em centavos. A leitura mensal mantém compatibilidade com as coleções raiz. Consulte [migração financeira](docs/migracao-financeira.md) antes da transição. `npm run migration:financeiro -- --project PROJETO --uid UID` simula a migração; gravações exigem `--apply`. Relatórios privados ficam em `migration-reports/`, ignorados pelo Git.
+Novas gravações usam `usuarios/{uid}/transacoes` e `usuarios/{uid}/planejamentos`, com valores inteiros em centavos. Transações mantêm leitura compatível com a coleção raiz. Planejamentos usam apenas IDs calculados a partir de mês, classificação e categoria; registros anteriores de teste deixam de aparecer, mas não são apagados. As Rules precisam ser publicadas antes desta versão do aplicativo. O script histórico de migração financeira não adapta planejamentos ao novo ID e não deve ser usado para migrá-los sem revisão. Relatórios privados de migração ficam em `migration-reports/`, ignorados pelo Git.
 
 `deploy:hosting`, `deploy:rules` e `deploy:indexes` publicam recursos separadamente. Rules e índices compatíveis devem ser publicados e os índices devem estar prontos antes da publicação da aplicação. Nenhuma publicação ou migração em produção faz parte desta mesclagem. A configuração ativa não inclui Functions; a pasta `functions/` preserva o scaffold para referência futura.
 

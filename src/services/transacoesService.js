@@ -3,10 +3,14 @@ import { db } from "../config/firebase";
 import { colecaoUsuario, observarPeriodo, gravarExistente, excluirNoBatch } from "./repositorioFinanceiro";
 import { serializarDinheiro, normalizarDinheiro } from "../utils/dinheiro";
 import { mesAtual } from "../utils/periodo";
+import { classificacaoPadraoDespesa } from "../data/categorias";
+import { prepararAtualizacaoParcelas } from "../utils/parcelamento";
 
 function dadosTransacao(dados, uid) {
   const campos = { ...dados };
   delete campos.id;
+  if (campos.tipo === "receita") delete campos.classificacao;
+  else if (campos.classificacao === undefined) campos.classificacao = classificacaoPadraoDespesa(campos.categoria);
   const resultado = serializarDinheiro(campos);
   resultado.userId = uid;
   resultado.data = typeof dados.data === "string" ? Timestamp.fromDate(new Date(`${dados.data}T12:00:00`)) : dados.data;
@@ -64,10 +68,11 @@ export async function excluirParcelasFuturasNaApi(parcelamentoId, numeroParcelaM
 
 export async function atualizarCompraParceladaNaApi({ parcelamentoId, novasParcelas, transacaoUnica, userId }) {
   const documentos = await documentosSerie(userId, parcelamentoId);
+  if (transacaoUnica || !novasParcelas?.length) throw Object.assign(new Error("Alteração de parcelamento indisponível"), { code: "parcelamento-alteracao-indisponivel" });
+  const atualizacoes = prepararAtualizacaoParcelas(documentos, novasParcelas, parcelamentoId);
   const batch = writeBatch(db);
-  documentos.forEach((item) => batch.delete(item.ref));
-  for (const parcela of novasParcelas?.length ? novasParcelas : transacaoUnica ? [transacaoUnica] : []) {
-    batch.set(doc(colecaoUsuario(userId, "transacoes")), dadosTransacao(parcela, userId));
+  for (const { documento, parcela } of atualizacoes) {
+    batch.set(documento.ref, dadosTransacao(parcela, userId));
   }
   await batch.commit();
 }

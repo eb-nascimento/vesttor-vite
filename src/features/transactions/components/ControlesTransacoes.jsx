@@ -44,8 +44,8 @@ function ControlesTransacoes({
           className="ordenacao-select"
           aria-label="Ordenar transações"
         >
-          <option value="data-decrescente">Mais recentes ▾</option>
-          <option value="data-crescente">Mais antigas ▴</option>
+          <option value="data-decrescente">Mais recentes</option>
+          <option value="data-crescente">Mais antigas</option>
           <option value="valor-decrescente">Maior valor</option>
           <option value="valor-crescente">Menor valor</option>
         </Select>

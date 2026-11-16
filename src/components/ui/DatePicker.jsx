@@ -47,7 +47,7 @@ function parseValorData(dataStr) {
   };
 }
 
-function DatePicker({ id, value, onChange }) {
+function DatePicker({ id, value, onChange, disabled = false }) {
   const [aberto, setAberto] = useState(false);
   // Guarda navegação manual via setas { ano, mes }. Se null, deriva diretamente de value
   const [navegacao, setNavegacao] = useState(null);
@@ -167,6 +167,7 @@ function DatePicker({ id, value, onChange }) {
       <button
         id={id}
         type="button"
+        disabled={disabled}
         className={`datepicker-gatilho ${aberto ? "ativo" : ""}`}
         onClick={() => setAberto((prev) => !prev)}
         aria-haspopup="dialog"

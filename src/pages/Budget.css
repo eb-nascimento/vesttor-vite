@@ -1,4 +1,5 @@
 .budget-page { display: flex; flex-direction: column; padding: 0 0 40px; gap: 24px; }
+.budget-classificacao-aviso { margin: 0; font-size: 12px; line-height: 1.5; color: var(--color-text-muted); }
 .budget-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .budget-header h2 { font-size: 24px; margin: 24px 0; }
 .budget-header-textos { min-width: 0; }

@@ -80,8 +80,8 @@ export default function TabelaPlanejamentos({ itens = [], proximosVencimentos = 
               </th></tr>
               {linhas.map((item) => <tr className={`planejamento-linha ${item.isUnplanned ? "linha-alerta" : ""}`} key={item.id}>
                 <td><button className="planejamento-item-acao" disabled={processando} onClick={() => item.isUnplanned ? executar(() => onApprove?.(item)) : onEdit?.(item)}
-                  aria-label={`${item.isUnplanned ? "Adicionar ao" : "Editar"} planejamento de ${item.categoria}`}>
-                  <span className="item-title">{item.categoria}</span><small>{item.isUnplanned ? "Não planejado · Adicionar" : "Editar planejamento"}</small>
+                  aria-label={`${item.isUnplanned ? "Adicionar ao" : "Editar"} planejamento de ${item.categoria}${tipo !== "Entrada" ? ` (${tipo.toLocaleLowerCase("pt-BR")})` : ""}`}>
+                  <span className="item-title">{item.categoria}{tipo !== "Entrada" ? ` (${tipo.toLocaleLowerCase("pt-BR")})` : ""}</span><small>{item.isUnplanned ? "Não planejado · Adicionar" : "Editar planejamento"}</small>
                 </button></td>
                 <td className="align-right">{formatarMoeda(item.planejado)}</td>
                 <td className={`align-right ${tipo !== "Entrada" && item.valorRealizado > item.planejado ? "text-red" : tipo === "Entrada" ? "text-green" : ""}`}>{formatarMoeda(item.valorRealizado)}</td>

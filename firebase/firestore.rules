@@ -4,7 +4,7 @@ rules_version = '2';
 // transacoes/{transactionId}
 // - userId: string, required and immutable
 // - data: timestamp, required
-// - descricao: string, required, 1-100 characters
+// - descricao: string, required, 1-200 characters (+ numeração de parcelas)
 // - valor: number, required and positive
 // - tipo: "receita" or "despesa", required
 service cloud.firestore {
@@ -40,6 +40,7 @@ service cloud.firestore {
           'valorCentavos',
           'tipo',
           'categoria',
+          'classificacao',
           'metodoPagamento',
           'parcelado',
           'parcelas',
@@ -55,10 +56,11 @@ service cloud.firestore {
         && data.data is timestamp
         && data.descricao is string
         && data.descricao.size() > 0
-        && data.descricao.size() <= 100
+        && data.descricao.size() <= (('numeroParcela' in data) ? 208 : 200)
         && (('valorCentavos' in data && data.valorCentavos is int && data.valorCentavos > 0 && data.valorCentavos <= 9007199254740991)
           || (!('valorCentavos' in data) && data.valor is number && data.valor > 0))
         && data.tipo in ['receita', 'despesa']
+        && (!('classificacao' in data) || (data.tipo == 'despesa' && data.classificacao in ['Fixo', 'Variável']))
         && (!('categoria' in data) || (data.categoria is string && data.categoria.size() <= 50))
         && (!('metodoPagamento' in data) || (data.metodoPagamento is string && data.metodoPagamento.size() <= 50))
         && (!('parcelado' in data) || data.parcelado is bool)
@@ -120,15 +122,6 @@ service cloud.firestore {
 
     match /planejamentos/{planningId} {
       allow read: if isOwner(resource.data.userId);
-
-      allow create: if uidUnchanged()
-        && isValidPlanning(request.resource.data);
-
-      allow update: if isOwner(resource.data.userId)
-        && uidNotModified()
-        && isValidPlanning(request.resource.data);
-
-      allow delete: if isAuthenticated() && (!exists(/databases/$(database)/documents/planejamentos/$(planningId)) || isOwner(resource.data.userId));
     }
 
     // Destino da migração: contrato atual, dinheiro inteiro e propriedade no caminho.
@@ -147,9 +140,13 @@ service cloud.firestore {
       allow read, delete: if isOwner(uid);
       allow create: if isOwner(uid) && request.resource.data.userId == uid
         && isValidPlanning(request.resource.data) && 'planejadoCentavos' in request.resource.data
+        && request.resource.data.categoria.matches('^[^/]+$')
+        && id == 'orcamento-' + request.resource.data.mesAno + '-' + request.resource.data.tipo + '-' + request.resource.data.categoria
         && !('planejado' in request.resource.data);
       allow update: if isOwner(uid) && request.resource.data.userId == uid && uidNotModified()
         && isValidPlanning(request.resource.data) && 'planejadoCentavos' in request.resource.data
+        && request.resource.data.categoria.matches('^[^/]+$')
+        && id == 'orcamento-' + request.resource.data.mesAno + '-' + request.resource.data.tipo + '-' + request.resource.data.categoria
         && !('planejado' in request.resource.data)
         && request.resource.data.dataCriacao == resource.data.dataCriacao;
     }

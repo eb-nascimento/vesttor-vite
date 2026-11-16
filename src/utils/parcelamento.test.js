@@ -3,6 +3,7 @@ import {
   calcularParcelas,
   calcularVencimentos,
   gerarSerieTransacoes,
+  prepararAtualizacaoParcelas,
 } from "./parcelamento";
 
 describe("calcularParcelas", () => {
@@ -69,6 +70,10 @@ describe("calcularVencimentos", () => {
 });
 
 describe("gerarSerieTransacoes", () => {
+  it("propaga a classificação escolhida para todas as parcelas", () => {
+    const serie = gerarSerieTransacoes({ data: "2026-11-13", descricao: "Passe", valor: 300, numParcelas: 3, categoria: "Transporte", classificacao: "Fixo" });
+    expect(serie.every((parcela) => parcela.classificacao === "Fixo")).toBe(true);
+  });
   it("gera a série completa com metadados e IDs consistentes", () => {
     const serie = gerarSerieTransacoes({
       data: "2026-10-15",
@@ -118,5 +123,27 @@ describe("gerarSerieTransacoes", () => {
     expect(calc.valorParcelaBase).toBe(50);
     expect(calc.valorPrimeiraParcela).toBe(50);
     expect(calc.numParcelas).toBe(2);
+  });
+});
+
+describe("edição de série existente", () => {
+  const documento = (numero, data) => ({ ref: `p${numero}`, data: () => ({ numeroParcela: numero, totalParcelas: 3, parcelamentoId: "original", data }) });
+  it("mantém datas reais, IDs e série ao editar pela parcela de fevereiro", () => {
+    const docs = [documento(1, "2026-01-31"), documento(2, "2026-02-28"), documento(3, "2026-03-31")];
+    const nova = gerarSerieTransacoes({ data: "2026-02-28", descricao: "Editada", valor: 300, numParcelas: 3 });
+    const resultado = prepararAtualizacaoParcelas(docs, nova, "original");
+    expect(resultado.map(({ documento: d }) => d.ref)).toEqual(["p1", "p2", "p3"]);
+    expect(resultado.map(({ parcela }) => parcela.data)).toEqual(["2026-01-31", "2026-02-28", "2026-03-31"]);
+    expect(resultado.every(({ parcela }) => parcela.parcelamentoId === "original" && parcela.valor === 100)).toBe(true);
+  });
+  it("não recria parcelas já excluídas", () => {
+    const docs = [documento(2, "2026-02-28"), documento(3, "2026-03-31")];
+    const nova = gerarSerieTransacoes({ data: "2026-02-28", descricao: "Compra", valor: 300, numParcelas: 3 });
+    expect(prepararAtualizacaoParcelas(docs, nova, "original").map(({ parcela }) => parcela.numeroParcela)).toEqual([2, 3]);
+  });
+  it("recusa alteração da quantidade antes de modificar a série", () => {
+    const docs = [documento(2, "2026-02-28")];
+    const nova = gerarSerieTransacoes({ data: "2026-02-28", descricao: "Compra", valor: 300, numParcelas: 2 });
+    expect(() => prepararAtualizacaoParcelas(docs, nova, "original")).toThrow();
   });
 });
