@@ -1,76 +1,53 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-
-const state = vi.hoisted(() => ({ privados: [], legado: [], documents: new Map(), writes: [], queue: Promise.resolve() }));
+import { onSnapshot } from "firebase/firestore";
+const state = vi.hoisted(() => ({ docs: new Map(), queue: Promise.resolve() }));
 vi.mock("../config/firebase", () => ({ db: {} }));
-vi.mock("./repositorioFinanceiro", () => ({
-  colecaoUsuario: (uid) => `usuarios/${uid}/planejamentos`, observarPeriodo: vi.fn(),
-}));
+vi.mock("./repositorioFinanceiro", () => ({ colecaoUsuario: (uid) => `usuarios/${uid}/planejamentos`, consultaPeriodo: vi.fn() }));
 vi.mock("firebase/firestore", () => ({
-  collection: (_, nome) => nome,
   doc: (...args) => args.filter((item) => typeof item === "string").join("/"),
-  where: vi.fn(), query: (ref) => ref,
-  getDocs: async (ref) => ({ docs: ref.startsWith("usuarios/") ? state.privados : state.legado }),
-  serverTimestamp: () => "timestamp",
+  onSnapshot: vi.fn(), serverTimestamp: () => "timestamp",
   runTransaction: (_, callback) => {
-    const operation = state.queue.then(() => callback({
-      get: async (ref) => ({ exists: () => state.documents.has(ref), data: () => state.documents.get(ref) }),
-      set: (ref, dados) => { state.documents.set(ref, dados); state.writes.push(ref); },
-      delete: (ref) => state.documents.delete(ref),
+    const task = state.queue.then(() => callback({
+      get: async (ref) => ({ exists: () => state.docs.has(ref), data: () => state.docs.get(ref) }),
+      set: (ref, data) => state.docs.set(ref, data), delete: (ref) => state.docs.delete(ref),
     }));
-    state.queue = operation.catch(() => {});
-    return operation;
+    state.queue = task.catch(() => {});
+    return task;
   },
 }));
-import { criarPlanejamentoNaApi, atualizarPlanejamentoNaApi } from "./planejamentoService";
-const novo = { categoria: "Outros", tipo: "Entrada", planejado: 100, mesAno: "2026-11" };
-beforeEach(() => {
-  state.privados = []; state.legado = []; state.documents.clear(); state.writes = []; state.queue = Promise.resolve();
-});
-const item = (id, dados) => ({ id, data: () => dados });
-
-describe("unicidade de orçamento", () => {
-  it("rejeita duplicata legada sem gravar", async () => {
-    state.legado = [item("antigo", novo)];
-    await expect(criarPlanejamentoNaApi(novo, "u1")).rejects.toMatchObject({ code: "planejamento-duplicado" });
-    expect(state.writes).toHaveLength(0);
+import { criarPlanejamentoNaApi, atualizarPlanejamentoNaApi, idPlanejamento, onPlanejamentoChange } from "./planejamentoService";
+const dados = { mesAno: "2026-11", tipo: "Fixo", categoria: "Transporte", planejado: 100 };
+const path = (item) => `usuarios/u1/planejamentos/${idPlanejamento(item)}`;
+beforeEach(() => { state.docs.clear(); state.queue = Promise.resolve(); });
+describe("unicidade de orçamentos", () => {
+  it("apresenta apenas os registros no novo formato, sem apagar os antigos", () => {
+    const atual = { ...dados, planejadoCentavos: 10000 };
+    const receber = vi.fn();
+    onPlanejamentoChange("u1", receber, vi.fn(), dados.mesAno);
+    const callback = vi.mocked(onSnapshot).mock.calls.at(-1)[1];
+    callback({ docs: [{ id: "antigo", data: () => atual }, { id: idPlanejamento(atual), data: () => atual }] });
+    expect(receber).toHaveBeenCalledWith([expect.objectContaining({ id: idPlanejamento(atual), planejado: 100 })]);
   });
-  it("permite Outros em naturezas e meses diferentes", async () => {
-    state.privados = [item("existente", novo)];
-    await criarPlanejamentoNaApi({ ...novo, tipo: "Variável" }, "u1");
-    await criarPlanejamentoNaApi({ ...novo, mesAno: "2026-12" }, "u1");
-    expect(state.writes).toHaveLength(2);
+  it("aceita fixo e variável na mesma categoria", async () => {
+    await criarPlanejamentoNaApi(dados, "u1");
+    await criarPlanejamentoNaApi({ ...dados, tipo: "Variável" }, "u1");
+    expect(state.docs.size).toBe(2);
   });
-  it("permite fixo e variável na mesma categoria, inclusive com o ID antigo", async () => {
-    state.privados = [item("existente", { ...novo, tipo: "Fixo" })];
-    await criarPlanejamentoNaApi({ ...novo, tipo: "Variável" }, "u1");
-    expect(state.writes).toHaveLength(1);
-    expect(state.writes[0]).toContain("-variavel-");
+  it("rejeita criações concorrentes da mesma identidade", async () => {
+    const resultados = await Promise.allSettled([criarPlanejamentoNaApi(dados, "u1"), criarPlanejamentoNaApi(dados, "u1")]);
+    expect(resultados.map((item) => item.status).sort()).toEqual(["fulfilled", "rejected"]);
+    expect(state.docs.size).toBe(1);
   });
-  it.each(["Fixo", "Variável"])("rejeita duplicata da mesma classificação %s", async (tipo) => {
-    state.privados = [item("existente", { ...novo, tipo })];
-    await expect(criarPlanejamentoNaApi({ ...novo, tipo }, "u1")).rejects.toMatchObject({ code: "planejamento-duplicado" });
-    expect(state.writes).toHaveLength(0);
+  it("rejeita edição para uma identidade já existente", async () => {
+    await criarPlanejamentoNaApi(dados, "u1");
+    await criarPlanejamentoNaApi({ ...dados, tipo: "Variável" }, "u1");
+    await expect(atualizarPlanejamentoNaApi(idPlanejamento(dados), { tipo: "Variável" }, "u1")).rejects.toMatchObject({ code: "planejamento-duplicado" });
+    expect(state.docs.size).toBe(2);
   });
-  it("cria um fixo e um variável simultaneamente em documentos separados", async () => {
-    await Promise.all(["Fixo", "Variável"].map((tipo) => criarPlanejamentoNaApi({ ...novo, tipo }, "u1")));
-    expect(new Set(state.writes).size).toBe(2);
-  });
-  it("criações concorrentes disputam o mesmo documento", async () => {
-    const results = await Promise.allSettled([criarPlanejamentoNaApi(novo, "u1"), criarPlanejamentoNaApi(novo, "u1")]);
-    expect(results.map((r) => r.status).sort()).toEqual(["fulfilled", "rejected"]);
-    expect(state.writes).toHaveLength(1);
-  });
-  it("bloqueia edição para uma categoria já planejada", async () => {
-    state.privados = [item("p1", { ...novo, categoria: "Salário" }), item("p2", novo)];
-    await expect(atualizarPlanejamentoNaApi("p1", { categoria: "Outros" }, "u1")).rejects.toMatchObject({ code: "planejamento-duplicado" });
-  });
-  it("edita registro antigo preservando criação e convertendo reais para centavos", async () => {
-    const dados = { ...novo, userId: "u1", dataCriacao: "original" };
-    state.privados = [item("p1", dados)];
-    state.documents.set("usuarios/u1/planejamentos/p1", dados);
-    await atualizarPlanejamentoNaApi("p1", { planejado: 200 }, "u1");
-    expect(state.documents.has("usuarios/u1/planejamentos/p1")).toBe(false);
-    expect(state.documents.get(state.writes[0])).toMatchObject({ planejadoCentavos: 20000, dataCriacao: "original" });
-    expect(state.documents.get(state.writes[0])).not.toHaveProperty("planejado");
+  it("move a edição de categoria sem perder a data de criação", async () => {
+    await criarPlanejamentoNaApi(dados, "u1");
+    await atualizarPlanejamentoNaApi(idPlanejamento(dados), { categoria: "Moradia", planejado: 200 }, "u1");
+    expect(state.docs.has(path(dados))).toBe(false);
+    expect(state.docs.get(path({ ...dados, categoria: "Moradia" }))).toMatchObject({ planejadoCentavos: 20000, dataCriacao: "timestamp" });
   });
 });

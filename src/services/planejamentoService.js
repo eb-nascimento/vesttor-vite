@@ -1,65 +1,48 @@
-import { collection, doc, getDocs, query, where, runTransaction, serverTimestamp } from "firebase/firestore";
+import { doc, onSnapshot, runTransaction, serverTimestamp } from "firebase/firestore";
 import { db } from "../config/firebase";
-import { colecaoUsuario, observarPeriodo } from "./repositorioFinanceiro";
-import { chavePlanejamento } from "../utils/planejamento";
-import { serializarDinheiro } from "../utils/dinheiro";
+import { colecaoUsuario, consultaPeriodo } from "./repositorioFinanceiro";
+import { normalizarDinheiro, serializarDinheiro } from "../utils/dinheiro";
 import { mesAtual } from "../utils/periodo";
 
+export function idPlanejamento({ mesAno, tipo, categoria }) {
+  if (!mesAno || !["Entrada", "Fixo", "Variável"].includes(tipo) || !categoria || categoria.includes("/")) {
+    throw Object.assign(new Error("Planejamento inválido"), { code: "invalid-argument" });
+  }
+  return `orcamento-${mesAno}-${tipo}-${categoria}`;
+}
+
 export function onPlanejamentoChange(uid, onDados, onErro, mes = mesAtual()) {
-  return observarPeriodo(uid, "planejamentos", mes, onDados, onErro);
+  return onSnapshot(consultaPeriodo(colecaoUsuario(uid, "planejamentos"), "planejamentos", mes), (snapshot) => {
+    const atuais = snapshot.docs.filter((item) => {
+      try { return item.id === idPlanejamento(item.data()); } catch { return false; }
+    });
+    onDados(atuais.map((item) => ({ ...normalizarDinheiro(item.data(), true), id: item.id })));
+  }, onErro);
 }
 
 export async function criarPlanejamentoNaApi(planejamento, uid) {
-  await salvarPlanejamento(planejamento, uid);
+  const ref = doc(colecaoUsuario(uid, "planejamentos"), idPlanejamento(planejamento));
+  await runTransaction(db, async (transaction) => {
+    if ((await transaction.get(ref)).exists()) throw Object.assign(new Error("Orçamento já existe"), { code: "planejamento-duplicado" });
+    transaction.set(ref, { ...serializarDinheiro(planejamento, true), userId: uid, dataCriacao: serverTimestamp() });
+  });
 }
 
 export async function atualizarPlanejamentoNaApi(id, alteracoes, uid) {
-  await salvarPlanejamento(alteracoes, uid, id);
-}
-
-function falhar(code) {
-  throw Object.assign(new Error(code), { code });
-}
-
-async function salvarPlanejamento(alteracoes, uid, id) {
-  const privados = colecaoUsuario(uid, "planejamentos");
-  // Inclui o legado para impedir duplicatas mesmo antes da migração.
-  const snapshots = await Promise.all([
-    getDocs(privados),
-    getDocs(query(collection(db, "planejamentos"), where("userId", "==", uid))),
-  ]);
-  const existentes = new Map();
-  for (const snapshot of [...snapshots].reverse()) {
-    for (const item of snapshot.docs) existentes.set(item.id, { ...item.data(), id: item.id });
-  }
-  const original = id ? existentes.get(id) : null;
-  if (id && !original) falhar("not-found");
-  const dados = { ...original, ...alteracoes };
-  delete dados.id;
-  if ([...existentes.values()].some((item) => item.id !== id && item.mesAno === dados.mesAno && chavePlanejamento(item) === chavePlanejamento(dados))) {
-    falhar("planejamento-duplicado");
-  }
-  // Mesmo destino para criações simultâneas: só uma transação pode criá-lo.
-  const classificacoes = { Entrada: "receita", Fixo: "fixo", Variável: "variavel" };
-  if (!Object.hasOwn(classificacoes, dados.tipo)) falhar("invalid-argument");
-  const chave = `orcamento-${dados.mesAno}-${classificacoes[dados.tipo]}-${encodeURIComponent(dados.categoria)}`;
-  const destino = doc(privados, chave);
-  await runTransaction(db, async (transacao) => {
-    const atual = await transacao.get(destino);
-    const origemPrivada = id ? doc(privados, id) : null;
-    const origemLegada = id ? doc(db, "planejamentos", id) : null;
-    const privada = id ? await transacao.get(origemPrivada) : null;
-    const legada = id && !privada.exists() ? await transacao.get(origemLegada) : null;
-    if (atual.exists() && chave !== id) falhar("planejamento-duplicado");
-    const origem = privada?.exists() ? privada : legada;
-    if (id && !origem?.exists()) falhar("not-found");
-    if (origem && (chavePlanejamento(origem.data()) !== chavePlanejamento(original) || origem.data().mesAno !== original.mesAno)) falhar("aborted");
-    const registro = serializarDinheiro({
-      ...(origem?.data() || {}), ...alteracoes,
-      userId: uid, dataCriacao: origem?.data().dataCriacao ?? serverTimestamp(),
-    }, true);
-    transacao.set(destino, registro);
-    if (id && id !== chave && privada.exists()) transacao.delete(origemPrivada);
-    if (id) transacao.delete(origemLegada);
+  const colecao = colecaoUsuario(uid, "planejamentos");
+  const origem = doc(colecao, id);
+  await runTransaction(db, async (transaction) => {
+    const atual = await transaction.get(origem);
+    if (!atual.exists()) throw Object.assign(new Error("Orçamento não encontrado"), { code: "not-found" });
+    const anterior = atual.data();
+    if (id !== idPlanejamento(anterior)) throw Object.assign(new Error("Orçamento antigo"), { code: "failed-precondition" });
+    const dados = { ...anterior, ...alteracoes };
+    const novoId = idPlanejamento(dados);
+    const destino = doc(colecao, novoId);
+    if (novoId !== id && (await transaction.get(destino)).exists()) {
+      throw Object.assign(new Error("Orçamento já existe"), { code: "planejamento-duplicado" });
+    }
+    transaction.set(destino, serializarDinheiro(dados, true));
+    if (novoId !== id) transaction.delete(origem);
   });
 }
