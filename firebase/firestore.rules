@@ -4,7 +4,7 @@ rules_version = '2';
 // transacoes/{transactionId}
 // - userId: string, required and immutable
 // - data: timestamp, required
-// - descricao: string, required, 1-100 characters
+// - descricao: string, required, 1-200 characters (+ numeração de parcelas)
 // - valor: number, required and positive
 // - tipo: "receita" or "despesa", required
 service cloud.firestore {
@@ -56,7 +56,7 @@ service cloud.firestore {
         && data.data is timestamp
         && data.descricao is string
         && data.descricao.size() > 0
-        && data.descricao.size() <= 100
+        && data.descricao.size() <= (('numeroParcela' in data) ? 208 : 200)
         && (('valorCentavos' in data && data.valorCentavos is int && data.valorCentavos > 0 && data.valorCentavos <= 9007199254740991)
           || (!('valorCentavos' in data) && data.valor is number && data.valor > 0))
         && data.tipo in ['receita', 'despesa']

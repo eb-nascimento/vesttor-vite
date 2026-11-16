@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, expect, it, vi } from "vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Form from "./FormTransacao";
 
@@ -58,4 +58,22 @@ it("ao editar uma parcela mantém data, quantidade e tipo bloqueados e informa o
   expect(screen.getByText(/As alterações serão aplicadas às parcelas existentes/)).toBeTruthy();
   await userEvent.click(screen.getByRole("button", { name: "Salvar alterações" }));
   expect(onEditParcelado).toHaveBeenCalledWith(expect.objectContaining({ parcelamentoId: "serie" }));
+});
+
+it("impede salvar descrição longa sem perder o texto e explica o limite", async () => {
+  const onAddParcelado = vi.fn();
+  render(<Form onAddParcelado={onAddParcelado} />);
+  const user = userEvent.setup();
+  await user.click(screen.getByRole("checkbox"));
+  await user.type(screen.getByRole("textbox", { name: "Valor total da compra" }), "100");
+  expect(screen.queryByText(/máximo 200 caracteres/i)).toBeNull();
+  fireEvent.change(screen.getByRole("textbox", { name: "Descrição" }), { target: { value: "a".repeat(200) } });
+  expect(screen.queryByText(/máximo 200 caracteres/i)).toBeNull();
+  fireEvent.change(screen.getByRole("textbox", { name: "Descrição" }), { target: { value: "a".repeat(201) } });
+  await user.click(screen.getByRole("button", { name: /Adicionar compra parcelada/ }));
+  expect(screen.getByRole("alert").textContent).toContain("máximo 200 caracteres");
+  expect(screen.getByRole("textbox", { name: "Descrição" }).value).toHaveLength(201);
+  expect(onAddParcelado).not.toHaveBeenCalled();
+  fireEvent.change(screen.getByRole("textbox", { name: "Descrição" }), { target: { value: "a".repeat(200) } });
+  expect(screen.queryByText(/máximo 200 caracteres/i)).toBeNull();
 });

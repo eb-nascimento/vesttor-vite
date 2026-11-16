@@ -61,6 +61,15 @@ function transacaoCentavos(overrides = {}) {
 }
 
 describe("hierarquia privada e centavos", () => {
+  it("limite de descrição aceita 200 caracteres e reserva espaço para a numeração das parcelas", async () => {
+    const db = testEnv.authenticatedContext("usuario-1").firestore();
+    const ref = doc(db, "usuarios/usuario-1/transacoes/limite");
+    await assertSucceeds(setDoc(ref, transacaoCentavos({ descricao: "a".repeat(200) })));
+    await assertFails(setDoc(ref, transacaoCentavos({ descricao: "a".repeat(201) })));
+    const parcela = { numeroParcela: 12, totalParcelas: 12, parcelamentoId: "serie" };
+    await assertSucceeds(setDoc(ref, transacaoCentavos({ ...parcela, descricao: `${"a".repeat(200)} (12/12)` })));
+    await assertFails(setDoc(ref, transacaoCentavos({ ...parcela, descricao: `${"a".repeat(201)} (12/12)` })));
+  });
   it.each(["Fixo", "Variável"])("aceita classificação %s opcional em despesas antigas e novas", async (classificacao) => {
     const db = testEnv.authenticatedContext("usuario-1").firestore();
     for (const caminho of ["transacoes/tipo", "usuarios/usuario-1/transacoes/tipo"]) {

@@ -126,6 +126,7 @@ function Form({
 
     setForm((prev) => {
       const atualizado = { ...prev, [campo]: valorProcessado };
+      if (campo === "descricao" && prev.erro === "A descrição deve ter no máximo 200 caracteres.") atualizado.erro = "";
 
       // Se o usuário alternar de despesa para receita, desliga o parcelamento
       if (campo === "tipo") {
@@ -217,6 +218,10 @@ function Form({
     e.preventDefault();
     if (envioEmCurso.current) return;
 
+    const parcelasParsed = parseInt(form.parcelas, 10);
+    const numParcelasValidas = Math.min(72, Math.max(2, isNaN(parcelasParsed) ? 2 : parcelasParsed));
+    const isParceladoValido = form.tipo === "despesa" && Boolean(form.parcelado);
+
     const mensagemErro = validarTransacao({
       data: form.data,
       descricao: form.descricao,
@@ -232,15 +237,6 @@ function Form({
     atualizarCampo("erro", "");
 
     const valorNumerico = Number(String(form.valor).replace(",", "."));
-    const parcelasParsed = parseInt(form.parcelas, 10);
-    const numParcelasValidas = Math.min(
-      72,
-      Math.max(2, isNaN(parcelasParsed) ? 2 : parcelasParsed),
-    );
-
-    const isParceladoValido =
-      form.tipo === "despesa" && Boolean(form.parcelado);
-
     const payload = {
       data: form.data,
       descricao: form.descricao.trim(),
@@ -651,11 +647,13 @@ function Form({
             placeholder={obterPlaceholderDescricao(form.categoria, form.tipo)}
             value={form.descricao}
             onChange={(e) => atualizarCampo("descricao", e.target.value)}
+            aria-describedby={form.descricao.trim().length > 200 ? "descricao-limite" : undefined}
             required
           />
+          {form.descricao.trim().length > 200 && <small id="descricao-limite" className="erro-msg" role="alert">A descrição deve ter no máximo 200 caracteres.</small>}
         </div>
 
-        {form.erro && (
+        {form.erro && form.descricao.trim().length <= 200 && (
           <p className="erro-msg" role="alert">
             {form.erro}
           </p>
