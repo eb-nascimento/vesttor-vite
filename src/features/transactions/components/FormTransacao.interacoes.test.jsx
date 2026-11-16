@@ -48,3 +48,14 @@ it("receita esconde classificação e não envia campo de despesa", async () => 
   expect(onAdd).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ tipo: "receita" }));
   expect(onAdd.mock.calls[0][0]).not.toHaveProperty("classificacao");
 });
+
+it("ao editar uma parcela mantém data, quantidade e tipo bloqueados e informa o alcance", async () => {
+  const onEditParcelado = vi.fn().mockResolvedValue();
+  render(<Form transacaoEditando={{ id: "p2", data: "2026-02-28", descricao: "Compra (2/3)", tipo: "despesa", categoria: "Transporte", valor: 100, valorTotalCompra: 300, parcelamentoId: "serie", numeroParcela: 2, totalParcelas: 3 }} onEditParcelado={onEditParcelado} cancelarEdicao={vi.fn()} />);
+  expect(screen.getByRole("button", { name: "Data" }).disabled).toBe(true);
+  expect(screen.getByRole("textbox", { name: "Quantidade de parcelas" }).disabled).toBe(true);
+  expect(screen.getByRole("button", { name: "Receita" }).disabled).toBe(true);
+  expect(screen.getByText(/As alterações serão aplicadas às parcelas existentes/)).toBeTruthy();
+  await userEvent.click(screen.getByRole("button", { name: "Salvar alterações" }));
+  expect(onEditParcelado).toHaveBeenCalledWith(expect.objectContaining({ parcelamentoId: "serie" }));
+});

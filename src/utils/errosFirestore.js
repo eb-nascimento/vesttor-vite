@@ -1,4 +1,5 @@
 const mensagens = {
+  "parcelamento-alteracao-indisponivel": "Não foi possível atualizar a compra preservando as parcelas existentes. Confira os dados e tente novamente.",
   "planejamento-duplicado": "Já existe um orçamento para essa categoria e classificação neste mês. Edite o orçamento existente.",
   "permission-denied": "Você não tem permissão para acessar ou alterar esses dados. Confira a conta conectada.",
   unauthenticated: "Sua sessão expirou. Entre novamente para continuar.",

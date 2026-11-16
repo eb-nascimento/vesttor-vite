@@ -113,6 +113,7 @@ function Form({
 
   function atualizarCampo(campo, valor) {
     if (envioEmCurso.current && campo !== "erro") return;
+    if (transacaoEditando?.parcelamentoId && ["data", "parcelado", "parcelas", "tipo"].includes(campo)) return;
     let valorProcessado = valor;
 
     if (campo === "valor") {
@@ -388,6 +389,7 @@ function Form({
           <span id="tipo-label" className="form-item-label">Tipo</span>
           <TipoSwitcher
             aria-labelledby="tipo-label"
+            disabled={Boolean(transacaoEditando?.parcelamentoId)}
             opcoes={[
               {
                 valor: "despesa",
@@ -415,6 +417,7 @@ function Form({
           <DatePicker
             id="data"
             value={form.data}
+            disabled={Boolean(transacaoEditando?.parcelamentoId)}
             onChange={(novaData) => atualizarCampo("data", novaData)}
           />
         </div>
@@ -469,6 +472,7 @@ function Form({
               <button
                 type="button"
                 className="checkbox-custom"
+                disabled={Boolean(transacaoEditando?.parcelamentoId)}
                 aria-checked={form.parcelado}
                 role="checkbox"
                 onClick={(e) => {
@@ -509,13 +513,14 @@ function Form({
                         const atual = parseInt(form.parcelas, 10) || 2;
                         atualizarCampo("parcelas", Math.max(2, atual - 1));
                       }}
-                      disabled={Number(form.parcelas) <= 2}
+                      disabled={Boolean(transacaoEditando?.parcelamentoId) || Number(form.parcelas) <= 2}
                       aria-label="Diminuir uma parcela"
                     >
                       −
                     </button>
                     <input
                       id="numParcelas"
+                      disabled={Boolean(transacaoEditando?.parcelamentoId)}
                       type="text"
                       inputMode="numeric"
                       pattern="[0-9]*"
@@ -543,7 +548,7 @@ function Form({
                         const atual = parseInt(form.parcelas, 10) || 2;
                         atualizarCampo("parcelas", Math.min(72, atual + 1));
                       }}
-                      disabled={Number(form.parcelas) >= 72}
+                      disabled={Boolean(transacaoEditando?.parcelamentoId) || Number(form.parcelas) >= 72}
                       aria-label="Aumentar uma parcela"
                     >
                       +
@@ -557,6 +562,7 @@ function Form({
                     <button
                       key={n}
                       type="button"
+                      disabled={Boolean(transacaoEditando?.parcelamentoId)}
                       className={`atalho-btn ${Number(form.parcelas) === n ? "ativo" : ""}`}
                       onClick={() => atualizarCampo("parcelas", n)}
                     >
@@ -630,6 +636,8 @@ function Form({
           />
           <small>Define qual orçamento desta categoria recebe o gasto.</small>
         </div>}
+
+        {transacaoEditando?.parcelamentoId && <p className="form-helper-rodape">As alterações serão aplicadas às parcelas existentes. As datas e a quantidade original serão mantidas.</p>}
 
         {/* 7. DESCRIÇÃO */}
         <div className="form-item">
