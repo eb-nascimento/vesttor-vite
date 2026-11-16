@@ -19,7 +19,13 @@ function App() {
   const { usuario, carregandoAuth } = useAuth();
   // Aguarda o Firebase confirmar se existe uma sessao salva no navegador.
   if (carregandoAuth) {
-    return <p>Verificando sessão...</p>;
+    return (
+      <main className="app-loading" role="status" aria-label="Carregando Vesttor">
+        <span className="app-loading__brand">Vesttor</span>
+        <span className="app-loading__spinner" aria-hidden="true" />
+        <span className="app-loading__text">Carregando...</span>
+      </main>
+    );
   }
   return (
     <Routes>
