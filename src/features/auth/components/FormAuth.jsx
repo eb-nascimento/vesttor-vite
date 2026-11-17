@@ -11,6 +11,7 @@ import {
   loginGoogle,
   obterMensagemErroAuth,
 } from "../../../services/authService";
+import LogoHorizontal from "../../../components/ui/logos/LogoHorizontal";
 import "./FormAuth.css";
 
 const estadosAuth = {
@@ -55,6 +56,8 @@ function FormAuth({ modo = "login" }) {
   const [erro, setErro] = useState("");
   const navigate = useNavigate();
   const [confirmarSenha, setConfirmarSenha] = useState("");
+  const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [mostrarConfirmacao, setMostrarConfirmacao] = useState(false);
 
   async function entrar(e) {
     // Impede o recarregamento nativo do formulario.
@@ -78,7 +81,12 @@ function FormAuth({ modo = "login" }) {
     }
   }
 
-  async function cadastrar() {
+  async function cadastrar(e) {
+    e.preventDefault();
+    if (senha !== confirmarSenha) {
+      setErro("As senhas não coincidem.");
+      return;
+    }
     try {
       setErro("");
       // O Firebase autentica o usuario logo depois de criar a conta.
@@ -264,55 +272,50 @@ function FormAuth({ modo = "login" }) {
     );
   }
 
+  const cadastro = modo === "cadastro";
+
   return (
-    <section className="form-auth">
-      <div className="auth-form-content">
-        <h2>Acessar conta</h2>
-        <form onSubmit={entrar}>
-          <div className="form-item">
-            <label htmlFor="email">E-mail:</label>
-            <input
-              id="email"
-              required
-              type="email"
-              autoComplete="email"
-              placeholder="E-mail"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div className="form-item">
-            <label htmlFor="senha">Senha:</label>
-            <input
-              id="senha"
-              required
-              type="password"
-              autoComplete="current-password"
-              placeholder="Senha"
-              value={senha}
-              onChange={(e) => setSenha(e.target.value)}
-            />
-          </div>
-
-          {erro && (
-            <p className="erro-msg" role="alert">
-              {erro}
-            </p>
-          )}
-
-          <button type="submit">Entrar</button>
-          <button type="button" onClick={loginComGoogle}>
-            Entrar com Google
-          </button>
-          <button type="button" onClick={cadastrar}>
-            Criar Conta
-          </button>
-          <Link className="form-auth-link" to="/login?modo=recuperar">
-            Esqueci minha senha
-          </Link>
-        </form>
-      </div>
-    </section>
+    <main className={`auth-page ${cadastro ? "auth-page--cadastro" : "auth-page--login"}`}>
+      <div className="auth-glow" aria-hidden="true" />
+      <header className="auth-header">
+        <div className="auth-brand" role="img" aria-label="Vesttor"><LogoHorizontal /></div>
+        {!cadastro && <span className="auth-badge auth-mobile-badge">SEGURO</span>}
+      </header>
+      <aside className="auth-intro">
+        <span className="auth-badge">ACESSO VESTTOR</span>
+        <h1>Comece com uma<br />visão mais clara.</h1>
+        <p>Crie sua conta para organizar transações, metas e decisões em um só lugar.</p>
+        <div className="auth-privacy"><span aria-hidden="true">✓</span><div><strong>Privacidade por padrão</strong><p>Seus dados ficam protegidos e só você controla o acesso.</p></div></div>
+        <p className="auth-intro-footer">Uma experiência segura, simples e direta.</p>
+      </aside>
+      <section className="form-auth auth-card" aria-labelledby="auth-title">
+        <div className="auth-form-content">
+          <h2 id="auth-title">{cadastro ? "Criar conta" : "Entrar"}</h2>
+          <p className="form-auth-description">{cadastro ? "Leva menos de um minuto." : "Controle financeiro com menos ruído."}</p>
+          <form onSubmit={cadastro ? cadastrar : entrar}>
+            {cadastro && <div className="form-item"><label htmlFor="nome">Nome</label><input id="nome" autoComplete="name" placeholder="Seu nome" /></div>}
+            <div className="form-item">
+              <label htmlFor="email">E-mail</label>
+              <input id="email" required type="email" autoComplete="email" placeholder="voce@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+            </div>
+            <div className="form-item">
+              <label htmlFor="senha">Senha</label>
+              <div className="auth-password"><input id="senha" required type={mostrarSenha ? "text" : "password"} autoComplete={cadastro ? "new-password" : "current-password"} placeholder="Digite sua senha" value={senha} onChange={(e) => setSenha(e.target.value)} /><button type="button" onClick={() => setMostrarSenha(!mostrarSenha)} aria-label={mostrarSenha ? "Ocultar senha" : "Mostrar senha"}>{mostrarSenha ? "Ocultar" : "Mostrar"}</button></div>
+            </div>
+            {cadastro ? <>
+              <div className="form-item"><label htmlFor="confirmar-cadastro">Confirmar senha</label><div className="auth-password"><input id="confirmar-cadastro" required type={mostrarConfirmacao ? "text" : "password"} autoComplete="new-password" placeholder="Confirme sua senha" value={confirmarSenha} onChange={(e) => setConfirmarSenha(e.target.value)} /><button type="button" onClick={() => setMostrarConfirmacao(!mostrarConfirmacao)} aria-label={mostrarConfirmacao ? "Ocultar confirmação de senha" : "Mostrar confirmação de senha"}>{mostrarConfirmacao ? "Ocultar" : "Mostrar"}</button></div></div>
+              <label className="auth-terms"><input type="checkbox" required /> <span>Li e aceito os termos e a política de privacidade.</span></label>
+            </> : <Link className="auth-forgot" to="/login?modo=recuperar">Esqueci minha senha</Link>}
+            {erro && <p className="erro-msg" role="alert">{erro}</p>}
+            <button className="auth-submit" type="submit">{cadastro ? "Criar minha conta" : "Entrar"}</button>
+            {!cadastro && <><div className="auth-divider"><span>ou</span></div><button className="auth-google" type="button" onClick={loginComGoogle}><span aria-hidden="true">G</span>Continuar com Google</button></>}
+            <p className="auth-switch">{cadastro ? "Já possui conta?" : "Não tem conta?"} <Link to={cadastro ? "/login" : "/login?modo=cadastro"}>{cadastro ? "Entrar" : "Criar conta"}</Link></p>
+            {!cadastro && <p className="auth-disclaimer">Ao entrar, você concorda com os termos e a política de privacidade.</p>}
+          </form>
+        </div>
+      </section>
+      {!cadastro && <footer className="auth-footer">© 2026 Vesttor</footer>}
+    </main>
   );
 }
 
