@@ -7,6 +7,7 @@ const { login } = vi.hoisted(() => ({ login: vi.fn() }));
 vi.mock("../../../config/firebase", () => ({ auth: {} }));
 vi.mock("../../../services/authService", async (original) => ({ ...(await original()), login }));
 import FormAuth from "./FormAuth";
+import Login from "../../../pages/Login";
 afterEach(() => { cleanup(); vi.clearAllMocks(); });
 it("n�o envia campos vazios e apresenta mensagem segura para senha incorreta", async () => {
   const user = userEvent.setup();
@@ -18,4 +19,18 @@ it("n�o envia campos vazios e apresenta mensagem segura para senha incorreta",
   login.mockRejectedValueOnce({ code: "auth/invalid-credential", message: "Firebase: Error" });
   await user.click(screen.getByRole("button", { name: "Entrar", exact: true }));
   expect((await screen.findByRole("alert")).textContent).toBe("E-mail ou senha inv�lidos.");
+});
+it("limpa erros e senhas ao navegar entre login e recupera��o", async () => {
+  const user = userEvent.setup();
+  render(<MemoryRouter initialEntries={["/login"]}><Login /></MemoryRouter>);
+  await user.type(screen.getByLabelText("E-mail:"), "teste@example.com");
+  await user.type(screen.getByLabelText("Senha:"), "errada");
+  login.mockRejectedValueOnce({ code: "auth/invalid-credential" });
+  await user.click(screen.getByRole("button", { name: "Entrar", exact: true }));
+  await screen.findByRole("alert");
+  await user.click(screen.getByRole("link", { name: "Esqueci minha senha" }));
+  expect(screen.queryByRole("alert")).toBeNull();
+  await user.click(screen.getByRole("link", { name: "Voltar ao login" }));
+  expect(screen.queryByRole("alert")).toBeNull();
+  expect(screen.getByLabelText("Senha:").value).toBe("");
 });
