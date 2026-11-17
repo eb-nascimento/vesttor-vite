@@ -16,7 +16,7 @@ import "./FormAuth.css";
 const estadosAuth = {
   "email-enviado": {
     titulo: "Confira seu e-mail",
-    descricao: "Enviamos um link para você redefinir sua senha.",
+    descricao: "Enviamos um link para voc� redefinir sua senha.",
     acao: "Voltar ao login",
   },
   "senha-redefinida": {
@@ -27,18 +27,18 @@ const estadosAuth = {
   "link-expirado": {
     titulo: "Este link expirou",
     descricao:
-      "O link é inválido ou já foi usado. Solicite outro para continuar.",
+      "O link � inv�lido ou j� foi usado. Solicite outro para continuar.",
     acao: "Solicitar novo link",
     acaoSecundaria: "Voltar ao login",
   },
   "email-confirmado": {
     titulo: "E-mail confirmado",
-    descricao: "Sua conta está pronta. Entre para continuar.",
+    descricao: "Sua conta est� pronta. Entre para continuar.",
     acao: "Voltar ao login",
   },
   "email-nao-confirmado": {
-    titulo: "E-mail ainda não confirmado",
-    descricao: "Confirme seu endereço de e-mail antes de entrar.",
+    titulo: "E-mail ainda n�o confirmado",
+    descricao: "Confirme seu endere�o de e-mail antes de entrar.",
     acao: "Reenviar e-mail",
     acaoSecundaria: "Voltar ao login",
   },
@@ -65,7 +65,7 @@ function FormAuth({ modo = "login" }) {
       // Ao entrar, o Firebase atualiza automaticamente o observador em useAuth.
       await login(email, senha);
     } catch (erro) {
-      setErro(erro.message);
+      setErro(obterMensagemErroAuth(erro.code));
     }
   }
 
@@ -84,12 +84,12 @@ function FormAuth({ modo = "login" }) {
       // O Firebase autentica o usuario logo depois de criar a conta.
       await cadastroUsuario(email, senha);
     } catch (erro) {
-      setErro(erro.message);
+      setErro(obterMensagemErroAuth(erro.code));
     }
   }
 
   /**
-   * Dispara o fluxo de envio do e-mail de recuperação de senha pelo Firebase.
+   * Dispara o fluxo de envio do e-mail de recupera��o de senha pelo Firebase.
    * Se houver sucesso, navega para a tela de aviso de e-mail enviado.
    */
   async function enviarLinkRedefinicaoSenha() {
@@ -104,21 +104,21 @@ function FormAuth({ modo = "login" }) {
   }
 
   /**
-   * Valida se as senhas coincidem, extrai o código (oobCode) da URL
-   * e chama a função de comunicação com o Firebase para salvar a nova senha.
+   * Valida se as senhas coincidem, extrai o c�digo (oobCode) da URL
+   * e chama a fun��o de comunica��o com o Firebase para salvar a nova senha.
    */
   function salvarNovaSenha() {
     if (senha !== confirmarSenha) {
-      setErro("As senhas não coincidem.");
+      setErro("As senhas n�o coincidem.");
       return;
     }
 
-    // Extrai os parâmetros de busca (?mode=...&oobCode=...) da URL atual
+    // Extrai os par�metros de busca (?mode=...&oobCode=...) da URL atual
     const urlParams = new URLSearchParams(window.location.search);
     const codigo = urlParams.get("oobCode");
 
     if (!codigo) {
-      setErro("Código de redefinição de senha ausente.");
+      setErro("C�digo de redefini��o de senha ausente.");
       return;
     }
 
@@ -126,10 +126,10 @@ function FormAuth({ modo = "login" }) {
   }
 
   /**
-   * Conclui a redefinição de senha utilizando o código fornecido.
-   * Se houver sucesso, redireciona o usuário para a tela de sucesso.
-   * @param {string} codigo - Código de segurança (oobCode) fornecido pelo Firebase via URL.
-   * @param {string} novaSenha - A senha final escolhida pelo usuário.
+   * Conclui a redefini��o de senha utilizando o c�digo fornecido.
+   * Se houver sucesso, redireciona o usu�rio para a tela de sucesso.
+   * @param {string} codigo - C�digo de seguran�a (oobCode) fornecido pelo Firebase via URL.
+   * @param {string} novaSenha - A senha final escolhida pelo usu�rio.
    */
   async function redefinirSenhaUsuario(codigo, novaSenha) {
     try {
@@ -153,7 +153,7 @@ function FormAuth({ modo = "login" }) {
             </p>
           )}
           <p className="form-auth-description">
-            Informe o e-mail da sua conta para receber o link de redefinição.
+            Informe o e-mail da sua conta para receber o link de redefini��o.
           </p>
           <form>
             <div className="form-item">
@@ -273,6 +273,7 @@ function FormAuth({ modo = "login" }) {
             <label htmlFor="email">E-mail:</label>
             <input
               id="email"
+              required
               type="email"
               autoComplete="email"
               placeholder="E-mail"
@@ -284,6 +285,7 @@ function FormAuth({ modo = "login" }) {
             <label htmlFor="senha">Senha:</label>
             <input
               id="senha"
+              required
               type="password"
               autoComplete="current-password"
               placeholder="Senha"
