@@ -1,3 +1,4 @@
+import { formatarMoeda } from "../../../utils/formatarMoeda";
 
 import "./PainelLateralPlanejamento.css";
 
@@ -14,7 +15,7 @@ function PainelLateralPlanejamento({
 
         <div className="saldo-card">
           <span className="saldo-label">Saldo disponível</span>
-          <span className="saldo-valor">R$ {saldoProjetado.toFixed(2)}</span>
+          <span className="saldo-valor">{formatarMoeda(saldoProjetado)}</span>
         </div>
 
         <div className="track-container">

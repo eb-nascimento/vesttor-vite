@@ -305,6 +305,10 @@ export function validarTransacao({ data, descricao, valor, tipo }) {
     return "A descrição é obrigatória.";
   }
 
+  if (descricao.trim().length > 200) {
+    return "A descrição deve ter no máximo 200 caracteres.";
+  }
+
   const valorNumerico = Number(String(valor).replace(",", "."));
   if (!valor || Number.isNaN(valorNumerico) || valorNumerico <= 0) {
     return "O valor deve ser um número positivo.";

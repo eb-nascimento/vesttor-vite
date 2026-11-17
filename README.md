@@ -74,13 +74,13 @@ Para desenvolvimento isolado, execute `npm run emulators` e `npm run dev:emulato
 
 ### Refatoração financeira e publicação
 
-Novas gravações usam `usuarios/{uid}/transacoes` e `usuarios/{uid}/planejamentos`, com valores inteiros em centavos. A leitura mensal mantém compatibilidade com as coleções raiz. Consulte [migração financeira](docs/migracao-financeira.md) antes da transição. `npm run migration:financeiro -- --project PROJETO --uid UID` simula a migração; gravações exigem `--apply`. Relatórios privados ficam em `migration-reports/`, ignorados pelo Git.
+Novas gravações usam `usuarios/{uid}/transacoes` e `usuarios/{uid}/planejamentos`, com valores inteiros em centavos. Transações mantêm leitura compatível com a coleção raiz. Planejamentos usam apenas IDs calculados a partir de mês, classificação e categoria; registros anteriores de teste deixam de aparecer, mas não são apagados. As Rules precisam ser publicadas antes desta versão do aplicativo. O script histórico de migração financeira não adapta planejamentos ao novo ID e não deve ser usado para migrá-los sem revisão. Relatórios privados de migração ficam em `migration-reports/`, ignorados pelo Git.
 
 `deploy:hosting`, `deploy:rules` e `deploy:indexes` publicam recursos separadamente. Rules e índices compatíveis devem ser publicados e os índices devem estar prontos antes da publicação da aplicação. Nenhuma publicação ou migração em produção faz parte desta mesclagem. A configuração ativa não inclui Functions; a pasta `functions/` preserva o scaffold para referência futura.
 
 ### Estágio do projeto
 
-Aplicação em desenvolvimento. As páginas dedicadas a dashboard, categorias e meios financeiros ainda apresentam avisos de construção na versão consultada. Recursos descritos nos documentos de planejamento não devem ser interpretados automaticamente como entregues.
+MVP funcional concluído e aceito pelo responsável em 13/11/2026. Inclui autenticação, transações, planejamento mensal, 110 categorias padrão e 26 métodos de pagamento. Os catálogos têm cadastro desativado neste MVP. Consulte o [registro de fechamento do MVP](MVP.md) para escopo, decisões, validações e evolução futura. A conferência visual final e a preparação da publicação e das entregas acadêmicas permanecem etapas de entrega.
 
 ### Documentação
 
@@ -174,7 +174,7 @@ Rules tests require Firebase Emulator Suite prerequisites, including Java 21 or 
 
 ### Project status
 
-The application is under development. Dedicated dashboard, category, and payment-method pages still display construction notices in the reviewed version. Features described in planning documents should not automatically be treated as delivered.
+The functional MVP was accepted by the project owner on November 13, 2026. It includes authentication, transactions, monthly planning, 110 predefined categories and 26 payment methods. Custom catalog creation is disabled for this MVP. See the [MVP closure record](MVP.md) for scope, validation, delivery activities and future work. Final browser visual checks and release preparation remain delivery steps.
 
 ### Documentation
 

@@ -1,3 +1,7 @@
+export function dataLocal(referencia = new Date()) {
+  return `${mesAtual(referencia)}-${String(referencia.getDate()).padStart(2, "0")}`;
+}
+
 export function mesAtual(referencia = new Date()) {
   return `${referencia.getFullYear()}-${String(referencia.getMonth() + 1).padStart(2, "0")}`;
 }

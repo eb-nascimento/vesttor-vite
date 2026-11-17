@@ -44,6 +44,21 @@ function fill(props) {
 beforeEach(() => { state.values = []; state.refs = []; });
 
 describe("envio de transações", () => {
+  it("usa a data local ao abrir depois da meia-noite UTC", () => {
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(new Date("2026-11-17T02:30:00Z"));
+      // Controla os componentes locais para reproduzir Brasília também no CI em UTC.
+      vi.spyOn(Date.prototype, "getFullYear").mockReturnValue(2026);
+      vi.spyOn(Date.prototype, "getMonth").mockReturnValue(10);
+      vi.spyOn(Date.prototype, "getDate").mockReturnValue(16);
+      const tree = render({ onAdd: vi.fn() });
+      expect(field(tree, "data").props.value).toBe("2026-11-16");
+    } finally {
+      vi.useRealTimers();
+      vi.restoreAllMocks();
+    }
+  });
   it("associa o título Tipo ao grupo de opções sem um label para campo inexistente", () => {
     const tree = render({ onAdd: vi.fn() });
     expect(find(tree, (node) => node.type === "label" && node.props.htmlFor === "tipo")).toBeUndefined();

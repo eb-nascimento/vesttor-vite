@@ -1,3 +1,4 @@
+import { METODOS_PAGAMENTO } from "../data/metodosPagamento";
 import { useState, useMemo } from "react";
 import { deslocarMes } from "../utils/periodo";
 import {
@@ -47,14 +48,7 @@ export function useFiltrosTransacoes(transacoes, onMudarPeriodo) {
     return Array.from(cats).sort();
   }, [transacoes]);
 
-  const metodosDisponiveis = [
-    { valor: "pix", label: "Pix" },
-    { valor: "cartao_credito", label: "Cartão de Crédito" },
-    { valor: "cartao_debito", label: "Cartão de Débito" },
-    { valor: "dinheiro", label: "Dinheiro" },
-    { valor: "boleto", label: "Boleto" },
-    { valor: "transferencia", label: "Transferência" },
-  ];
+  const metodosDisponiveis = METODOS_PAGAMENTO;
 
   const transacoesFiltradas = useMemo(() => {
     return aplicarFiltrosAvancados(transacoes, filtros);
@@ -120,3 +114,4 @@ export function useFiltrosTransacoes(transacoes, onMudarPeriodo) {
     handleMudarMes,
   };
 }
+

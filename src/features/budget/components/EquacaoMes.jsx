@@ -1,3 +1,4 @@
+import { formatarMoeda } from "../../../utils/formatarMoeda";
 import "./EquacaoMes.css";
 
 function EquacaoMes({
@@ -10,17 +11,10 @@ function EquacaoMes({
   saldoProjetado = 0,
   porcentagemSaldo = 0,
 }) {
-  // Função auxiliar para formatar em Reais (R$)
-  const formatarMoeda = (valor) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(valor);
-  };
 
   return (
     <section className="equacao-mes-container">
-      <div className="fluxo-coluna">
+      <div className="fluxo-coluna fluxo-entradas">
         <span className="fluxo-titulo">ENTRADAS</span>
         <span className="fluxo-valor receita">
           {formatarMoeda(entradasPlanejadas)}
@@ -32,7 +26,7 @@ function EquacaoMes({
 
       <span className="operador-matematico">–</span>
 
-      <div className="fluxo-coluna">
+      <div className="fluxo-coluna fluxo-fixos">
         <span className="fluxo-titulo">FIXOS</span>
         <span className="fluxo-valor">{formatarMoeda(fixosPlanejados)}</span>
         <span className="fluxo-subtitulo">
@@ -42,7 +36,7 @@ function EquacaoMes({
 
       <span className="operador-matematico">–</span>
 
-      <div className="fluxo-coluna">
+      <div className="fluxo-coluna fluxo-variaveis">
         <span className="fluxo-titulo">VARIÁVEIS</span>
         <span className="fluxo-valor variavel">
           {formatarMoeda(variaveisPlanejados)}
@@ -54,7 +48,8 @@ function EquacaoMes({
 
       <span className="operador-matematico">=</span>
 
-      <div className="fluxo-coluna">
+      <div className="fluxo-coluna fluxo-saidas"><span className="fluxo-titulo">Fixos + variáveis</span><span className="fluxo-valor">− {formatarMoeda(fixosPlanejados + variaveisPlanejados)}</span></div>
+      <div className="fluxo-coluna fluxo-saldo">
         <span className="fluxo-titulo">SALDO PROJETADO</span>
         <span className="fluxo-valor saldo">
           {formatarMoeda(saldoProjetado)}

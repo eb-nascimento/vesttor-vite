@@ -35,7 +35,7 @@ export function converterDocumento(nome, dados) {
       throw new Error("Campo desconhecido na transação");
     if (
       typeof dados.descricao !== "string" ||
-      dados.descricao.length > 100 ||
+      dados.descricao.length > (dados.numeroParcela ? 208 : 200) ||
       !Number.isFinite(dados.data.toDate().getTime())
     )
       throw new Error("Descrição ou data inválida");

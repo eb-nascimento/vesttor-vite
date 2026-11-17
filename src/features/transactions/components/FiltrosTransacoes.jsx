@@ -1,9 +1,12 @@
+import Select from "../../../components/ui/Select";
 import "./FiltrosTransacoes.css";
 import { Search, Filter, X } from "lucide-react";
 import CustomSelect from "../../../components/ui/CustomSelect";
 
 function FiltrosTransacoes({
   filtros,
+  quantidade,
+  periodo,
   onFiltroChange,
   limparFiltros,
   mesesDisponiveis,
@@ -19,14 +22,16 @@ function FiltrosTransacoes({
   return (
     <div className={`filtros-transacoes-container ${isOpen ? "open" : ""}`}>
       <div className="filtros-header">
+        <div className="filtros-resumo-mobile"><h3>{quantidade} {quantidade === 1 ? "transação" : "transações"}</h3><p>{periodo}</p></div>
         <button
           className="btn-toggle-filtros"
           onClick={onToggle}
+          aria-label={isOpen ? "Ocultar filtros" : "Abrir filtros"}
           aria-expanded={isOpen}
           aria-controls="filtros-panel"
         >
           <Filter size={16} />
-          {isOpen ? "Ocultar filtros" : "Abrir filtros"}
+          <span className="filtros-toggle-texto">{isOpen ? "Ocultar filtros" : "Abrir filtros"}</span>
         </button>
       </div>
 
@@ -83,7 +88,7 @@ function FiltrosTransacoes({
           <div className="filtros-grid">
             <div className="filtro-item">
               <label htmlFor="filtro-competencia">Competência</label>
-              <select
+              <Select
                 id="filtro-competencia"
                 value={filtros.mesAno}
                 onChange={(e) => handleChange("mesAno", e.target.value)}
@@ -93,7 +98,7 @@ function FiltrosTransacoes({
                     {m.label}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
 
             <div className="filtro-item">
@@ -154,3 +159,4 @@ function FiltrosTransacoes({
 }
 
 export default FiltrosTransacoes;
+

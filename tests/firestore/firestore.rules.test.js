@@ -24,6 +24,7 @@ import { afterAll, beforeAll, beforeEach, describe, it, expect, vi } from "vites
 import { initializeApp as initializeAdminApp, deleteApp } from "firebase-admin/app";
 import { getFirestore as getAdminFirestore } from "firebase-admin/firestore";
 import { migrarUsuario, reverterMigracao } from "../../scripts/migracaoFinanceira";
+import { cruzarPlanejamentos } from "../../src/utils/planejamento";
 
 const PROJECT_ID = "demo-vesttor-rules";
 const [host = "127.0.0.1", portText = "8080"] = (
@@ -60,6 +61,34 @@ function transacaoCentavos(overrides = {}) {
 }
 
 describe("hierarquia privada e centavos", () => {
+  it("limite de descrição aceita 200 caracteres e reserva espaço para a numeração das parcelas", async () => {
+    const db = testEnv.authenticatedContext("usuario-1").firestore();
+    const ref = doc(db, "usuarios/usuario-1/transacoes/limite");
+    await assertSucceeds(setDoc(ref, transacaoCentavos({ descricao: "a".repeat(200) })));
+    await assertFails(setDoc(ref, transacaoCentavos({ descricao: "a".repeat(201) })));
+    const parcela = { numeroParcela: 12, totalParcelas: 12, parcelamentoId: "serie" };
+    await assertSucceeds(setDoc(ref, transacaoCentavos({ ...parcela, descricao: `${"a".repeat(200)} (12/12)` })));
+    await assertFails(setDoc(ref, transacaoCentavos({ ...parcela, descricao: `${"a".repeat(201)} (12/12)` })));
+  });
+  it.each(["Fixo", "Variável"])("aceita classificação %s opcional em despesas antigas e novas", async (classificacao) => {
+    const db = testEnv.authenticatedContext("usuario-1").firestore();
+    for (const caminho of ["transacoes/tipo", "usuarios/usuario-1/transacoes/tipo"]) {
+      const ref = doc(db, caminho);
+      await assertSucceeds(setDoc(ref, transacaoCentavos()));
+      await assertSucceeds(updateDoc(ref, { classificacao }));
+      expect((await getDoc(ref)).data().classificacao).toBe(classificacao);
+    }
+  });
+  it.each([true, 1, null, "Entrada", "fixo", "desconhecida"])("rejeita classificação inválida %j", async (classificacao) => {
+    const db = testEnv.authenticatedContext("usuario-1").firestore();
+    for (const caminho of ["transacoes/invalida", "usuarios/usuario-1/transacoes/invalida"]) {
+      await assertFails(setDoc(doc(db, caminho), transacaoCentavos({ classificacao })));
+    }
+  });
+  it("receitas não podem receber classificação de despesa", async () => {
+    const db = testEnv.authenticatedContext("usuario-1").firestore();
+    await assertFails(setDoc(doc(db, "usuarios/usuario-1/transacoes/invalida"), transacaoCentavos({ tipo: "receita", classificacao: "Fixo" })));
+  });
   it("permite consulta mensal, CRUD do proprietário e mover legado atomicamente", async () => {
     const db = testEnv.authenticatedContext("usuario-1").firestore();
     const ref = doc(db, "usuarios/usuario-1/transacoes/t1");
@@ -92,7 +121,7 @@ describe("hierarquia privada e centavos", () => {
     const campos = planejamentoValido();
     delete campos.planejado;
     const dados = { ...campos, planejadoCentavos: 50000 };
-    const ref = doc(db, "usuarios/usuario-1/planejamentos/p1");
+    const ref = doc(db, "usuarios/usuario-1/planejamentos/orcamento-2026-09-Variável-Alimentação");
     await assertSucceeds(setDoc(ref, dados));
     await assertSucceeds(updateDoc(ref, { planejadoCentavos: 0 }));
     await assertFails(updateDoc(ref, { planejadoCentavos: 1.1 }));
@@ -174,15 +203,45 @@ describe("migração e services no Firestore real emulado", () => {
     await servicos.excluirTransacaoNaApi(novo.id, "usuario-1");
     expect((await dbAdmin.doc(`usuarios/usuario-1/transacoes/${novo.id}`).get()).exists).toBe(false);
   });
-  it("planejamento novo e legado usam limites em centavos com atualização transacional", async () => {
-    await testEnv.withSecurityRulesDisabled(async (context) => setDoc(doc(context.firestore(), "planejamentos/p1"), planejamentoValido()));
-    await servicosPlanejamento.atualizarPlanejamentoNaApi("p1", { planejado: 123.45 }, "usuario-1");
-    expect((await dbAdmin.doc("usuarios/usuario-1/planejamentos/p1").get()).data().planejadoCentavos).toBe(12345);
-    expect((await dbAdmin.doc("planejamentos/p1").get()).exists).toBe(false);
-    await servicosPlanejamento.atualizarPlanejamentoNaApi("p1", { planejado: 0 }, "usuario-1");
-    await servicosPlanejamento.criarPlanejamentoNaApi({ categoria: "Transporte", tipo: "Variável", planejado: 1.01, mesAno: "2026-10" }, "usuario-1");
+  it("planejamento usa centavos com atualização transacional", async () => {
+    await servicosPlanejamento.criarPlanejamentoNaApi({ categoria: "Alimentação", tipo: "Variável", planejado: 123.45, mesAno: "2026-09" }, "usuario-1");
+    const id = "orcamento-2026-09-Variável-Alimentação";
+    expect((await dbAdmin.doc(`usuarios/usuario-1/planejamentos/${id}`).get()).data().planejadoCentavos).toBe(12345);
+    await servicosPlanejamento.atualizarPlanejamentoNaApi(id, { planejado: 0 }, "usuario-1");
+    expect((await dbAdmin.doc(`usuarios/usuario-1/planejamentos/${id}`).get()).data().planejadoCentavos).toBe(0);
+  });
+  it("permite orçamentos híbridos, bloqueia duplicatas e troca classificação sem apagar o orçamento oposto", async () => {
+    const criar = (tipo) => servicosPlanejamento.criarPlanejamentoNaApi({ categoria: "Transporte", tipo, planejado: 100, mesAno: "2026-11" }, "usuario-1");
+    await Promise.all([criar("Fixo"), criar("Variável")]);
     const planos = await dbAdmin.collection("usuarios/usuario-1/planejamentos").get();
-    expect(planos.docs.map((item) => item.data().planejadoCentavos).sort((a, b) => a - b)).toEqual([0, 101]);
+    expect(planos.docs.map((item) => item.data().tipo).sort()).toEqual(["Fixo", "Variável"]);
+    await Promise.all([
+      servicos.criarTransacaoNaApi({ tipo: "despesa", categoria: "Transporte", classificacao: "Fixo", descricao: "Passe mensal", valor: 150, data: "2026-11-13" }, "usuario-1"),
+      servicos.criarTransacaoNaApi({ tipo: "despesa", categoria: "Transporte", classificacao: "Variável", descricao: "Uber", valor: 20, data: "2026-11-13" }, "usuario-1"),
+    ]);
+    const gastos = await dbAdmin.collection("usuarios/usuario-1/transacoes").get();
+    const cruzados = cruzarPlanejamentos(planos.docs.map((item) => item.data()), gastos.docs.map((item) => item.data()));
+    expect(cruzados.find((item) => item.tipo === "Fixo").valorRealizado).toBe(150);
+    expect(cruzados.find((item) => item.tipo === "Variável").valorRealizado).toBe(20);
+    await expect(criar("Fixo")).rejects.toMatchObject({ code: "planejamento-duplicado" });
+    const fixo = planos.docs.find((item) => item.data().tipo === "Fixo");
+    await expect(servicosPlanejamento.atualizarPlanejamentoNaApi(fixo.id, { tipo: "Variável" }, "usuario-1")).rejects.toMatchObject({ code: "planejamento-duplicado" });
+    expect((await dbAdmin.doc(fixo.ref.path).get()).data().tipo).toBe("Fixo");
+  });
+  it("duas criações simultâneas da mesma classificação confirmam só um orçamento", async () => {
+    const dados = { categoria: "Transporte", tipo: "Fixo", planejado: 100, mesAno: "2026-11" };
+    const resultados = await Promise.allSettled([0, 1].map(() => servicosPlanejamento.criarPlanejamentoNaApi(dados, "usuario-1")));
+    expect(resultados.filter((item) => item.status === "fulfilled")).toHaveLength(1);
+    expect((await dbAdmin.collection("usuarios/usuario-1/planejamentos").get()).size).toBe(1);
+  });
+  it("service preserva classificação na despesa e a remove ao converter em receita", async () => {
+    const nova = await servicos.criarTransacaoNaApi({ tipo: "despesa", categoria: "Transporte", classificacao: "Fixo", descricao: "Passe", valor: 150, data: "2026-11-13" }, "usuario-1");
+    const ref = dbAdmin.doc(`usuarios/usuario-1/transacoes/${nova.id}`);
+    expect((await ref.get()).data().classificacao).toBe("Fixo");
+    await servicos.editarTransacaoNaApi(nova.id, { valor: 160 }, "usuario-1");
+    expect((await ref.get()).data().classificacao).toBe("Fixo");
+    await servicos.editarTransacaoNaApi(nova.id, { tipo: "receita" }, "usuario-1");
+    expect((await ref.get()).data()).not.toHaveProperty("classificacao");
   });
   it("assinatura mensal acompanha criação, edição e exclusão sem recarregar", async () => {
     let itens;
@@ -230,88 +289,39 @@ afterAll(async () => {
 });
 
 describe("Security Rules de planejamentos", () => {
-  it("permite ao proprietário criar, ler, atualizar e excluir", async () => {
+  it("serviço cria, impede duplicata e altera categoria com as regras ativas", async () => {
     const db = testEnv.authenticatedContext("usuario-1").firestore();
-    const ref = doc(db, "planejamentos", "plano-1");
-
-    await assertSucceeds(setDoc(ref, planejamentoValido()));
-    await assertSucceeds(getDoc(ref));
-    await assertSucceeds(updateDoc(ref, { planejado: 650 }));
-    await assertSucceeds(deleteDoc(ref));
+    vi.doMock("../../src/config/firebase", () => ({ db }));
+    const servicos = await import("../../src/services/planejamentoService");
+    const dados = { mesAno: "2026-11", tipo: "Variável", categoria: "Alimentação", planejado: 100 };
+    await servicos.criarPlanejamentoNaApi(dados, "usuario-1");
+    await expect(servicos.criarPlanejamentoNaApi(dados, "usuario-1")).rejects.toMatchObject({ code: "planejamento-duplicado" });
+    const id = servicos.idPlanejamento(dados);
+    await servicos.atualizarPlanejamentoNaApi(id, { categoria: "Moradia" }, "usuario-1");
+    expect((await getDoc(doc(db, "usuarios", "usuario-1", "planejamentos", id))).exists()).toBe(false);
+    const destino = servicos.idPlanejamento({ ...dados, categoria: "Moradia" });
+    expect((await getDoc(doc(db, "usuarios", "usuario-1", "planejamentos", destino))).data().planejadoCentavos).toBe(10000);
   });
-
-  it("impede leitura e alteração por outro usuário", async () => {
-    await testEnv.withSecurityRulesDisabled(async (context) => {
-      await setDoc(
-        doc(context.firestore(), "planejamentos", "plano-1"),
-        planejamentoValido(),
-      );
-    });
-
-    const db = testEnv.authenticatedContext("usuario-2").firestore();
-    const ref = doc(db, "planejamentos", "plano-1");
-
-    await assertFails(getDoc(ref));
-    await assertFails(updateDoc(ref, { planejado: 1 }));
-    await assertFails(deleteDoc(ref));
-  });
-
-  it("impede acesso de usuário não autenticado", async () => {
-    await testEnv.withSecurityRulesDisabled(async (context) => {
-      await setDoc(
-        doc(context.firestore(), "planejamentos", "plano-1"),
-        planejamentoValido(),
-      );
-    });
-
-    const db = testEnv.unauthenticatedContext().firestore();
-    await assertFails(getDoc(doc(db, "planejamentos", "plano-1")));
-    await assertFails(
-      setDoc(
-        doc(db, "planejamentos", "novo-plano"),
-        planejamentoValido(),
-      ),
-    );
-  });
-
-  it("rejeita campos desconhecidos, tipos inválidos e troca de proprietário", async () => {
+  it("bloqueia caminhos alternativos e protege a identidade do orçamento", async () => {
     const db = testEnv.authenticatedContext("usuario-1").firestore();
-
-    await assertFails(
-      setDoc(
-        doc(db, "planejamentos", "campo-extra"),
-        planejamentoValido({ admin: true }),
-      ),
-    );
-    await assertFails(
-      setDoc(
-        doc(db, "planejamentos", "tipo-invalido"),
-        planejamentoValido({ tipo: "Outro" }),
-      ),
-    );
-    await assertFails(
-      setDoc(
-        doc(db, "planejamentos", "mes-invalido"),
-        planejamentoValido({ mesAno: "09/2026" }),
-      ),
-    );
-
-    const ref = doc(db, "planejamentos", "proprietario");
-    await assertSucceeds(setDoc(ref, planejamentoValido()));
-    await assertFails(updateDoc(ref, { userId: "usuario-2" }));
+    const dados = { ...planejamentoValido(), planejadoCentavos: 50000 };
+    delete dados.planejado;
+    const id = `orcamento-${dados.mesAno}-${dados.tipo}-${dados.categoria}`;
+    const ref = doc(db, "usuarios", "usuario-1", "planejamentos", id);
+    await assertSucceeds(setDoc(ref, dados));
+    await assertSucceeds(updateDoc(ref, { planejadoCentavos: 30000 }));
+    await assertFails(setDoc(doc(db, "usuarios/usuario-1/planejamentos/id-arbitrario"), dados));
+    await assertFails(setDoc(doc(db, "planejamentos/id-arbitrario"), dados));
+    await assertFails(updateDoc(ref, { categoria: "Outra" }));
+    await assertFails(getDoc(doc(testEnv.authenticatedContext("usuario-2").firestore(), ref.path)));
+    await assertFails(getDoc(doc(testEnv.unauthenticatedContext().firestore(), ref.path)));
   });
-
-  it("mantém documentos legados com data ISO editáveis pelo proprietário", async () => {
-    await testEnv.withSecurityRulesDisabled(async (context) => {
-      await setDoc(
-        doc(context.firestore(), "planejamentos", "legado"),
-        planejamentoValido({ dataCriacao: "2026-09-25T12:00:00.000Z" }),
-      );
-    });
-
+  it("permite fixo e variável na mesma categoria e mês", async () => {
     const db = testEnv.authenticatedContext("usuario-1").firestore();
-    await assertSucceeds(
-      updateDoc(doc(db, "planejamentos", "legado"), { planejado: 700 }),
-    );
+    const dados = { ...planejamentoValido(), planejadoCentavos: 50000 };
+    delete dados.planejado;
+    for (const tipo of ["Fixo", "Variável"]) {
+      await assertSucceeds(setDoc(doc(db, "usuarios", "usuario-1", "planejamentos", `orcamento-${dados.mesAno}-${tipo}-${dados.categoria}`), { ...dados, tipo }));
+    }
   });
 });

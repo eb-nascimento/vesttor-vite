@@ -38,8 +38,24 @@ export function loginGoogle() {
  * @returns {string} Mensagem de erro traduzida para exibir ao usuário.
  */
 export function obterMensagemErroAuth(codigo) {
-  if (codigo === "auth/invalid-credential") {
+  if (["auth/invalid-credential", "auth/wrong-password", "auth/user-not-found"].includes(codigo)) {
     return "E-mail ou senha inválidos.";
+  }
+
+  if (codigo === "auth/invalid-email") {
+    return "Informe um e-mail válido.";
+  }
+  if (codigo === "auth/missing-password") {
+    return "Informe sua senha.";
+  }
+  if (codigo === "auth/weak-password") {
+    return "Use uma senha com pelo menos seis caracteres.";
+  }
+  if (codigo === "auth/too-many-requests") {
+    return "Muitas tentativas. Aguarde um pouco e tente novamente.";
+  }
+  if (codigo === "auth/network-request-failed") {
+    return "Não foi possível conectar. Verifique sua conexão e tente novamente.";
   }
 
   if (codigo === "auth/email-already-in-use") {

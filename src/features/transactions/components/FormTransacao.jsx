@@ -1,4 +1,8 @@
+import { METODOS_PAGAMENTO } from "../../../data/metodosPagamento";
+import { CATEGORIAS_DESPESA, CATEGORIAS_RECEITA, classificacaoPadraoDespesa } from "../../../data/categorias";
+import { classificacaoTransacao } from "../../../utils/planejamento";
 import { obterMensagemErroFirestore } from "../../../utils/errosFirestore";
+import { dataLocal } from "../../../utils/periodo";
 import "./FormTransacao.css";
 import { useState, useMemo, useRef } from "react";
 import DatePicker from "../../../components/ui/DatePicker";
@@ -22,28 +26,10 @@ import CustomSelect from "../../../components/ui/CustomSelect";
 import TipoSwitcher from "../../../components/ui/TipoSwitcher";
 
 function obterDataAtual() {
-  return new Date().toISOString().split("T")[0];
+  return dataLocal();
 }
 
-const CATEGORIAS_DESPESA = [
-  "Alimentação",
-  "Moradia",
-  "Transporte",
-  "Lazer",
-  "Saúde",
-  "Educação",
-  "Contas & Serviços",
-  "Outros",
-];
 
-const CATEGORIAS_RECEITA = [
-  "Salário",
-  "Investimentos",
-  "Freelance",
-  "Benefícios",
-  "Reembolso",
-  "Outros",
-];
 
 function obterPlaceholderDescricao(categoria, tipo) {
   if (tipo === "receita") {
@@ -80,11 +66,12 @@ function criarEstadoInicial(transacaoEditando) {
 
     return {
       data: transacaoEditando.data?.toDate
-        ? transacaoEditando.data.toDate().toISOString().split("T")[0]
+        ? dataLocal(transacaoEditando.data.toDate())
         : transacaoEditando.data || obterDataAtual(),
       descricao: descricaoLimpa,
       valor: valorInicial,
       tipo: transacaoEditando.tipo || "despesa",
+      classificacao: isDespesa ? classificacaoTransacao(transacaoEditando) : "Variável",
       metodoPagamento: transacaoEditando.metodoPagamento || "pix",
       categoria:
         transacaoEditando.categoria || (isDespesa ? "Alimentação" : "Salário"),
@@ -104,6 +91,7 @@ function criarEstadoInicial(transacaoEditando) {
     tipo: "despesa",
     metodoPagamento: "pix",
     categoria: "Alimentação",
+    classificacao: classificacaoPadraoDespesa("Alimentação"),
     parcelado: false,
     parcelas: 2,
     erro: "",
@@ -126,6 +114,7 @@ function Form({
 
   function atualizarCampo(campo, valor) {
     if (envioEmCurso.current && campo !== "erro") return;
+    if (transacaoEditando?.parcelamentoId && ["data", "parcelado", "parcelas", "tipo"].includes(campo)) return;
     let valorProcessado = valor;
 
     if (campo === "valor") {
@@ -138,6 +127,7 @@ function Form({
 
     setForm((prev) => {
       const atualizado = { ...prev, [campo]: valorProcessado };
+      if (campo === "descricao" && prev.erro === "A descrição deve ter no máximo 200 caracteres.") atualizado.erro = "";
 
       // Se o usuário alternar de despesa para receita, desliga o parcelamento
       if (campo === "tipo") {
@@ -151,6 +141,10 @@ function Form({
             atualizado.categoria = "Alimentação";
           }
         }
+      }
+
+      if (campo === "categoria" || (campo === "tipo" && valor === "despesa")) {
+        atualizado.classificacao = classificacaoPadraoDespesa(atualizado.categoria);
       }
 
       return atualizado;
@@ -225,6 +219,10 @@ function Form({
     e.preventDefault();
     if (envioEmCurso.current) return;
 
+    const parcelasParsed = parseInt(form.parcelas, 10);
+    const numParcelasValidas = Math.min(72, Math.max(2, isNaN(parcelasParsed) ? 2 : parcelasParsed));
+    const isParceladoValido = form.tipo === "despesa" && Boolean(form.parcelado);
+
     const mensagemErro = validarTransacao({
       data: form.data,
       descricao: form.descricao,
@@ -240,21 +238,13 @@ function Form({
     atualizarCampo("erro", "");
 
     const valorNumerico = Number(String(form.valor).replace(",", "."));
-    const parcelasParsed = parseInt(form.parcelas, 10);
-    const numParcelasValidas = Math.min(
-      72,
-      Math.max(2, isNaN(parcelasParsed) ? 2 : parcelasParsed),
-    );
-
-    const isParceladoValido =
-      form.tipo === "despesa" && Boolean(form.parcelado);
-
     const payload = {
       data: form.data,
       descricao: form.descricao.trim(),
       valor: valorNumerico,
       tipo: form.tipo,
       categoria: form.categoria,
+      ...(form.tipo === "despesa" ? { classificacao: form.classificacao } : {}),
       ...(form.tipo === "despesa" && form.metodoPagamento
         ? { metodoPagamento: form.metodoPagamento }
         : {}),
@@ -279,6 +269,7 @@ function Form({
               numParcelas: numParcelasValidas,
               modo: "total",
               categoria: form.categoria,
+              classificacao: form.classificacao,
               metodoPagamento: form.metodoPagamento,
             });
             await onEditParcelado({
@@ -297,6 +288,7 @@ function Form({
               false,
               1,
             );
+            if (payload.tipo === "despesa") transacaoUnica.classificacao = form.classificacao;
             await onEditParcelado({
               parcelamentoId: transacaoEditando.parcelamentoId,
               novasParcelas: null,
@@ -316,6 +308,7 @@ function Form({
             numParcelas: numParcelasValidas,
             modo: "total",
             categoria: form.categoria,
+            classificacao: form.classificacao,
             metodoPagamento: form.metodoPagamento,
           });
           await onConverterParaParcelado(transacaoEditando.id, novaSerie);
@@ -333,6 +326,7 @@ function Form({
           numParcelas: numParcelasValidas,
           modo: "total",
           categoria: form.categoria,
+          classificacao: form.classificacao,
           metodoPagamento: form.metodoPagamento,
         });
         await onAddParcelado(serie);
@@ -347,7 +341,7 @@ function Form({
           payload.parcelado,
           payload.parcelas || 1,
         );
-        await onAdd(nova);
+        await onAdd({ ...nova, ...(form.tipo === "despesa" ? { classificacao: form.classificacao } : {}) });
       }
 
       // Reset para o estado inicial
@@ -358,6 +352,7 @@ function Form({
         tipo: "despesa",
         metodoPagamento: "pix",
         categoria: "Alimentação",
+        classificacao: classificacaoPadraoDespesa("Alimentação"),
         parcelado: false,
         parcelas: 2,
         erro: "",
@@ -391,6 +386,7 @@ function Form({
           <span id="tipo-label" className="form-item-label">Tipo</span>
           <TipoSwitcher
             aria-labelledby="tipo-label"
+            disabled={Boolean(transacaoEditando?.parcelamentoId)}
             opcoes={[
               {
                 valor: "despesa",
@@ -418,6 +414,7 @@ function Form({
           <DatePicker
             id="data"
             value={form.data}
+            disabled={Boolean(transacaoEditando?.parcelamentoId)}
             onChange={(novaData) => atualizarCampo("data", novaData)}
           />
         </div>
@@ -455,14 +452,7 @@ function Form({
               id="metodoPagamento"
               value={form.metodoPagamento}
               onChange={(val) => atualizarCampo("metodoPagamento", val)}
-              options={[
-                { valor: "pix", label: "Pix" },
-                { valor: "cartao_credito", label: "Cartão de Crédito" },
-                { valor: "cartao_debito", label: "Cartão de Débito" },
-                { valor: "dinheiro", label: "Dinheiro" },
-                { valor: "boleto", label: "Boleto" },
-                { valor: "transferencia", label: "Transferência" },
-              ]}
+              options={METODOS_PAGAMENTO}
             />
           </div>
         )}
@@ -479,6 +469,7 @@ function Form({
               <button
                 type="button"
                 className="checkbox-custom"
+                disabled={Boolean(transacaoEditando?.parcelamentoId)}
                 aria-checked={form.parcelado}
                 role="checkbox"
                 onClick={(e) => {
@@ -519,13 +510,14 @@ function Form({
                         const atual = parseInt(form.parcelas, 10) || 2;
                         atualizarCampo("parcelas", Math.max(2, atual - 1));
                       }}
-                      disabled={Number(form.parcelas) <= 2}
+                      disabled={Boolean(transacaoEditando?.parcelamentoId) || Number(form.parcelas) <= 2}
                       aria-label="Diminuir uma parcela"
                     >
                       −
                     </button>
                     <input
                       id="numParcelas"
+                      disabled={Boolean(transacaoEditando?.parcelamentoId)}
                       type="text"
                       inputMode="numeric"
                       pattern="[0-9]*"
@@ -553,7 +545,7 @@ function Form({
                         const atual = parseInt(form.parcelas, 10) || 2;
                         atualizarCampo("parcelas", Math.min(72, atual + 1));
                       }}
-                      disabled={Number(form.parcelas) >= 72}
+                      disabled={Boolean(transacaoEditando?.parcelamentoId) || Number(form.parcelas) >= 72}
                       aria-label="Aumentar uma parcela"
                     >
                       +
@@ -567,6 +559,7 @@ function Form({
                     <button
                       key={n}
                       type="button"
+                      disabled={Boolean(transacaoEditando?.parcelamentoId)}
                       className={`atalho-btn ${Number(form.parcelas) === n ? "ativo" : ""}`}
                       onClick={() => atualizarCampo("parcelas", n)}
                     >
@@ -627,6 +620,22 @@ function Form({
           />
         </div>
 
+        {isDespesa && <div className="form-item">
+          <label htmlFor="classificacao-transacao">Classificação</label>
+          <CustomSelect
+            id="classificacao-transacao"
+            value={form.classificacao}
+            onChange={(val) => atualizarCampo("classificacao", val)}
+            options={[
+              { valor: "Fixo", label: "Fixo" },
+              { valor: "Variável", label: "Variável" },
+            ]}
+          />
+          <small>Define qual orçamento desta categoria recebe o gasto.</small>
+        </div>}
+
+        {transacaoEditando?.parcelamentoId && <p className="form-helper-rodape">As alterações serão aplicadas às parcelas existentes. As datas e a quantidade original serão mantidas.</p>}
+
         {/* 7. DESCRIÇÃO */}
         <div className="form-item">
           <label htmlFor="descricao">
@@ -639,11 +648,13 @@ function Form({
             placeholder={obterPlaceholderDescricao(form.categoria, form.tipo)}
             value={form.descricao}
             onChange={(e) => atualizarCampo("descricao", e.target.value)}
+            aria-describedby={form.descricao.trim().length > 200 ? "descricao-limite" : undefined}
             required
           />
+          {form.descricao.trim().length > 200 && <small id="descricao-limite" className="erro-msg" role="alert">A descrição deve ter no máximo 200 caracteres.</small>}
         </div>
 
-        {form.erro && (
+        {form.erro && form.descricao.trim().length <= 200 && (
           <p className="erro-msg" role="alert">
             {form.erro}
           </p>
@@ -680,3 +691,5 @@ function Form({
 }
 
 export default Form;
+
+

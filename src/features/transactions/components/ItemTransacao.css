@@ -152,3 +152,26 @@
     justify-content: space-between;
   }
 }
+
+.acao-mobile-label { display: none; }
+@media (max-width: 767px) {
+  .transacoes-page .transacao-item { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid var(--color-border); border-radius: 16px; background: var(--color-surface); }
+  .transacoes-page .transacao-esquerda { align-items: flex-start; }
+  .transacoes-page .transacao-descricao { white-space: normal; overflow-wrap: anywhere; font-size: 14px; }
+  .transacoes-page .transacao-meta { display: block; margin-top: 6px; line-height: 1.6; overflow-wrap: anywhere; }
+  .transacoes-page .transacao-direita { width: 100%; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  .transacoes-page .transacao-acoes { margin-left: auto; }
+  .transacoes-page .btn-acao { display: flex; gap: 5px; width: auto; min-height: 44px; height: auto; padding: 8px 12px; }
+  .transacoes-page .acao-mobile-label { display: inline; font-size: 12px; }
+}
+
+.transacao-natureza-mobile { display: none; }
+@media (max-width: 767px) {
+  .transacoes-page .transacao-item { position: relative; }
+  .transacoes-page .transacao-esquerda { align-items: flex-start; }
+  .transacoes-page .transacao-info { flex: 1; }
+  .transacoes-page .transacao-descricao { padding-right: 100px; white-space: nowrap; text-overflow: ellipsis; }
+  .transacoes-page .transacao-meta { margin-top: 16px; }
+  .transacoes-page .transacao-valor { position: absolute; top: 20px; right: 16px; font-size: 12px; max-width: 115px; overflow-wrap: anywhere; text-align: right; }
+  .transacoes-page .transacao-natureza-mobile { display: block; padding: 8px 10px; font-size: 11px; color: var(--color-text-muted); border: 1px solid var(--color-border); border-radius: 20px; }
+}

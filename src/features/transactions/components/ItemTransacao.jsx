@@ -1,6 +1,10 @@
+import { METODOS_PAGAMENTO } from "../../../data/metodosPagamento";
 import { Pencil, Trash2 } from "lucide-react";
 import "./ItemTransacao.css";
 import { useOperacaoAssincrona } from "../../../hooks/useOperacaoAssincrona";
+import { classificacaoTransacao } from "../../../utils/planejamento";
+import { useState } from "react";
+import ConfirmModal from "../../../components/ui/ConfirmModal";
 
 function ItemTransacao({
   item,
@@ -8,6 +12,7 @@ function ItemTransacao({
   onExcluir,
   onSolicitarExclusaoParcelamento,
 }) {
+  const [confirmando, setConfirmando] = useState(false);
   const { processando, erro, executar } = useOperacaoAssincrona(
     "Não foi possível excluir a transação. Tente novamente.",
   );
@@ -33,7 +38,7 @@ function ItemTransacao({
       boleto: "Boleto",
       transferencia: "Transferência",
     };
-    return mapa[metodo] || metodo;
+    return mapa[metodo] || METODOS_PAGAMENTO.find(item => item.valor === metodo)?.label || metodo;
   };
 
   const infoParcela = item.parcelamentoId
@@ -44,7 +49,7 @@ function ItemTransacao({
 
   const metaPartes = [
     dataFormatada,
-    item.categoria || (isReceita ? "Receita" : "Despesa"),
+    `${item.categoria || (isReceita ? "Receita" : "Despesa")}${!isReceita ? ` (${classificacaoTransacao(item).toLocaleLowerCase("pt-BR")})` : ""}`,
     formatarMetodo(item.metodoPagamento),
     infoParcela,
   ].filter(Boolean);
@@ -58,7 +63,7 @@ function ItemTransacao({
     if (item.parcelamentoId && onSolicitarExclusaoParcelamento) {
       onSolicitarExclusaoParcelamento(item);
     } else {
-      executar(() => onExcluir(item.id));
+      setConfirmando(true);
     }
   }
 
@@ -75,6 +80,7 @@ function ItemTransacao({
       </div>
 
       <div className="transacao-direita">
+        <span className="transacao-natureza-mobile">{isReceita ? "Receita" : "Despesa"}</span>
         <span
           className={`transacao-valor ${isReceita ? "receita" : "despesa"}`}
         >
@@ -89,7 +95,7 @@ function ItemTransacao({
             onClick={() => onEditar(item)}
             aria-label={`Editar transação ${item.descricao}`}
           >
-            <Pencil size={15} aria-hidden="true" />
+            <Pencil size={15} aria-hidden="true" /><span className="acao-mobile-label">Editar</span>
           </button>
           <button
             type="button"
@@ -98,14 +104,28 @@ function ItemTransacao({
             onClick={handleExcluir}
             aria-label={`Excluir transação ${item.descricao}`}
           >
-            <Trash2 size={15} aria-hidden="true" />
+            <Trash2 size={15} aria-hidden="true" /><span className="acao-mobile-label">Excluir</span>
           </button>
         </div>
       </div>
       {processando && <span role="status">Excluindo...</span>}
       {erro && <p className="erro-msg" role="alert">{erro}</p>}
+      <ConfirmModal
+        isOpen={confirmando}
+        onClose={() => setConfirmando(false)}
+        title="Excluir transação?"
+        subtitle={`A transação ${item.descricao} será excluída.`}
+        confirmText="Excluir"
+        processando={processando}
+        onConfirm={async () => {
+          if (await executar(() => onExcluir(item.id))) setConfirmando(false);
+        }}
+      >
+        {erro && <p className="erro-msg" role="alert">{erro}</p>}
+      </ConfirmModal>
     </div>
   );
 }
 
 export default ItemTransacao;
+

@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/set-state-in-effect */
+import { CATEGORIAS, CATEGORIAS_DESPESA, CATEGORIAS_RECEITA, tipoPadraoOrcamento } from "../../../data/categorias";
 import { useState, useEffect } from "react";
 import { X, DollarSign, Tag } from "lucide-react";
 import ModalBase from "../../../components/ui/ModalBase";
@@ -10,20 +11,7 @@ import "./ModalFormPlanejamento.css";
 import "../../../features/transactions/components/FormTransacao.css";
 import { useOperacaoAssincrona } from "../../../hooks/useOperacaoAssincrona";
 
-const CATEGORIAS = [
-  "Alimentação",
-  "Moradia",
-  "Transporte",
-  "Lazer",
-  "Saúde",
-  "Educação",
-  "Contas & Serviços",
-  "Salário",
-  "Investimentos",
-  "Freelance",
-  "Reembolso",
-  "Outros",
-];
+
 
 function ModalFormPlanejamento({
   isOpen,
@@ -48,7 +36,7 @@ function ModalFormPlanejamento({
       setForm({
         categoria: itemEditando.categoria,
         tipo: itemEditando.tipo,
-        planejado: itemEditando.planejado.toString(),
+        planejado: itemEditando.isUnplanned ? "" : itemEditando.planejado.toString(),
       });
     } else {
       setForm({ categoria: "Alimentação", tipo: "Variável", planejado: "" });
@@ -59,6 +47,8 @@ function ModalFormPlanejamento({
     if (emCurso.current) return;
     if (campo === "planejado") {
       setForm({ ...form, [campo]: normalizarInputValor(valor) });
+    } else if (campo === "categoria") {
+      setForm({ ...form, categoria: valor, tipo: tipoPadraoOrcamento(valor, form.tipo) });
     } else {
       setForm({ ...form, [campo]: valor });
     }
@@ -109,7 +99,7 @@ function ModalFormPlanejamento({
         </button>
         <section className="form-container">
           <div className="form-header">
-            <h2 id="modal-form-planejamento">{itemEditando ? "Editar Orçamento" : "Novo Orçamento"}</h2>
+            <h2 id="modal-form-planejamento">{itemEditando && !itemEditando.isUnplanned ? "Editar Orçamento" : "Novo Orçamento"}</h2>
             <p className="form-subtitulo">
               Defina um limite de gastos ou meta de receita.
             </p>
@@ -131,6 +121,23 @@ function ModalFormPlanejamento({
                   label: cat,
                 }))}
               />
+            </div>
+
+            <div className="form-item">
+              <label htmlFor="classificacao-orcamento">Classificação</label>
+              <CustomSelect
+                id="classificacao-orcamento"
+                value={form.tipo}
+                onChange={(val) => atualizarCampo("tipo", val)}
+                options={[
+                  ...(CATEGORIAS_RECEITA.includes(form.categoria) ? [{ valor: "Entrada", label: "Entrada" }] : []),
+                  ...(CATEGORIAS_DESPESA.includes(form.categoria) ? [
+                    { valor: "Fixo", label: "Fixo" },
+                    { valor: "Variável", label: "Variável" },
+                  ] : []),
+                ]}
+              />
+              <small>Classificação sugerida pela categoria. Ajuste conforme seu orçamento.</small>
             </div>
 
             <div className="form-item">
@@ -168,3 +175,4 @@ function ModalFormPlanejamento({
 }
 
 export default ModalFormPlanejamento;
+

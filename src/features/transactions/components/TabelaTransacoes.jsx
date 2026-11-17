@@ -1,6 +1,10 @@
+import { METODOS_PAGAMENTO } from "../../../data/metodosPagamento";
+import { classificacaoTransacao } from "../../../utils/planejamento";
 import "./TabelaTransacoes.css";
 import { Pencil, Trash2 } from "lucide-react";
 import { useOperacaoAssincrona } from "../../../hooks/useOperacaoAssincrona";
+import { useState } from "react";
+import ConfirmModal from "../../../components/ui/ConfirmModal";
 
 const formatarMetodo = (metodo) => {
   if (!metodo) return "-";
@@ -12,7 +16,7 @@ const formatarMetodo = (metodo) => {
     boleto: "Boleto",
     transferencia: "Transferência",
   };
-  return mapa[metodo] || metodo;
+  return mapa[metodo] || METODOS_PAGAMENTO.find(item => item.valor === metodo)?.label || metodo;
 };
 
 const obterDataFormatada = (data) => {
@@ -26,12 +30,13 @@ function TabelaTransacoes({
   onExcluir,
   onSolicitarExclusaoParcelamento,
 }) {
+  const [itemParaExcluir, setItemParaExcluir] = useState(null);
   const { processando, erro, executar } = useOperacaoAssincrona(
     "Não foi possível excluir a transação. Tente novamente.",
   );
   if (!transacoes || transacoes.length === 0) {
     return (
-      <div className="tabela-vazia">
+      <div className="tabela-vazia desktop-only">
         Nenhuma transação encontrada no período.
       </div>
     );
@@ -41,7 +46,7 @@ function TabelaTransacoes({
     if (item.parcelamentoId && onSolicitarExclusaoParcelamento) {
       onSolicitarExclusaoParcelamento(item);
     } else {
-      executar(() => onExcluir(item.id));
+      setItemParaExcluir(item);
     }
   };
 
@@ -100,7 +105,7 @@ function TabelaTransacoes({
                     </div>
                   </div>
                 </td>
-                <td className="td-categoria">{item.categoria || "-"}</td>
+                <td className="td-categoria">{item.categoria || "-"}{!isReceita ? ` (${classificacaoTransacao(item).toLocaleLowerCase("pt-BR")})` : ""}</td>
                 <td className="td-metodo">
                   {formatarMetodo(item.metodoPagamento)}
                 </td>
@@ -137,8 +142,22 @@ function TabelaTransacoes({
           })}
         </tbody>
       </table>
+      <ConfirmModal
+        isOpen={Boolean(itemParaExcluir)}
+        onClose={() => setItemParaExcluir(null)}
+        title="Excluir transação?"
+        subtitle={`A transação ${itemParaExcluir?.descricao || ""} será excluída.`}
+        confirmText="Excluir"
+        processando={processando}
+        onConfirm={async () => {
+          if (await executar(() => onExcluir(itemParaExcluir.id))) setItemParaExcluir(null);
+        }}
+      >
+        {erro && <p className="erro-msg" role="alert">{erro}</p>}
+      </ConfirmModal>
     </div>
   );
 }
 
 export default TabelaTransacoes;
+

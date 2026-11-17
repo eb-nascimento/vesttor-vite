@@ -1,6 +1,23 @@
-.budget-page {
-  display: flex;
-  flex-direction: column;
-  padding: 0 0 40px 0;
-  gap: 24px;
+.budget-page { display: flex; flex-direction: column; padding: 0 0 40px; gap: 24px; }
+.budget-classificacao-aviso { margin: 0; font-size: 12px; line-height: 1.5; color: var(--color-text-muted); }
+.budget-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.budget-header h2 { font-size: 24px; margin: 24px 0; }
+.budget-header-textos { min-width: 0; }
+.budget-header-textos p { margin: 0; font-size: 14px; color: var(--color-text-muted); }
+.budget-header-acoes { display: flex; align-items: center; gap: 16px; }
+.budget-periodo-compacto, .budget-compacto-label { display: none; }
+@media (max-width: 900px) {
+  .budget-page { gap: 16px; }
+  .budget-header { margin-top: 12px; }
+  .budget-header h2 { font-size: 21px; margin: 0 0 6px; overflow-wrap: anywhere; }
+  .budget-desktop-label, .budget-periodo-detalhado { display: none; }
+  .budget-compacto-label { display: inline; }
+  .budget-periodo-compacto { display: block; width: 100%; border: 0; background: var(--color-bg); color: var(--color-text-muted); font: inherit; font-size: 11px; padding: 4px 0; }
+  .budget-header .btn-ui { min-height: 44px; min-width: 90px; }
+  .budget-page .area-operacional { flex-direction: column; }
+  .budget-page .painel-lateral-planejamento { display: none; }
+}
+@media (min-width: 901px) and (max-width: 1200px) {
+  .budget-page .area-operacional { flex-direction: column; }
+  .budget-page .tabela-planejamentos-container, .budget-page .painel-lateral-planejamento { width: 100%; min-width: 0; }
 }

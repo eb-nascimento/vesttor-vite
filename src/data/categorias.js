@@ -1,0 +1,147 @@
+// Catálogo universal compartilhado pela consulta, transações e planejamento.
+// Nomes legados são preservados para manter a compatibilidade com o histórico.
+export const CATEGORIAS_DESPESA = [
+  "Alimentação",
+  "Supermercado",
+  "Restaurantes",
+  "Delivery",
+  "Padaria",
+  "Café e lanches",
+  "Moradia",
+  "Aluguel",
+  "Condomínio",
+  "Financiamento imobiliário",
+  "Manutenção da casa",
+  "Móveis e decoração",
+  "Eletrodomésticos",
+  "Utensílios domésticos",
+  "Serviços domésticos",
+  "Contas & Serviços",
+  "Energia elétrica",
+  "Água e esgoto",
+  "Gás",
+  "Internet",
+  "Telefone e celular",
+  "Assinaturas digitais",
+  "Transporte",
+  "Combustível",
+  "Transporte público",
+  "Aplicativos de transporte",
+  "Estacionamento",
+  "Pedágios",
+  "Manutenção do veículo",
+  "Seguro do veículo",
+  "Financiamento de veículo",
+  "IPVA e licenciamento",
+  "Saúde",
+  "Plano de saúde",
+  "Consultas médicas",
+  "Exames",
+  "Medicamentos",
+  "Odontologia",
+  "Terapia",
+  "Óculos e lentes",
+  "Educação",
+  "Escola e faculdade",
+  "Cursos",
+  "Livros",
+  "Material escolar",
+  "Idiomas",
+  "Lazer",
+  "Cinema e teatro",
+  "Shows e eventos",
+  "Jogos e hobbies",
+  "Passeios",
+  "Viagens",
+  "Hospedagem",
+  "Passagens",
+  "Vestuário",
+  "Calçados",
+  "Acessórios",
+  "Cuidados pessoais",
+  "Cabeleireiro e barbearia",
+  "Cosméticos",
+  "Academia",
+  "Esportes",
+  "Família e dependentes",
+  "Creche e babá",
+  "Pensão alimentícia",
+  "Cuidados com idosos",
+  "Pets",
+  "Ração",
+  "Veterinário",
+  "Banho e tosa",
+  "Presentes",
+  "Doações",
+  "Impostos",
+  "Taxas e tarifas bancárias",
+  "Juros e multas",
+  "Seguros",
+  "Parcelas de empréstimos",
+  "Serviços profissionais",
+  "Ferramentas de trabalho",
+  "Outros",
+];
+export const CATEGORIAS_RECEITA = [
+  "Salário",
+  "Freelance",
+  "Investimentos",
+  "Benefícios",
+  "Reembolso",
+  "Outros",
+  "Décimo terceiro",
+  "Férias",
+  "Horas extras",
+  "Comissões",
+  "Bônus e premiações",
+  "Participação nos lucros",
+  "Pró-labore",
+  "Distribuição de lucros",
+  "Prestação de serviços",
+  "Vendas",
+  "Aluguel recebido",
+  "Aposentadoria",
+  "Pensão recebida",
+  "Bolsa de estudos",
+  "Auxílios",
+  "Seguro-desemprego",
+  "Rescisão trabalhista",
+  "Rendimentos de poupança",
+  "Dividendos",
+  "Juros recebidos",
+  "Restituição de imposto",
+  "Cashback",
+  "Presentes recebidos",
+  "Herança",
+  "Direitos autorais",
+];
+export const CATEGORIAS = [
+  ...new Set([...CATEGORIAS_DESPESA, ...CATEGORIAS_RECEITA]),
+];
+// Sugestão inicial, sem restringir a classificação escolhida no orçamento.
+export const CATEGORIAS_FIXAS_PADRAO = ["Moradia", "Contas & Serviços", "Educação"];
+
+export function classificacaoPadraoDespesa(categoria) {
+  return CATEGORIAS_FIXAS_PADRAO.includes(categoria) ? "Fixo" : "Variável";
+}
+
+export function tipoPadraoOrcamento(categoria, tipoAtual = "Variável") {
+  const receita = CATEGORIAS_RECEITA.includes(categoria);
+  const despesa = CATEGORIAS_DESPESA.includes(categoria);
+  if (receita && despesa) return tipoAtual;
+  if (receita) return "Entrada";
+  return classificacaoPadraoDespesa(categoria);
+}
+
+export const CATALOGO_CATEGORIAS = CATEGORIAS.map((nome) => {
+  const despesa = CATEGORIAS_DESPESA.includes(nome);
+  const receita = CATEGORIAS_RECEITA.includes(nome);
+  return {
+    id: nome,
+    nome,
+    tipo: despesa && receita ? "Ambas" : receita ? "Receitas" : "Despesas",
+    ativa: true,
+    universal: true,
+    cor: receita ? "var(--color-growth)" : "var(--color-accent)",
+  };
+});

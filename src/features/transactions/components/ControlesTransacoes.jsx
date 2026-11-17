@@ -1,3 +1,4 @@
+import Select from "../../../components/ui/Select";
 import "./ControlesTransacoes.css";
 
 function ControlesTransacoes({
@@ -37,20 +38,21 @@ function ControlesTransacoes({
       </div>
 
       <div className="ordenacao-wrapper">
-        <select
+        <Select
           value={ordenacao}
           onChange={(e) => onOrdenacaoChange(e.target.value)}
           className="ordenacao-select"
           aria-label="Ordenar transações"
         >
-          <option value="data-decrescente">Mais recentes ▾</option>
-          <option value="data-crescente">Mais antigas ▴</option>
+          <option value="data-decrescente">Mais recentes</option>
+          <option value="data-crescente">Mais antigas</option>
           <option value="valor-decrescente">Maior valor</option>
           <option value="valor-crescente">Menor valor</option>
-        </select>
+        </Select>
       </div>
     </section>
   );
 }
 
 export default ControlesTransacoes;
+
