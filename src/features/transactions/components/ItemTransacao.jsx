@@ -14,7 +14,7 @@ function ItemTransacao({
 }) {
   const [confirmando, setConfirmando] = useState(false);
   const { processando, erro, executar } = useOperacaoAssincrona(
-    "N�o foi poss�vel excluir a transa��o. Tente novamente.",
+    "Não foi possível excluir a transação. Tente novamente.",
   );
   const isReceita = item.tipo === "receita";
   const dataFormatada = item.data?.toDate
@@ -32,11 +32,11 @@ function ItemTransacao({
     if (!metodo) return null;
     const mapa = {
       pix: "Pix",
-      cartao_credito: "Cart�o",
-      cartao_debito: "D�bito",
+      cartao_credito: "Cartão",
+      cartao_debito: "Débito",
       dinheiro: "Dinheiro",
       boleto: "Boleto",
-      transferencia: "Transfer�ncia",
+      transferencia: "Transferência",
     };
     return mapa[metodo] || METODOS_PAGAMENTO.find(item => item.valor === metodo)?.label || metodo;
   };
@@ -75,7 +75,7 @@ function ItemTransacao({
         </div>
         <div className="transacao-info">
           <p className="transacao-descricao">{item.descricao}</p>
-          <span className="transacao-meta">{metaPartes.join(" � ")}</span>
+          <span className="transacao-meta">{metaPartes.join(" · ")}</span>
         </div>
       </div>
 
@@ -84,7 +84,7 @@ function ItemTransacao({
         <span
           className={`transacao-valor ${isReceita ? "receita" : "despesa"}`}
         >
-          {isReceita ? `+ ${valorFormatado}` : `- ${valorFormatado}`}
+          {isReceita ? `＋ ${valorFormatado}` : `− ${valorFormatado}`}
         </span>
 
         <div className="transacao-acoes">
@@ -93,7 +93,7 @@ function ItemTransacao({
             className="btn-acao btn-editar"
             disabled={processando}
             onClick={() => onEditar(item)}
-            aria-label={`Editar transa��o ${item.descricao}`}
+            aria-label={`Editar transação ${item.descricao}`}
           >
             <Pencil size={15} aria-hidden="true" /><span className="acao-mobile-label">Editar</span>
           </button>
@@ -102,7 +102,7 @@ function ItemTransacao({
             className="btn-acao btn-excluir"
             disabled={processando}
             onClick={handleExcluir}
-            aria-label={`Excluir transa��o ${item.descricao}`}
+            aria-label={`Excluir transação ${item.descricao}`}
           >
             <Trash2 size={15} aria-hidden="true" /><span className="acao-mobile-label">Excluir</span>
           </button>
@@ -113,8 +113,8 @@ function ItemTransacao({
       <ConfirmModal
         isOpen={confirmando}
         onClose={() => setConfirmando(false)}
-        title="Excluir transa��o?"
-        subtitle={`A transa��o ${item.descricao} ser� exclu�da.`}
+        title="Excluir transação?"
+        subtitle={`A transação ${item.descricao} será excluída.`}
         confirmText="Excluir"
         processando={processando}
         onConfirm={async () => {

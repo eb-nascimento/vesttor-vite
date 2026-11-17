@@ -38,30 +38,30 @@ const field = (tree) => find(tree, (node) => node.props?.id === "planejado");
 const submit = (tree) => find(tree, (node) => node.type === "form").props.onSubmit({ preventDefault() {} });
 beforeEach(() => { state.values = []; state.refs = []; });
 
-describe("salvamento do or�amento", () => {
-  it("preenche o default da categoria e permite trocar Fixo por Vari�vel", async () => {
+describe("salvamento do orçamento", () => {
+  it("preenche o default da categoria e permite trocar Fixo por Variável", async () => {
     const props = { isOpen: true, mesAno: "2026-11", onSave: vi.fn(), onClose: vi.fn() };
     const select = (id) => find(render(Form, props), (node) => node.props?.id === id);
     select("categoria").props.onChange("Moradia");
     expect(select("classificacao-orcamento").props.value).toBe("Fixo");
-    select("classificacao-orcamento").props.onChange("Vari�vel");
+    select("classificacao-orcamento").props.onChange("Variável");
     field(render(Form, props)).props.onChange({ target: { value: "100" } });
     await submit(render(Form, props));
-    expect(props.onSave).toHaveBeenCalledWith(expect.objectContaining({ categoria: "Moradia", tipo: "Vari�vel" }));
+    expect(props.onSave).toHaveBeenCalledWith(expect.objectContaining({ categoria: "Moradia", tipo: "Variável" }));
   });
-  it("preenche Entrada para receita e mant�m as tr�s op��es em categoria h�brida", () => {
+  it("preenche Entrada para receita e mantém as três opções em categoria híbrida", () => {
     const props = { isOpen: true };
     const select = (id) => find(render(Form, props), (node) => node.props?.id === id);
-    select("categoria").props.onChange("Sal�rio");
+    select("categoria").props.onChange("Salário");
     expect(select("classificacao-orcamento").props.value).toBe("Entrada");
     expect(select("classificacao-orcamento").props.options.map((item) => item.valor)).toEqual(["Entrada"]);
     select("categoria").props.onChange("Outros");
     expect(select("classificacao-orcamento").props.value).toBe("Entrada");
-    expect(select("classificacao-orcamento").props.options.map((item) => item.valor)).toEqual(["Entrada", "Fixo", "Vari�vel"]);
-    select("categoria").props.onChange("Alimenta��o");
-    expect(select("classificacao-orcamento").props.value).toBe("Vari�vel");
+    expect(select("classificacao-orcamento").props.options.map((item) => item.valor)).toEqual(["Entrada", "Fixo", "Variável"]);
+    select("categoria").props.onChange("Alimentação");
+    expect(select("classificacao-orcamento").props.value).toBe("Variável");
   });
-  it("propaga a edi��o e preserva o valor quando atualizar falha", async () => {
+  it("propaga a edição e preserva o valor quando atualizar falha", async () => {
     const props = { isOpen: true, itemEditando: { id: "plan-1" }, onClose: vi.fn(), onUpdate: vi.fn().mockRejectedValue(new Error("Falha")) };
     field(render(Form, props)).props.onChange({ target: { value: "240" } });
     await submit(render(Form, props));
@@ -102,8 +102,8 @@ describe("salvamento do or�amento", () => {
   });
 });
 
-describe("exclus�o avulsa", () => {
-  it.each([Item, Tabela])("bloqueia duplicidade e permite tentar novamente ap�s falha", async (Component) => {
+describe("exclusão avulsa", () => {
+  it.each([Item, Tabela])("bloqueia duplicidade e permite tentar novamente após falha", async (Component) => {
     let falhar;
     const item = { id: "t-1", descricao: "Mercado", tipo: "despesa", valor: 120 };
     const props = { item, transacoes: [item], onExcluir: vi.fn(() => new Promise((_, reject) => { falhar = reject; })) };
@@ -129,10 +129,10 @@ describe("exclus�o avulsa", () => {
   });
 });
 
-describe("exclus�o parcelada", () => {
+describe("exclusão parcelada", () => {
   const propsBase = () => ({ transacao: { descricao: "Compra", valor: 120, numeroParcela: 1, totalParcelas: 2 }, onFechar: vi.fn() });
   const excluir = (tree) => find(tree, (node) => node.props?.className === "btn-modal-opcao btn-opcao-avulsa").props.onClick();
-  it("mant�m a confirma��o aberta na falha e fecha somente ap�s sucesso", async () => {
+  it("mantém a confirmação aberta na falha e fecha somente após sucesso", async () => {
     const props = { ...propsBase(), onExcluirApenasEsta: vi.fn().mockRejectedValueOnce(new Error("Falha")).mockResolvedValueOnce() };
     await excluir(render(Exclusao, props));
     expect(props.onFechar).not.toHaveBeenCalled();
@@ -140,7 +140,7 @@ describe("exclus�o parcelada", () => {
     await excluir(render(Exclusao, props));
     expect(props.onFechar).toHaveBeenCalledTimes(1);
   });
-  it("bloqueia exclus�o simult�nea e cancelamento", async () => {
+  it("bloqueia exclusão simultânea e cancelamento", async () => {
     let concluir;
     const props = { ...propsBase(), onExcluirApenasEsta: vi.fn(() => new Promise((resolve) => { concluir = resolve; })) };
     const tree = render(Exclusao, props);

@@ -22,12 +22,12 @@ function ModalFormPlanejamento({
   itemEditando,
 }) {
   const { processando, erro, executar, emCurso } = useOperacaoAssincrona(
-    "N�o foi poss�vel salvar o or�amento. Seus dados foram preservados. Tente novamente.",
+    "Não foi possível salvar o orçamento. Seus dados foram preservados. Tente novamente.",
   );
   const fechar = () => { if (!emCurso.current) onClose(); };
   const [form, setForm] = useState({
-    categoria: "Alimenta��o",
-    tipo: "Vari�vel",
+    categoria: "Alimentação",
+    tipo: "Variável",
     planejado: "",
   });
 
@@ -39,7 +39,7 @@ function ModalFormPlanejamento({
         planejado: itemEditando.isUnplanned ? "" : itemEditando.planejado.toString(),
       });
     } else {
-      setForm({ categoria: "Alimenta��o", tipo: "Vari�vel", planejado: "" });
+      setForm({ categoria: "Alimentação", tipo: "Variável", planejado: "" });
     }
   }, [itemEditando, isOpen]);
 
@@ -76,7 +76,7 @@ function ModalFormPlanejamento({
     });
     if (!sucesso) return;
 
-    setForm({ categoria: "Alimenta��o", tipo: "Vari�vel", planejado: "" });
+    setForm({ categoria: "Alimentação", tipo: "Variável", planejado: "" });
     onClose();
   };
 
@@ -99,7 +99,7 @@ function ModalFormPlanejamento({
         </button>
         <section className="form-container">
           <div className="form-header">
-            <h2 id="modal-form-planejamento">{itemEditando && !itemEditando.isUnplanned ? "Editar Or�amento" : "Novo Or�amento"}</h2>
+            <h2 id="modal-form-planejamento">{itemEditando && !itemEditando.isUnplanned ? "Editar Orçamento" : "Novo Orçamento"}</h2>
             <p className="form-subtitulo">
               Defina um limite de gastos ou meta de receita.
             </p>
@@ -124,7 +124,7 @@ function ModalFormPlanejamento({
             </div>
 
             <div className="form-item">
-              <label htmlFor="classificacao-orcamento">Classifica��o</label>
+              <label htmlFor="classificacao-orcamento">Classificação</label>
               <CustomSelect
                 id="classificacao-orcamento"
                 value={form.tipo}
@@ -133,11 +133,11 @@ function ModalFormPlanejamento({
                   ...(CATEGORIAS_RECEITA.includes(form.categoria) ? [{ valor: "Entrada", label: "Entrada" }] : []),
                   ...(CATEGORIAS_DESPESA.includes(form.categoria) ? [
                     { valor: "Fixo", label: "Fixo" },
-                    { valor: "Vari�vel", label: "Vari�vel" },
+                    { valor: "Variável", label: "Variável" },
                   ] : []),
                 ]}
               />
-              <small>Classifica��o sugerida pela categoria. Ajuste conforme seu or�amento.</small>
+              <small>Classificação sugerida pela categoria. Ajuste conforme seu orçamento.</small>
             </div>
 
             <div className="form-item">
@@ -162,7 +162,7 @@ function ModalFormPlanejamento({
 
             <div className="form-acoes">
               <button type="submit" className="btn-submit" disabled={processando}>
-                {processando ? "Salvando..." : "Salvar Or�amento"}
+                {processando ? "Salvando..." : "Salvar Orçamento"}
               </button>
             </div>
             </fieldset>

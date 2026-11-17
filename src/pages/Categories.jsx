@@ -29,7 +29,7 @@ export default function Categories() {
           c.nome.localeCompare(nome, "pt-BR", { sensitivity: "base" }) === 0,
       )
     ) {
-      setErro("Informe um nome �nico.");
+      setErro("Informe um nome único.");
       return;
     }
     setCategorias((atual) =>
@@ -45,7 +45,7 @@ export default function Categories() {
         title="Categorias"
         subtitle="Organize receitas e despesas para entender melhor seus gastos."
       >
-        <Button disabled title="Dispon�vel em uma implementa��o futura" onClick={() =>
+        <Button disabled title="Disponível em uma implementação futura" onClick={() =>
             setForm({
               nome: "",
               tipo: "Despesas",
@@ -118,7 +118,7 @@ export default function Categories() {
           <span>Tipo</span>
           <span>Status</span>
           
-          <span hidden>A��es</span>
+          <span hidden>Ações</span>
         </div>
         {categorias
           .filter(
@@ -174,7 +174,7 @@ export default function Categories() {
         )}
       </div>
       <p className="categories-preview">
-        Cat�logo padr�o dispon�vel em transa��es e planejamento. Cria��o e gerenciamento de categorias estar�o dispon�veis futuramente.
+        Catálogo padrão disponível em transações e planejamento. Criação e gerenciamento de categorias estarão disponíveis futuramente.
       </p>
       <ModalBase
         isOpen={!!form}

@@ -7,7 +7,7 @@ export function mesAtual(referencia = new Date()) {
 }
 
 export function limitesMes(mes) {
-  if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(mes)) throw new Error("Per�odo mensal inv�lido");
+  if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(mes)) throw new Error("Período mensal inválido");
   const [ano, numeroMes] = mes.split("-").map(Number);
   return { inicio: new Date(ano, numeroMes - 1, 1), fim: new Date(ano, numeroMes, 1) };
 }

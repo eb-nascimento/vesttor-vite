@@ -9,7 +9,7 @@ vi.mock("../../../services/authService", async (original) => ({ ...(await origin
 import FormAuth from "./FormAuth";
 import Login from "../../../pages/Login";
 afterEach(() => { cleanup(); vi.clearAllMocks(); });
-it("n�o envia campos vazios e apresenta mensagem segura para senha incorreta", async () => {
+it("não envia campos vazios e apresenta mensagem segura para senha incorreta", async () => {
   const user = userEvent.setup();
   render(<MemoryRouter><FormAuth /></MemoryRouter>);
   await user.click(screen.getByRole("button", { name: "Entrar", exact: true }));
@@ -18,9 +18,9 @@ it("n�o envia campos vazios e apresenta mensagem segura para senha incorreta",
   await user.type(screen.getByLabelText("Senha:"), "errada");
   login.mockRejectedValueOnce({ code: "auth/invalid-credential", message: "Firebase: Error" });
   await user.click(screen.getByRole("button", { name: "Entrar", exact: true }));
-  expect((await screen.findByRole("alert")).textContent).toBe("E-mail ou senha inv�lidos.");
+  expect((await screen.findByRole("alert")).textContent).toBe("E-mail ou senha inválidos.");
 });
-it("limpa erros e senhas ao navegar entre login e recupera��o", async () => {
+it("limpa erros e senhas ao navegar entre login e recuperação", async () => {
   const user = userEvent.setup();
   render(<MemoryRouter initialEntries={["/login"]}><Login /></MemoryRouter>);
   await user.type(screen.getByLabelText("E-mail:"), "teste@example.com");

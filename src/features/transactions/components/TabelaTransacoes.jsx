@@ -10,11 +10,11 @@ const formatarMetodo = (metodo) => {
   if (!metodo) return "-";
   const mapa = {
     pix: "Pix",
-    cartao_credito: "Cart�o de Cr�dito",
-    cartao_debito: "Cart�o de D�bito",
+    cartao_credito: "Cartão de Crédito",
+    cartao_debito: "Cartão de Débito",
     dinheiro: "Dinheiro",
     boleto: "Boleto",
-    transferencia: "Transfer�ncia",
+    transferencia: "Transferência",
   };
   return mapa[metodo] || METODOS_PAGAMENTO.find(item => item.valor === metodo)?.label || metodo;
 };
@@ -32,12 +32,12 @@ function TabelaTransacoes({
 }) {
   const [itemParaExcluir, setItemParaExcluir] = useState(null);
   const { processando, erro, executar } = useOperacaoAssincrona(
-    "N�o foi poss�vel excluir a transa��o. Tente novamente.",
+    "Não foi possível excluir a transação. Tente novamente.",
   );
   if (!transacoes || transacoes.length === 0) {
     return (
       <div className="tabela-vazia desktop-only">
-        Nenhuma transa��o encontrada no per�odo.
+        Nenhuma transação encontrada no período.
       </div>
     );
   }
@@ -52,18 +52,18 @@ function TabelaTransacoes({
 
   return (
     <div className="tabela-transacoes-container desktop-only">
-      {processando && <p role="status">Excluindo transa��o...</p>}
+      {processando && <p role="status">Excluindo transação...</p>}
       {erro && <p className="erro-msg" role="alert">{erro}</p>}
       <table className="tabela-transacoes">
         <thead>
           <tr>
             <th>Data</th>
-            <th>Descri��o</th>
+            <th>Descrição</th>
             <th>Categoria</th>
-            <th>M�todo</th>
+            <th>Método</th>
             <th>Tipo</th>
             <th className="th-valor">Valor</th>
-            <th className="th-acoes">A��es</th>
+            <th className="th-acoes">Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -84,7 +84,7 @@ function TabelaTransacoes({
               ? `Parcela ${item.numeroParcela}/${item.totalParcelas}`
               : isReceita
                 ? ""
-                : "� vista";
+                : "À vista";
 
             return (
               <tr key={item.id}>
@@ -145,8 +145,8 @@ function TabelaTransacoes({
       <ConfirmModal
         isOpen={Boolean(itemParaExcluir)}
         onClose={() => setItemParaExcluir(null)}
-        title="Excluir transa��o?"
-        subtitle={`A transa��o ${itemParaExcluir?.descricao || ""} ser� exclu�da.`}
+        title="Excluir transação?"
+        subtitle={`A transação ${itemParaExcluir?.descricao || ""} será excluída.`}
         confirmText="Excluir"
         processando={processando}
         onConfirm={async () => {

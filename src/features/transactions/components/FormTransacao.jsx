@@ -33,31 +33,31 @@ function obterDataAtual() {
 
 function obterPlaceholderDescricao(categoria, tipo) {
   if (tipo === "receita") {
-    if (categoria === "Sal�rio") return "Ex: Sal�rio mensal, adiantamento...";
+    if (categoria === "Salário") return "Ex: Salário mensal, adiantamento...";
     if (categoria === "Freelance") return "Ex: Projeto website, consultoria...";
     if (categoria === "Investimentos")
       return "Ex: Dividendos, rendimento CDB...";
-    return "Ex: Descri��o da receita...";
+    return "Ex: Descrição da receita...";
   }
 
-  if (categoria === "Alimenta��o")
+  if (categoria === "Alimentação")
     return "Ex: Mercado da semana, restaurante...";
-  if (categoria === "Transporte") return "Ex: Uber, combust�vel, recarga...";
-  if (categoria === "Moradia") return "Ex: Aluguel, condom�nio, luz...";
+  if (categoria === "Transporte") return "Ex: Uber, combustível, recarga...";
+  if (categoria === "Moradia") return "Ex: Aluguel, condomínio, luz...";
   if (categoria === "Lazer") return "Ex: Cinema, jantar, viagem...";
-  if (categoria === "Sa�de") return "Ex: Farm�cia, consulta, exame...";
-  return "Ex: Descri��o da despesa...";
+  if (categoria === "Saúde") return "Ex: Farmácia, consulta, exame...";
+  return "Ex: Descrição da despesa...";
 }
 
 function criarEstadoInicial(transacaoEditando) {
   if (transacaoEditando) {
     const isDespesa = transacaoEditando.tipo === "despesa";
-    // Extrai o texto limpo da descri��o (remove o sufixo " (X/Y)" se for s�rie de parcelas)
+    // Extrai o texto limpo da descrição (remove o sufixo " (X/Y)" se for série de parcelas)
     const descricaoLimpa = transacaoEditando.descricao
       ? transacaoEditando.descricao.replace(/\s*\(\d+\/\d+\)$/, "")
       : "";
 
-    // Se for uma compra parcelada, o valor do formul�rio deve ser o total da compra
+    // Se for uma compra parcelada, o valor do formulário deve ser o total da compra
     const valorInicial = transacaoEditando.valorTotalCompra
       ? String(transacaoEditando.valorTotalCompra)
       : transacaoEditando.valor
@@ -71,10 +71,10 @@ function criarEstadoInicial(transacaoEditando) {
       descricao: descricaoLimpa,
       valor: valorInicial,
       tipo: transacaoEditando.tipo || "despesa",
-      classificacao: isDespesa ? classificacaoTransacao(transacaoEditando) : "Vari�vel",
+      classificacao: isDespesa ? classificacaoTransacao(transacaoEditando) : "Variável",
       metodoPagamento: transacaoEditando.metodoPagamento || "pix",
       categoria:
-        transacaoEditando.categoria || (isDespesa ? "Alimenta��o" : "Sal�rio"),
+        transacaoEditando.categoria || (isDespesa ? "Alimentação" : "Salário"),
       parcelado: Boolean(
         transacaoEditando.parcelamentoId || transacaoEditando.parcelado,
       ),
@@ -90,8 +90,8 @@ function criarEstadoInicial(transacaoEditando) {
     valor: "",
     tipo: "despesa",
     metodoPagamento: "pix",
-    categoria: "Alimenta��o",
-    classificacao: classificacaoPadraoDespesa("Alimenta��o"),
+    categoria: "Alimentação",
+    classificacao: classificacaoPadraoDespesa("Alimentação"),
     parcelado: false,
     parcelas: 2,
     erro: "",
@@ -127,18 +127,18 @@ function Form({
 
     setForm((prev) => {
       const atualizado = { ...prev, [campo]: valorProcessado };
-      if (campo === "descricao" && prev.erro === "A descri��o deve ter no m�ximo 200 caracteres.") atualizado.erro = "";
+      if (campo === "descricao" && prev.erro === "A descrição deve ter no máximo 200 caracteres.") atualizado.erro = "";
 
-      // Se o usu�rio alternar de despesa para receita, desliga o parcelamento
+      // Se o usuário alternar de despesa para receita, desliga o parcelamento
       if (campo === "tipo") {
         if (valor === "receita") {
           atualizado.parcelado = false;
           if (!CATEGORIAS_RECEITA.includes(prev.categoria)) {
-            atualizado.categoria = "Sal�rio";
+            atualizado.categoria = "Salário";
           }
         } else {
           if (!CATEGORIAS_DESPESA.includes(prev.categoria)) {
-            atualizado.categoria = "Alimenta��o";
+            atualizado.categoria = "Alimentação";
           }
         }
       }
@@ -155,7 +155,7 @@ function Form({
     return form.tipo === "receita" ? CATEGORIAS_RECEITA : CATEGORIAS_DESPESA;
   }, [form.tipo]);
 
-  // C�lculo da parcela em tempo real com precis�o de centavos
+  // Cálculo da parcela em tempo real com precisão de centavos
   const calculoParcela = useMemo(() => {
     const numValor = Number(String(form.valor).replace(",", "."));
     if (!form.parcelado || !numValor || numValor <= 0) return null;
@@ -187,10 +187,10 @@ function Form({
     };
   }, [form.valor, form.parcelado, form.parcelas]);
 
-  // Texto amig�vel no bot�o CTA principal
+  // Texto amigável no botão CTA principal
   const textoBotaoPrincipal = useMemo(() => {
     if (transacaoEditando) {
-      return "Salvar altera��es";
+      return "Salvar alterações";
     }
 
     if (form.parcelado && form.tipo === "despesa" && calculoParcela) {
@@ -206,7 +206,7 @@ function Form({
       return `+ Adicionar ${form.tipo === "receita" ? "Receita" : "Despesa"} (${formatted})`;
     }
 
-    return "+ Adicionar transa��o";
+    return "+ Adicionar transação";
   }, [
     transacaoEditando,
     form.parcelado,
@@ -261,7 +261,7 @@ function Form({
 
         if (tinhaParcelamentoId && onEditParcelado) {
           if (isParceladoValido) {
-            // Atualiza toda a s�rie recalculada com a nova quantidade de parcelas e valor
+            // Atualiza toda a série recalculada com a nova quantidade de parcelas e valor
             const novaSerie = gerarSerieTransacoes({
               data: form.data,
               descricao: form.descricao,
@@ -277,7 +277,7 @@ function Form({
               novasParcelas: novaSerie,
             });
           } else {
-            // Usu�rio desmarcou parcelamento: converte a s�rie inteira em transa��o �nica
+            // Usuário desmarcou parcelamento: converte a série inteira em transação única
             const transacaoUnica = criarTransacao(
               payload.data,
               payload.descricao,
@@ -300,7 +300,7 @@ function Form({
           isParceladoValido &&
           onConverterParaParcelado
         ) {
-          // Era transa��o �nica e foi convertida para compra parcelada
+          // Era transação única e foi convertida para compra parcelada
           const novaSerie = gerarSerieTransacoes({
             data: form.data,
             descricao: form.descricao,
@@ -313,7 +313,7 @@ function Form({
           });
           await onConverterParaParcelado(transacaoEditando.id, novaSerie);
         } else {
-          // Edi��o simples de transa��o avulsa
+          // Edição simples de transação avulsa
           await onEdit(transacaoEditando.id, payload);
         }
 
@@ -351,14 +351,14 @@ function Form({
         valor: "",
         tipo: "despesa",
         metodoPagamento: "pix",
-        categoria: "Alimenta��o",
-        classificacao: classificacaoPadraoDespesa("Alimenta��o"),
+        categoria: "Alimentação",
+        classificacao: classificacaoPadraoDespesa("Alimentação"),
         parcelado: false,
         parcelas: 2,
         erro: "",
       });
     } catch (erro) {
-      atualizarCampo("erro", obterMensagemErroFirestore(erro, "N�o foi poss�vel salvar. Tente novamente."));
+      atualizarCampo("erro", obterMensagemErroFirestore(erro, "Não foi possível salvar. Tente novamente."));
     } finally {
       envioEmCurso.current = false;
       setProcessando(false);
@@ -371,10 +371,10 @@ function Form({
   return (
     <section className="form-container">
       <div className="form-header">
-        <h2>{transacaoEditando ? "Editar transa��o" : "Nova transa��o"}</h2>
+        <h2>{transacaoEditando ? "Editar transação" : "Nova transação"}</h2>
         <p className="form-subtitulo">
           {transacaoEditando
-            ? "Atualize as informa��es da movimenta��o selecionada."
+            ? "Atualize as informações da movimentação selecionada."
             : "Registre uma receita ou despesa."}
         </p>
       </div>
@@ -440,13 +440,13 @@ function Form({
           </div>
         </div>
 
-        {/* 4. M�TODO DE PAGAMENTO (apenas para despesas) */}
+        {/* 4. MÉTODO DE PAGAMENTO (apenas para despesas) */}
         </div>
         {isDespesa && (
           <div className="form-item">
             <label htmlFor="metodoPagamento">
               <CreditCard size={13} aria-hidden="true" />
-              M�todo de pagamento
+              Método de pagamento
             </label>
             <CustomSelect
               id="metodoPagamento"
@@ -513,7 +513,7 @@ function Form({
                       disabled={Boolean(transacaoEditando?.parcelamentoId) || Number(form.parcelas) <= 2}
                       aria-label="Diminuir uma parcela"
                     >
-                      -
+                      −
                     </button>
                     <input
                       id="numParcelas"
@@ -553,7 +553,7 @@ function Form({
                   </div>
                 </div>
 
-                {/* Atalhos r�pidos de parcelas */}
+                {/* Atalhos rápidos de parcelas */}
                 <div className="parcelas-atalhos">
                   {[2, 3, 6, 10, 12, 18, 24].map((n) => (
                     <button
@@ -568,13 +568,13 @@ function Form({
                   ))}
                 </div>
 
-                {/* Resumo e pr�via de c�lculo */}
+                {/* Resumo e prévia de cálculo */}
                 {calculoParcela && (
                   <div className="resumo-calculo-parcela">
                     <div>
                       <strong>{calculoParcela.numParcelas}x</strong> de{" "}
                       <strong>{calculoParcela.valorParcelaFormatado}</strong> /
-                      m�s
+                      mês
                     </div>
                     <div
                       style={{
@@ -588,7 +588,7 @@ function Form({
                       {calculoParcela.temSobra && (
                         <span>
                           {" "}
-                          (1� parcela:{" "}
+                          (1ª parcela:{" "}
                           <strong>
                             {calculoParcela.valorPrimeiraParcelaFormatado}
                           </strong>{" "}
@@ -621,26 +621,26 @@ function Form({
         </div>
 
         {isDespesa && <div className="form-item">
-          <label htmlFor="classificacao-transacao">Classifica��o</label>
+          <label htmlFor="classificacao-transacao">Classificação</label>
           <CustomSelect
             id="classificacao-transacao"
             value={form.classificacao}
             onChange={(val) => atualizarCampo("classificacao", val)}
             options={[
               { valor: "Fixo", label: "Fixo" },
-              { valor: "Vari�vel", label: "Vari�vel" },
+              { valor: "Variável", label: "Variável" },
             ]}
           />
-          <small>Define qual or�amento desta categoria recebe o gasto.</small>
+          <small>Define qual orçamento desta categoria recebe o gasto.</small>
         </div>}
 
-        {transacaoEditando?.parcelamentoId && <p className="form-helper-rodape">As altera��es ser�o aplicadas �s parcelas existentes. As datas e a quantidade original ser�o mantidas.</p>}
+        {transacaoEditando?.parcelamentoId && <p className="form-helper-rodape">As alterações serão aplicadas às parcelas existentes. As datas e a quantidade original serão mantidas.</p>}
 
-        {/* 7. DESCRI��O */}
+        {/* 7. DESCRIÇÃO */}
         <div className="form-item">
           <label htmlFor="descricao">
             <FileText size={13} aria-hidden="true" />
-            Descri��o
+            Descrição
           </label>
           <input
             id="descricao"
@@ -651,7 +651,7 @@ function Form({
             aria-describedby={form.descricao.trim().length > 200 ? "descricao-limite" : undefined}
             required
           />
-          {form.descricao.trim().length > 200 && <small id="descricao-limite" className="erro-msg" role="alert">A descri��o deve ter no m�ximo 200 caracteres.</small>}
+          {form.descricao.trim().length > 200 && <small id="descricao-limite" className="erro-msg" role="alert">A descrição deve ter no máximo 200 caracteres.</small>}
         </div>
 
         {form.erro && form.descricao.trim().length <= 200 && (
@@ -660,10 +660,10 @@ function Form({
           </p>
         )}
 
-        {/* 8. BOT�ES DE A��O */}
+        {/* 8. BOTÕES DE AÇÃO */}
         <div className="form-acoes">
           <button type="submit" className="btn-submit" disabled={processando}>
-            {processando ? "Salvando." : textoBotaoPrincipal}
+            {processando ? "Salvando…" : textoBotaoPrincipal}
           </button>
 
           {transacaoEditando && (
@@ -673,16 +673,16 @@ function Form({
               disabled={processando}
               onClick={cancelarEdicao}
             >
-              Cancelar edi��o
+              Cancelar edição
             </button>
           )}
         </div>
 
         </fieldset>
-        {/* 9. HELPER RODAP� DO FIGMA */}
+        {/* 9. HELPER RODAPÉ DO FIGMA */}
         <p className="form-helper-rodape">
           <span role="status">
-            {processando ? "Salvando transa��o. Aguarde." : "Os saldos e a lista ser�o atualizados automaticamente."}
+            {processando ? "Salvando transação. Aguarde." : "Os saldos e a lista serão atualizados automaticamente."}
           </span>
         </p>
       </form>

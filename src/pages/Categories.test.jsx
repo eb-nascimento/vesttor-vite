@@ -9,7 +9,7 @@ it("busca categorias com ou sem acentos e informa resultado vazio", async () => 
   render(<Categories />);
   const busca = screen.getByRole("textbox", { name: "Buscar categoria" });
   await user.type(busca, "SAUDE");
-  expect(screen.getByRole("heading", { name: "Sa�de", exact: true })).toBeTruthy();
+  expect(screen.getByRole("heading", { name: "Saúde", exact: true })).toBeTruthy();
   expect(screen.queryByText(/Nenhuma categoria encontrada/)).toBeNull();
   await user.clear(busca);
   await user.type(busca, "inexistente");

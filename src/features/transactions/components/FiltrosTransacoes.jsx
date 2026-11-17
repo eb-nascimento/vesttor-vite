@@ -22,7 +22,7 @@ function FiltrosTransacoes({
   return (
     <div className={`filtros-transacoes-container ${isOpen ? "open" : ""}`}>
       <div className="filtros-header">
-        <div className="filtros-resumo-mobile"><h3>{quantidade} {quantidade === 1 ? "transa��o" : "transa��es"}</h3><p>{periodo}</p></div>
+        <div className="filtros-resumo-mobile"><h3>{quantidade} {quantidade === 1 ? "transação" : "transações"}</h3><p>{periodo}</p></div>
         <button
           className="btn-toggle-filtros"
           onClick={onToggle}
@@ -76,8 +76,8 @@ function FiltrosTransacoes({
               <input
                 id="filtro-busca"
                 type="text"
-                placeholder="Buscar por descri��o..."
-                aria-label="Buscar por descri��o das transa��es"
+                placeholder="Buscar por descrição..."
+                aria-label="Buscar por descrição das transações"
                 value={filtros.busca}
                 onChange={(e) => handleChange("busca", e.target.value)}
               />
@@ -87,7 +87,7 @@ function FiltrosTransacoes({
           {/* Filtros em Grid */}
           <div className="filtros-grid">
             <div className="filtro-item">
-              <label htmlFor="filtro-competencia">Compet�ncia</label>
+              <label htmlFor="filtro-competencia">Competência</label>
               <Select
                 id="filtro-competencia"
                 value={filtros.mesAno}
@@ -118,7 +118,7 @@ function FiltrosTransacoes({
             </div>
 
             <div className="filtro-item">
-              <label htmlFor="filtro-metodo">M�todo</label>
+              <label htmlFor="filtro-metodo">Método</label>
               <CustomSelect
                 id="filtro-metodo"
                 value={filtros.metodoPagamento}
@@ -131,7 +131,7 @@ function FiltrosTransacoes({
             </div>
 
             <div className="filtro-item">
-              <label htmlFor="filtro-ordenacao">Ordena��o</label>
+              <label htmlFor="filtro-ordenacao">Ordenação</label>
               <CustomSelect
                 id="filtro-ordenacao"
                 value={filtros.ordenacao}

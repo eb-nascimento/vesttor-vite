@@ -6,14 +6,14 @@ import ItemTransacao from "./ItemTransacao";
 import TabelaTransacoes from "./TabelaTransacoes";
 
 afterEach(cleanup);
-const item = { id: "t1", descricao: "Mercado", valor: 100, tipo: "despesa", categoria: "Alimenta��o", data: "2026-11-16" };
-describe.each(["mobile", "desktop"])("exclus�o %s", (layout) => {
+const item = { id: "t1", descricao: "Mercado", valor: 100, tipo: "despesa", categoria: "Alimentação", data: "2026-11-16" };
+describe.each(["mobile", "desktop"])("exclusão %s", (layout) => {
   function montar(onExcluir) {
     return render(layout === "mobile"
       ? <ItemTransacao item={item} onExcluir={onExcluir} />
       : <TabelaTransacoes transacoes={[item]} onExcluir={onExcluir} />);
   }
-  it("s� exclui depois de confirmar e permite cancelar", async () => {
+  it("só exclui depois de confirmar e permite cancelar", async () => {
     const user = userEvent.setup();
     const excluir = vi.fn().mockResolvedValue();
     montar(excluir);

@@ -43,12 +43,12 @@ function fill(props) {
 }
 beforeEach(() => { state.values = []; state.refs = []; });
 
-describe("envio de transa��es", () => {
+describe("envio de transações", () => {
   it("usa a data local ao abrir depois da meia-noite UTC", () => {
     vi.useFakeTimers();
     try {
       vi.setSystemTime(new Date("2026-11-17T02:30:00Z"));
-      // Controla os componentes locais para reproduzir Bras�lia tamb�m no CI em UTC.
+      // Controla os componentes locais para reproduzir Brasília também no CI em UTC.
       vi.spyOn(Date.prototype, "getFullYear").mockReturnValue(2026);
       vi.spyOn(Date.prototype, "getMonth").mockReturnValue(10);
       vi.spyOn(Date.prototype, "getDate").mockReturnValue(16);
@@ -59,7 +59,7 @@ describe("envio de transa��es", () => {
       vi.restoreAllMocks();
     }
   });
-  it("associa o t�tulo Tipo ao grupo de op��es sem um label para campo inexistente", () => {
+  it("associa o título Tipo ao grupo de opções sem um label para campo inexistente", () => {
     const tree = render({ onAdd: vi.fn() });
     expect(find(tree, (node) => node.type === "label" && node.props.htmlFor === "tipo")).toBeUndefined();
     const titulo = field(tree, "tipo-label");
@@ -67,7 +67,7 @@ describe("envio de transa��es", () => {
     expect(find(tree, (node) => node.props?.["aria-labelledby"] === "tipo-label")).toBeDefined();
   });
 
-  it("aguarda a grava��o e bloqueia um segundo envio antes de limpar os campos", async () => {
+  it("aguarda a gravação e bloqueia um segundo envio antes de limpar os campos", async () => {
     let concluir;
     const onAdd = vi.fn(() => new Promise((resolve) => { concluir = resolve; }));
     const props = { onAdd };
@@ -83,32 +83,32 @@ describe("envio de transa��es", () => {
     expect(field(render(props), "descricao").props.value).toBe("");
   });
 
-  it("preserva os dados ap�s falha e permite tentar novamente", async () => {
-    const onAdd = vi.fn().mockRejectedValueOnce(new Error("Falha na grava��o")).mockResolvedValueOnce();
+  it("preserva os dados após falha e permite tentar novamente", async () => {
+    const onAdd = vi.fn().mockRejectedValueOnce(new Error("Falha na gravação")).mockResolvedValueOnce();
     const props = { onAdd };
     await submit(fill(props));
     const tree = render(props);
     expect(field(tree, "descricao").props.value).toBe("Compra de teste");
     expect(field(tree, "valor").props.value).toBe("120");
-    expect(find(tree, (node) => node.props?.role === "alert").props.children).toBe("N�o foi poss�vel salvar. Tente novamente.");
+    expect(find(tree, (node) => node.props?.role === "alert").props.children).toBe("Não foi possível salvar. Tente novamente.");
     expect(find(tree, (node) => node.type === "fieldset").props.disabled).toBe(false);
     await submit(tree);
     expect(onAdd).toHaveBeenCalledTimes(2);
     expect(field(render(props), "descricao").props.value).toBe("");
   });
 
-  it("n�o cancela a edi��o quando a grava��o falha", async () => {
+  it("não cancela a edição quando a gravação falha", async () => {
     const cancelarEdicao = vi.fn();
     const props = {
       transacaoEditando: { id: "1", data: "2026-10-07", descricao: "Original", valor: 20, tipo: "despesa" },
-      onEdit: vi.fn().mockRejectedValue(new Error("Sem permiss�o")),
+      onEdit: vi.fn().mockRejectedValue(new Error("Sem permissão")),
       cancelarEdicao,
     };
     await submit(render(props));
     expect(cancelarEdicao).not.toHaveBeenCalled();
     expect(field(render(props), "descricao").props.value).toBe("Original");
   });
-  it("aguarda a cria��o parcelada antes de limpar o formul�rio", async () => {
+  it("aguarda a criação parcelada antes de limpar o formulário", async () => {
     let concluir;
     const onAddParcelado = vi.fn(() => new Promise((resolve) => { concluir = resolve; }));
     const props = { onAddParcelado };
