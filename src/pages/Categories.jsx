@@ -1,4 +1,5 @@
 import { CATALOGO_CATEGORIAS } from "../data/categorias";
+import { normalizarBusca } from "../utils/busca";
 import Select from "../components/ui/Select";
 import { useState } from "react";
 import PageHeader from "../components/ui/PageHeader";
@@ -28,7 +29,7 @@ export default function Categories() {
           c.nome.localeCompare(nome, "pt-BR", { sensitivity: "base" }) === 0,
       )
     ) {
-      setErro("Informe um nome único.");
+      setErro("Informe um nome �nico.");
       return;
     }
     setCategorias((atual) =>
@@ -44,7 +45,7 @@ export default function Categories() {
         title="Categorias"
         subtitle="Organize receitas e despesas para entender melhor seus gastos."
       >
-        <Button disabled title="Disponível em uma implementação futura" onClick={() =>
+        <Button disabled title="Dispon�vel em uma implementa��o futura" onClick={() =>
             setForm({
               nome: "",
               tipo: "Despesas",
@@ -117,12 +118,12 @@ export default function Categories() {
           <span>Tipo</span>
           <span>Status</span>
           
-          <span hidden>Ações</span>
+          <span hidden>A��es</span>
         </div>
         {categorias
           .filter(
             (c) =>
-              c.nome.toLocaleLowerCase().includes(busca.toLocaleLowerCase()) &&
+              normalizarBusca(c.nome).includes(normalizarBusca(busca)) &&
               (tipo === "Todas" || c.tipo === tipo || c.tipo === "Ambas"),
           )
           .map((c) => (
@@ -164,7 +165,7 @@ export default function Categories() {
           ))}
         {!categorias.some(
           (c) =>
-            c.nome.toLocaleLowerCase().includes(busca.toLocaleLowerCase()) &&
+            normalizarBusca(c.nome).includes(normalizarBusca(busca)) &&
             (tipo === "Todas" || c.tipo === tipo || c.tipo === "Ambas"),
         ) && (
           <p className="categories-empty">
@@ -173,7 +174,7 @@ export default function Categories() {
         )}
       </div>
       <p className="categories-preview">
-        Catálogo padrão disponível em transações e planejamento. Criação e gerenciamento de categorias estarão disponíveis futuramente.
+        Cat�logo padr�o dispon�vel em transa��es e planejamento. Cria��o e gerenciamento de categorias estar�o dispon�veis futuramente.
       </p>
       <ModalBase
         isOpen={!!form}
