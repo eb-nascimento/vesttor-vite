@@ -16,7 +16,7 @@ function Paginacao({
   return (
     <div className="paginacao-container">
       <span className="paginacao-info">
-        {de} a {ate} de {totalItens} registros
+        {de} a {ate} de {totalItens} {totalItens === 1 ? "registro" : "registros"}
       </span>
 
       <div className="paginacao-controles">
