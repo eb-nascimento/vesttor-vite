@@ -69,6 +69,12 @@ export default function TabelaPlanejamentos({ itens = [], proximosVencimentos = 
             </label>
           </div>
         </div>
+        {itensFiltrados.length === 0 && (
+          <p role="status" className="planejamento-vazio">
+            Nenhum planejamento encontrado. Ajuste a busca ou os filtros.
+            <button type="button" onClick={() => { setTextoBusca(""); setFiltroAtivo("Todos"); }}>Limpar filtros</button>
+          </p>
+        )}
         <table className="tabela-planejamentos">
           <thead><tr><th scope="col">Item</th><th scope="col" className="align-right">Planejado</th><th scope="col" className="align-right">Realizado</th><th scope="col">Status</th></tr></thead>
           {grupos.map(([tipo, titulo]) => {

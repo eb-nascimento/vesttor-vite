@@ -74,6 +74,10 @@ describe("planejamento responsivo compartilhado", () => {
     const props = { itens: [item], proximosVencimentos: [{ id: "t", descricao: "Conta futura", data: "2026-10-30", valor: 120 }] };
     localizar(render(props), (no) => no.props?.['aria-label'] === "Buscar planejamento por categoria").props.onChange({ target: { value: "inexistente" } });
     expect(acaoItem(render(props))).toBeUndefined();
+    const vazio = localizar(render(props), (no) => no.props?.role === "status");
+    expect(vazio.props.children.join("")).toContain("Nenhum planejamento encontrado");
+    localizar(vazio, (no) => no.type === "button").props.onClick();
+    expect(acaoItem(render(props))).toBeDefined();
     localizar(render(props), (no) => no.props?.id === "planejamento-tab-proximos").props.onClick();
     expect(localizar(render(props), (no) => no.props?.id === "planejamento-painel-visao").props.hidden).toBe(true);
     expect(localizar(render(props), (no) => no.props?.id === "planejamento-painel-proximos").props.hidden).toBe(false);
