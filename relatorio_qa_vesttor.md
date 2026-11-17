@@ -1,5 +1,27 @@
 # Relatório de QA Vesttor
 
+## Correções na branch fix/qa — 16/11/2026
+
+Os achados abaixo foram corrigidos no código, com um commit por item. Esta seção registra a validação local; não representa reteste do ambiente publicado.
+
+| Item | Ajuste | Commit |
+| --- | --- | --- |
+| Exclusão imediata | Confirmação antes de excluir transação avulsa no desktop e no celular; cancelamento e nova tentativa após falha. | a735542 |
+| Erros técnicos no login | Campos obrigatórios e mensagens em português para credenciais inválidas, e-mail inválido e demais falhas de autenticação. | 0087072 |
+| Mensagem antiga entre telas | Reinicialização do formulário ao mudar o modo de autenticação, limpando erros e senhas. | d5cc854 |
+| Texto no singular | Contagem passa a mostrar “1 transação”. | c177b48 |
+| Busca de categorias com acentos | Pesquisa ignora acentos, maiúsculas e espaços nas extremidades. | 9d057fa |
+| Inclusão automática de orçamento zerado | A ação abre o formulário com categoria e classificação preenchidas, aguardando o valor e a confirmação; receitas usam status de meta. | 02c9767 |
+| Busca de planejamento sem resultado | Mensagem explícita com ação para limpar filtros. | 88e6215 |
+| Data padrão adiantada | Reproduzida a diferença entre UTC e data local; criação e edição usam o dia local. | 147caeb |
+| Caracteres corrompidos | Corrigida a transferência em UTF-8 para preservar acentos. Os 20 arquivos de código foram comparados por hash com o GitHub e estão idênticos aos arquivos locais testados, sem caracteres de substituição. | 8c098c5 |
+
+Validação após as correções: `npm run lint` passou; `npm run test:run` passou com 26 arquivos e 158 testes; `npm run build` passou, com aviso de pacote JavaScript acima de 500 kB. Foram incluídos testes de confirmação e cancelamento de exclusão, falha e repetição, login e troca de telas, pesquisa sem acentos, inclusão de orçamento pelo formulário, estado vazio e data local com relógio controlado.
+
+Permanecem pendentes os testes manuais e de infraestrutura descritos abaixo: autenticação real com Google, regras do Firestore, acessibilidade completa, outros navegadores e aparelhos, falhas de rede e desempenho. A suíte de regras é excluída de `test:run` e não foi validada nesta correção. Recuperação de senha e telas anunciadas como futuras continuam fora do escopo destas correções. Nenhum dado das contas de teste foi alterado nesta etapa.
+
+Os commits foram registrados diretamente na branch remota pelo GitHub, pois o ambiente local recusou a gravação em `.git/index.lock`. Os arquivos locais contêm as correções, mas o histórico e o índice locais não foram atualizados. Antes de fazer novos commits locais, sincronizar o checkout com `origin/fix/qa` preservando os arquivos de trabalho.
+
 Ambiente: https://dev.vesttor.com | 16/11/2026, horário de Brasília
 
 Avaliação exploratória em conta de teste criada para este trabalho. As telas foram percorridas em navegador interno com largura estreita. Os testes foram pontuais e não representam aprovação para produção.
