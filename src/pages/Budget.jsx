@@ -84,13 +84,9 @@ function Budget({ usuario }) {
   fixosPlanejados /= 100; fixosRealizados /= 100;
   variaveisPlanejados /= 100; variaveisRealizados /= 100;
   // 6. Função para aprovar o gasto não planejado no banco de dados
-  const handleApproveUnplanned = async (item) => {
-    await criarPlanejamento({
-      categoria: item.categoria,
-      tipo: item.tipo,
-      planejado: 0,
-      mesAno: filtros.mesAno,
-    });
+  const handleApproveUnplanned = (item) => {
+    setPlanejamentoEditando(item);
+    setModalFormAberto(true);
   };
 
   function abrirNovoPlanejamento() {

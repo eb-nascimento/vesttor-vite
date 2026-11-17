@@ -111,6 +111,10 @@ describe("exclusão avulsa", () => {
     const button = find(tree, (node) => node.props?.className?.includes("excluir"));
     button.props.onClick();
     button.props.onClick();
+    expect(props.onExcluir).not.toHaveBeenCalled();
+    const modal = find(render(Component, props), (node) => node.props?.confirmText === "Excluir");
+    modal.props.onConfirm();
+    modal.props.onConfirm();
     expect(props.onExcluir).toHaveBeenCalledTimes(1);
     expect(find(render(Component, props), (node) => node.props?.className?.includes("excluir")).props.disabled).toBe(true);
     falhar(new Error("Falha"));
@@ -118,7 +122,7 @@ describe("exclusão avulsa", () => {
     expect(find(render(Component, props), (node) => node.props?.role === "alert")).toBeDefined();
     expect(find(render(Component, props), (node) => node.props?.className?.includes("excluir")).props.disabled).toBe(false);
     props.onExcluir.mockResolvedValue();
-    find(render(Component, props), (node) => node.props?.className?.includes("excluir")).props.onClick();
+    await find(render(Component, props), (node) => node.props?.confirmText === "Excluir").props.onConfirm();
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(props.onExcluir).toHaveBeenCalledTimes(2);
     expect(find(render(Component, props), (node) => node.props?.role === "alert")).toBeUndefined();

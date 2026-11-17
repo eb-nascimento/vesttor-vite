@@ -22,7 +22,7 @@ function FiltrosTransacoes({
   return (
     <div className={`filtros-transacoes-container ${isOpen ? "open" : ""}`}>
       <div className="filtros-header">
-        <div className="filtros-resumo-mobile"><h3>{quantidade} transações</h3><p>{periodo}</p></div>
+        <div className="filtros-resumo-mobile"><h3>{quantidade} {quantidade === 1 ? "transação" : "transações"}</h3><p>{periodo}</p></div>
         <button
           className="btn-toggle-filtros"
           onClick={onToggle}

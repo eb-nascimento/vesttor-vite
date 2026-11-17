@@ -14,7 +14,7 @@ function Login() {
   // A pagina de login apenas compoe o formulario; a regra de redirecionamento fica no App.
   return (
     <div>
-      <FormAuth modo={modo} />
+      <FormAuth key={modo} modo={modo} />
     </div>
   );
 }

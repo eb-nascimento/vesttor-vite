@@ -28,6 +28,11 @@ const item = { id: "p1", categoria: "Alimentação", tipo: "Variável", planejad
 const acaoItem = (arvore) => localizar(arvore, (no) => no.props?.className === "planejamento-item-acao");
 
 describe("planejamento responsivo compartilhado", () => {
+  it("trata receitas como metas sem mostrar excesso de gastos", () => {
+    const html = renderToStaticMarkup(<TabelaPlanejamentos itens={[{ ...item, tipo: "Entrada", planejado: 0, valorRealizado: 2500 }]} />);
+    expect(html).toContain("Sem meta definida");
+    expect(html).not.toContain("Acima do limite");
+  });
   it("mantém a equação em reais e o saldo recebido", () => {
     const html = renderToStaticMarkup(<EquacaoMes entradasPlanejadas={2000} fixosPlanejados={100} variaveisPlanejados={500} saldoProjetado={1400} />).replace(/\u00a0/g, " ");
     expect(html).toContain("R$ 1.400,00");
@@ -69,6 +74,10 @@ describe("planejamento responsivo compartilhado", () => {
     const props = { itens: [item], proximosVencimentos: [{ id: "t", descricao: "Conta futura", data: "2026-10-30", valor: 120 }] };
     localizar(render(props), (no) => no.props?.['aria-label'] === "Buscar planejamento por categoria").props.onChange({ target: { value: "inexistente" } });
     expect(acaoItem(render(props))).toBeUndefined();
+    const vazio = localizar(render(props), (no) => no.props?.role === "status");
+    expect(vazio.props.children.join("")).toContain("Nenhum planejamento encontrado");
+    localizar(vazio, (no) => no.type === "button").props.onClick();
+    expect(acaoItem(render(props))).toBeDefined();
     localizar(render(props), (no) => no.props?.id === "planejamento-tab-proximos").props.onClick();
     expect(localizar(render(props), (no) => no.props?.id === "planejamento-painel-visao").props.hidden).toBe(true);
     expect(localizar(render(props), (no) => no.props?.id === "planejamento-painel-proximos").props.hidden).toBe(false);

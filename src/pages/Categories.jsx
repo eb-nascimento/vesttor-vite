@@ -1,4 +1,5 @@
 import { CATALOGO_CATEGORIAS } from "../data/categorias";
+import { normalizarBusca } from "../utils/busca";
 import Select from "../components/ui/Select";
 import { useState } from "react";
 import PageHeader from "../components/ui/PageHeader";
@@ -122,7 +123,7 @@ export default function Categories() {
         {categorias
           .filter(
             (c) =>
-              c.nome.toLocaleLowerCase().includes(busca.toLocaleLowerCase()) &&
+              normalizarBusca(c.nome).includes(normalizarBusca(busca)) &&
               (tipo === "Todas" || c.tipo === tipo || c.tipo === "Ambas"),
           )
           .map((c) => (
@@ -164,7 +165,7 @@ export default function Categories() {
           ))}
         {!categorias.some(
           (c) =>
-            c.nome.toLocaleLowerCase().includes(busca.toLocaleLowerCase()) &&
+            normalizarBusca(c.nome).includes(normalizarBusca(busca)) &&
             (tipo === "Todas" || c.tipo === tipo || c.tipo === "Ambas"),
         ) && (
           <p className="categories-empty">

@@ -65,7 +65,7 @@ function FormAuth({ modo = "login" }) {
       // Ao entrar, o Firebase atualiza automaticamente o observador em useAuth.
       await login(email, senha);
     } catch (erro) {
-      setErro(erro.message);
+      setErro(obterMensagemErroAuth(erro.code));
     }
   }
 
@@ -84,7 +84,7 @@ function FormAuth({ modo = "login" }) {
       // O Firebase autentica o usuario logo depois de criar a conta.
       await cadastroUsuario(email, senha);
     } catch (erro) {
-      setErro(erro.message);
+      setErro(obterMensagemErroAuth(erro.code));
     }
   }
 
@@ -273,6 +273,7 @@ function FormAuth({ modo = "login" }) {
             <label htmlFor="email">E-mail:</label>
             <input
               id="email"
+              required
               type="email"
               autoComplete="email"
               placeholder="E-mail"
@@ -284,6 +285,7 @@ function FormAuth({ modo = "login" }) {
             <label htmlFor="senha">Senha:</label>
             <input
               id="senha"
+              required
               type="password"
               autoComplete="current-password"
               placeholder="Senha"

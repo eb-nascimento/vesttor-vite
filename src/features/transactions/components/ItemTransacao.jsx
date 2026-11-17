@@ -3,6 +3,8 @@ import { Pencil, Trash2 } from "lucide-react";
 import "./ItemTransacao.css";
 import { useOperacaoAssincrona } from "../../../hooks/useOperacaoAssincrona";
 import { classificacaoTransacao } from "../../../utils/planejamento";
+import { useState } from "react";
+import ConfirmModal from "../../../components/ui/ConfirmModal";
 
 function ItemTransacao({
   item,
@@ -10,6 +12,7 @@ function ItemTransacao({
   onExcluir,
   onSolicitarExclusaoParcelamento,
 }) {
+  const [confirmando, setConfirmando] = useState(false);
   const { processando, erro, executar } = useOperacaoAssincrona(
     "Não foi possível excluir a transação. Tente novamente.",
   );
@@ -60,7 +63,7 @@ function ItemTransacao({
     if (item.parcelamentoId && onSolicitarExclusaoParcelamento) {
       onSolicitarExclusaoParcelamento(item);
     } else {
-      executar(() => onExcluir(item.id));
+      setConfirmando(true);
     }
   }
 
@@ -107,6 +110,19 @@ function ItemTransacao({
       </div>
       {processando && <span role="status">Excluindo...</span>}
       {erro && <p className="erro-msg" role="alert">{erro}</p>}
+      <ConfirmModal
+        isOpen={confirmando}
+        onClose={() => setConfirmando(false)}
+        title="Excluir transação?"
+        subtitle={`A transação ${item.descricao} será excluída.`}
+        confirmText="Excluir"
+        processando={processando}
+        onConfirm={async () => {
+          if (await executar(() => onExcluir(item.id))) setConfirmando(false);
+        }}
+      >
+        {erro && <p className="erro-msg" role="alert">{erro}</p>}
+      </ConfirmModal>
     </div>
   );
 }

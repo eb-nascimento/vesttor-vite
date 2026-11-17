@@ -2,6 +2,7 @@ import { METODOS_PAGAMENTO } from "../../../data/metodosPagamento";
 import { CATEGORIAS_DESPESA, CATEGORIAS_RECEITA, classificacaoPadraoDespesa } from "../../../data/categorias";
 import { classificacaoTransacao } from "../../../utils/planejamento";
 import { obterMensagemErroFirestore } from "../../../utils/errosFirestore";
+import { dataLocal } from "../../../utils/periodo";
 import "./FormTransacao.css";
 import { useState, useMemo, useRef } from "react";
 import DatePicker from "../../../components/ui/DatePicker";
@@ -25,7 +26,7 @@ import CustomSelect from "../../../components/ui/CustomSelect";
 import TipoSwitcher from "../../../components/ui/TipoSwitcher";
 
 function obterDataAtual() {
-  return new Date().toISOString().split("T")[0];
+  return dataLocal();
 }
 
 
@@ -65,7 +66,7 @@ function criarEstadoInicial(transacaoEditando) {
 
     return {
       data: transacaoEditando.data?.toDate
-        ? transacaoEditando.data.toDate().toISOString().split("T")[0]
+        ? dataLocal(transacaoEditando.data.toDate())
         : transacaoEditando.data || obterDataAtual(),
       descricao: descricaoLimpa,
       valor: valorInicial,

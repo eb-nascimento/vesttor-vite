@@ -3,6 +3,8 @@ import { classificacaoTransacao } from "../../../utils/planejamento";
 import "./TabelaTransacoes.css";
 import { Pencil, Trash2 } from "lucide-react";
 import { useOperacaoAssincrona } from "../../../hooks/useOperacaoAssincrona";
+import { useState } from "react";
+import ConfirmModal from "../../../components/ui/ConfirmModal";
 
 const formatarMetodo = (metodo) => {
   if (!metodo) return "-";
@@ -28,6 +30,7 @@ function TabelaTransacoes({
   onExcluir,
   onSolicitarExclusaoParcelamento,
 }) {
+  const [itemParaExcluir, setItemParaExcluir] = useState(null);
   const { processando, erro, executar } = useOperacaoAssincrona(
     "Não foi possível excluir a transação. Tente novamente.",
   );
@@ -43,7 +46,7 @@ function TabelaTransacoes({
     if (item.parcelamentoId && onSolicitarExclusaoParcelamento) {
       onSolicitarExclusaoParcelamento(item);
     } else {
-      executar(() => onExcluir(item.id));
+      setItemParaExcluir(item);
     }
   };
 
@@ -139,6 +142,19 @@ function TabelaTransacoes({
           })}
         </tbody>
       </table>
+      <ConfirmModal
+        isOpen={Boolean(itemParaExcluir)}
+        onClose={() => setItemParaExcluir(null)}
+        title="Excluir transação?"
+        subtitle={`A transação ${itemParaExcluir?.descricao || ""} será excluída.`}
+        confirmText="Excluir"
+        processando={processando}
+        onConfirm={async () => {
+          if (await executar(() => onExcluir(itemParaExcluir.id))) setItemParaExcluir(null);
+        }}
+      >
+        {erro && <p className="erro-msg" role="alert">{erro}</p>}
+      </ConfirmModal>
     </div>
   );
 }

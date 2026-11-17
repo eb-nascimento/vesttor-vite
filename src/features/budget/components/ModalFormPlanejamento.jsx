@@ -36,7 +36,7 @@ function ModalFormPlanejamento({
       setForm({
         categoria: itemEditando.categoria,
         tipo: itemEditando.tipo,
-        planejado: itemEditando.planejado.toString(),
+        planejado: itemEditando.isUnplanned ? "" : itemEditando.planejado.toString(),
       });
     } else {
       setForm({ categoria: "Alimentação", tipo: "Variável", planejado: "" });
@@ -99,7 +99,7 @@ function ModalFormPlanejamento({
         </button>
         <section className="form-container">
           <div className="form-header">
-            <h2 id="modal-form-planejamento">{itemEditando ? "Editar Orçamento" : "Novo Orçamento"}</h2>
+            <h2 id="modal-form-planejamento">{itemEditando && !itemEditando.isUnplanned ? "Editar Orçamento" : "Novo Orçamento"}</h2>
             <p className="form-subtitulo">
               Defina um limite de gastos ou meta de receita.
             </p>
