@@ -26,7 +26,7 @@ function Budget({ usuario }) {
   const { filtros, setFiltros, mesesDisponiveis, handleMudarMes } =
     useFiltrosTransacoes(transacoes, mudarPeriodo);
 
-  // 1. Filtra as transações do mês selecionado
+  // 1. Filtra as transa��es do m�s selecionado
   const transacoesDoMes = transacoes.filter((t) => {
     if (!t.data) return false;
     const dataObj = t.data.toDate()
@@ -40,7 +40,7 @@ function Budget({ usuario }) {
 
   const todosPlanejamentos = cruzarPlanejamentos(planejamentos, transacoesDoMes);
 
-  // 5. Matemática da Equação do Mês
+  // 5. Matem�tica da Equa��o do M�s
   let entradasPlanejadas = 0,
     entradasRealizadas = 0;
   let fixosPlanejados = 0,
@@ -67,7 +67,7 @@ function Budget({ usuario }) {
     entradasPlanejadas > 0
       ? Math.round((saldoProjetado * 100 / entradasPlanejadas) * 100)
       : 0;
-  // Quanto do orçamento já foi engolido por despesas?
+  // Quanto do or�amento j� foi engolido por despesas?
   const despesasPlanejadas = fixosPlanejados + variaveisPlanejados;
   let porcentagemComprometida = 0;
 
@@ -76,21 +76,17 @@ function Budget({ usuario }) {
       (despesasPlanejadas / entradasPlanejadas) * 100,
     );
   } else if (despesasPlanejadas > 0) {
-    // Se não tem receita planejada, mas tem despesa, já estourou o limite lógico
+    // Se n�o tem receita planejada, mas tem despesa, j� estourou o limite l�gico
     porcentagemComprometida = 101;
   }
 
   entradasPlanejadas /= 100; entradasRealizadas /= 100;
   fixosPlanejados /= 100; fixosRealizados /= 100;
   variaveisPlanejados /= 100; variaveisRealizados /= 100;
-  // 6. Função para aprovar o gasto não planejado no banco de dados
-  const handleApproveUnplanned = async (item) => {
-    await criarPlanejamento({
-      categoria: item.categoria,
-      tipo: item.tipo,
-      planejado: 0,
-      mesAno: filtros.mesAno,
-    });
+  // 6. Fun��o para aprovar o gasto n�o planejado no banco de dados
+  const handleApproveUnplanned = (item) => {
+    setPlanejamentoEditando(item);
+    setModalFormAberto(true);
   };
 
   function abrirNovoPlanejamento() {
@@ -103,7 +99,7 @@ function Budget({ usuario }) {
     setModalFormAberto(true);
   };
 
-  // 7. Próximos Vencimentos (Contas que vão vencer de hoje em diante)
+  // 7. Pr�ximos Vencimentos (Contas que v�o vencer de hoje em diante)
   const hoje = new Date();
   hoje.setHours(0, 0, 0, 0);
 
@@ -114,7 +110,7 @@ function Budget({ usuario }) {
       const dataObj = t.data.toDate
         ? t.data.toDate()
         : new Date(`${t.data}T12:00:00`);
-      // Zera a hora para comparar só o dia
+      // Zera a hora para comparar s� o dia
       dataObj.setHours(0, 0, 0, 0);
       return dataObj >= hoje;
     })
@@ -142,18 +138,18 @@ function Budget({ usuario }) {
       <header className="budget-header">
         <div className="budget-header-textos">
           <h2>Planejamento<span className="budget-desktop-label"> Financeiro</span></h2>
-          <p className="budget-desktop-label">Visão operacional do mês e dos próximos compromissos.</p>
-          <Select className="budget-periodo-compacto" aria-label="Competência do planejamento" value={filtros.mesAno} onChange={(event) => setFiltros({ ...filtros, mesAno: event.target.value })}>
+          <p className="budget-desktop-label">Vis�o operacional do m�s e dos pr�ximos compromissos.</p>
+          <Select className="budget-periodo-compacto" aria-label="Compet�ncia do planejamento" value={filtros.mesAno} onChange={(event) => setFiltros({ ...filtros, mesAno: event.target.value })}>
             {mesesDisponiveis.map((mes) => <option key={mes.valor} value={mes.valor}>{mes.label}</option>)}
           </Select>
         </div>
         <div className="budget-header-acoes">
           <div className="budget-periodo-detalhado"><PaginadorMes mesAtual={mesesDisponiveis.find((mes) => mes.valor === filtros.mesAno)?.label} onMudarMes={handleMudarMes} /></div>
-          <Button onClick={abrirNovoPlanejamento}><span className="budget-desktop-label">Novo Orçamento</span><span className="budget-compacto-label">+ Novo</span></Button>
+          <Button onClick={abrirNovoPlanejamento}><span className="budget-desktop-label">Novo Or�amento</span><span className="budget-compacto-label">+ Novo</span></Button>
         </div>
       </header>
       {transacoesDoMes.some((item) => item.tipo === "despesa" && !item.classificacao) && (
-        <p className="budget-classificacao-aviso">Despesas antigas sem classificação usam o padrão da categoria. Edite o lançamento para escolher fixo ou variável.</p>
+        <p className="budget-classificacao-aviso">Despesas antigas sem classifica��o usam o padr�o da categoria. Edite o lan�amento para escolher fixo ou vari�vel.</p>
       )}
       <EquacaoMes
         entradasPlanejadas={entradasPlanejadas}

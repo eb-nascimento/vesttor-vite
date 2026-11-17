@@ -5,7 +5,7 @@ import { centavosDoItem, paraCentavos } from "../../../utils/dinheiro";
 import { useOperacaoAssincrona } from "../../../hooks/useOperacaoAssincrona";
 import "./TabelaPlanejamentos.css";
 
-const grupos = [["Entrada", "Entradas"], ["Fixo", "Gastos fixos"], ["Variável", "Variáveis"]];
+const grupos = [["Entrada", "Entradas"], ["Fixo", "Gastos fixos"], ["Vari�vel", "Vari�veis"]];
 
 export default function TabelaPlanejamentos({ itens = [], proximosVencimentos = [], onApprove, onEdit, onAdd }) {
   const [aba, setAba] = useState("visao");
@@ -13,10 +13,10 @@ export default function TabelaPlanejamentos({ itens = [], proximosVencimentos = 
   const [textoBusca, setTextoBusca] = useState("");
   const [filtrosAbertos, setFiltrosAbertos] = useState(false);
   const [gruposFechados, setGruposFechados] = useState([]);
-  const { processando, erro, executar } = useOperacaoAssincrona("Não foi possível adicionar ao planejamento. Tente novamente.");
+  const { processando, erro, executar } = useOperacaoAssincrona("N�o foi poss�vel adicionar ao planejamento. Tente novamente.");
 
   const itensFiltrados = itens.filter((item) =>
-    (filtroAtivo === "Todos" || item.tipo === ({ Entradas: "Entrada", Fixos: "Fixo", Variáveis: "Variável" })[filtroAtivo]) &&
+    (filtroAtivo === "Todos" || item.tipo === ({ Entradas: "Entrada", Fixos: "Fixo", Vari�veis: "Vari�vel" })[filtroAtivo]) &&
     item.categoria.toLocaleLowerCase("pt-BR").includes(textoBusca.toLocaleLowerCase("pt-BR")),
   );
 
@@ -33,15 +33,20 @@ export default function TabelaPlanejamentos({ itens = [], proximosVencimentos = 
   }
 
   function statusDoItem(item) {
-    if (item.isUnplanned) return "Não planejado";
+    if (item.isUnplanned) return "N�o planejado";
+    if (item.tipo === "Entrada") {
+      return item.planejado > 0
+        ? `${Math.round((item.valorRealizado / item.planejado) * 100)}% da meta`
+        : "Sem meta definida";
+    }
     if (item.planejado > 0) return `${Math.round((item.valorRealizado / item.planejado) * 100)}% utilizado`;
     return item.valorRealizado > 0 ? "Acima do limite" : "0% utilizado";
   }
 
   return (
     <section className="tabela-planejamentos-container">
-      <div className="planejamento-abas" role="tablist" aria-label="Visões do planejamento">
-        {[["visao", "Visão geral"], ["proximos", "Próximos vencimentos"]].map(([valor, label]) => (
+      <div className="planejamento-abas" role="tablist" aria-label="Vis�es do planejamento">
+        {[["visao", "Vis�o geral"], ["proximos", "Pr�ximos vencimentos"]].map(([valor, label]) => (
           <button key={valor} id={`planejamento-tab-${valor}`} role="tab"
             tabIndex={aba === valor ? 0 : -1} aria-selected={aba === valor}
             aria-controls={`planejamento-painel-${valor}`} onKeyDown={navegarAbas} onClick={() => setAba(valor)}>{label}</button>
@@ -55,7 +60,7 @@ export default function TabelaPlanejamentos({ itens = [], proximosVencimentos = 
           <button className="planejamento-filtros-toggle" aria-expanded={filtrosAbertos} aria-controls="planejamento-filtros" onClick={() => setFiltrosAbertos(!filtrosAbertos)}>Filtrar planejamentos</button>
           <div id="planejamento-filtros" className="planejamento-filtros">
             <div className="tabela-planejamentos-filtros" role="group" aria-label="Filtrar planejamentos por tipo">
-              {["Todos", "Entradas", "Fixos", "Variáveis"].map((tipo) => (
+              {["Todos", "Entradas", "Fixos", "Vari�veis"].map((tipo) => (
                 <button key={tipo} className={`filtro-btn ${filtroAtivo === tipo ? "ativo" : ""}`} aria-pressed={filtroAtivo === tipo} onClick={() => setFiltroAtivo(tipo)}>{tipo}</button>
               ))}
             </div>
@@ -75,13 +80,13 @@ export default function TabelaPlanejamentos({ itens = [], proximosVencimentos = 
             return <tbody id={`planejamento-grupo-${tipo}`} key={tipo} className={`planejamento-grupo ${tipo === "Entrada" ? "entrada" : tipo === "Fixo" ? "fixo" : "variavel"} ${fechado ? "grupo-fechado" : ""}`}>
               <tr className="planejamento-grupo-cabecalho"><th colSpan="4" scope="rowgroup">
                 <button aria-expanded={!fechado} aria-controls={`planejamento-grupo-${tipo}`} onClick={() => alternarGrupo(tipo)}>
-                  <span>{fechado ? "▸" : "▾"} {titulo}</span><strong>{formatarMoeda(realizado)}</strong>
+                  <span>{fechado ? "?" : "?"} {titulo}</span><strong>{formatarMoeda(realizado)}</strong>
                 </button>
               </th></tr>
               {linhas.map((item) => <tr className={`planejamento-linha ${item.isUnplanned ? "linha-alerta" : ""}`} key={item.id}>
                 <td><button className="planejamento-item-acao" disabled={processando} onClick={() => item.isUnplanned ? executar(() => onApprove?.(item)) : onEdit?.(item)}
                   aria-label={`${item.isUnplanned ? "Adicionar ao" : "Editar"} planejamento de ${item.categoria}${tipo !== "Entrada" ? ` (${tipo.toLocaleLowerCase("pt-BR")})` : ""}`}>
-                  <span className="item-title">{item.categoria}{tipo !== "Entrada" ? ` (${tipo.toLocaleLowerCase("pt-BR")})` : ""}</span><small>{item.isUnplanned ? "Não planejado · Adicionar" : "Editar planejamento"}</small>
+                  <span className="item-title">{item.categoria}{tipo !== "Entrada" ? ` (${tipo.toLocaleLowerCase("pt-BR")})` : ""}</span><small>{item.isUnplanned ? "N�o planejado � Adicionar" : "Editar planejamento"}</small>
                 </button></td>
                 <td className="align-right">{formatarMoeda(item.planejado)}</td>
                 <td className={`align-right ${tipo !== "Entrada" && item.valorRealizado > item.planejado ? "text-red" : tipo === "Entrada" ? "text-green" : ""}`}>{formatarMoeda(item.valorRealizado)}</td>
@@ -98,7 +103,7 @@ export default function TabelaPlanejamentos({ itens = [], proximosVencimentos = 
         {proximosVencimentos.length ? proximosVencimentos.map((item) => <article className="planejamento-vencimento" key={item.id}>
           <div><strong>{item.descricao}</strong><small>{(item.data?.toDate ? item.data.toDate() : new Date(`${item.data}T12:00:00`)).toLocaleDateString("pt-BR")}</small></div>
           <strong>{formatarMoeda(item.valor)}</strong>
-        </article>) : <p className="planejamento-vazio">Nenhuma despesa futura neste mês.</p>}
+        </article>) : <p className="planejamento-vazio">Nenhuma despesa futura neste m�s.</p>}
       </section>
     </section>
   );
