@@ -1,5 +1,7 @@
 # Checklist de Estudos - Vesttor
 
+> **Registro histórico ou proposta:** o conteúdo abaixo preserva decisões e planos da época e pode divergir da implementação entregue. Para o estado do MVP e suas limitações, consulte [MVP](../MVP.md) e [índice da documentação](README.md). Não interprete requisitos propostos como funcionalidades prontas.
+
 Este checklist registra o que ja foi estudado/implementado no projeto e o que ainda falta fazer. A ideia e evitar repetir CRUD simples e manter o foco em conceitos novos.
 
 > **Registro histórico de estudo.** Para situação, prioridade e critérios vigentes em 26/09/2026, prevalecem [Plano de refatoração](plano-refatoracao.md), [Especificação funcional](especificacao-funcional.md) e o backlog do Notion.

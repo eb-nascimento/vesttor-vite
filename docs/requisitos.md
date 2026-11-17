@@ -1,5 +1,7 @@
 # Vesttor - Requisitos do Projeto
 
+> **Registro histórico ou proposta:** o conteúdo abaixo preserva decisões e planos da época e pode divergir da implementação entregue. Para o estado do MVP e suas limitações, consulte [MVP](../MVP.md) e [índice da documentação](README.md). Não interprete requisitos propostos como funcionalidades prontas.
+
 > **Documento histórico e não normativo.** Esta versão contém premissas anteriores à revisão de 26/09/2026. As fontes atuais são [Requisitos V2](requisitos-v2.md), [Especificação funcional](especificacao-funcional.md) e [Modelo de dados](modelo-de-dados.md).
 
 ## 1. Visao geral

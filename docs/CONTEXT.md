@@ -1,5 +1,7 @@
 # Vesttor
 
+> **Registro histórico ou proposta:** o conteúdo abaixo preserva decisões e planos da época e pode divergir da implementação entregue. Para o estado do MVP e suas limitações, consulte [MVP](../MVP.md) e [índice da documentação](README.md). Não interprete requisitos propostos como funcionalidades prontas.
+
 O Vesttor organiza controle e planejamento financeiro pessoal. Este glossário define a linguagem oficial do domínio. Os documentos em `docs` usam estes termos; nomes diferentes presentes no código atual são contratos legados a serem refatorados.
 
 ## Transações

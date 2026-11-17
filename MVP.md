@@ -1,6 +1,6 @@
 # Fechamento do MVP — Vesttor
 
-Data: 13/11/2026. Marco de documentação: versão 0.6.1.
+Fechamento funcional: 13/11/2026. Revisão documental: 17/11/2026. Versão do projeto: 0.8.1 (`package.json`).
 
 O responsável pelo projeto declarou concluído o escopo funcional do MVP após a implementação da tela de métodos de pagamento. Esta decisão congela o escopo desta primeira entrega; funcionalidades descritas em planejamentos anteriores que excedam os itens abaixo são evolução futura e não condicionam o fechamento do MVP.
 
@@ -16,6 +16,35 @@ O responsável pelo projeto declarou concluído o escopo funcional do MVP após 
 - Telas de categorias e métodos com busca, filtro por tipo e resumo; apresentação responsiva baseada no Figma e nos componentes do projeto.
 - Selects compartilhados com busca por digitação, correspondência sem acentos e seleção por teclado.
 - Persistência das transações e planejamentos no Firestore, vinculada ao usuário autenticado.
+
+## Referência da implementação para a banca
+
+O MVP é uma aplicação web de finanças pessoais em React, Vite e Firebase. Após o login, a Home apresenta a soma de receitas, despesas e a diferença entre ambas para o mês selecionado, a partir da data registrada nas transações. Esse resultado não é saldo bancário e não distingue pagamento ou recebimento efetivo. O planejamento compara valores previstos por categoria e classificação com transações do período; não há conciliação bancária nem controle de liquidação.
+
+| Área | Situação nesta versão |
+| --- | --- |
+| Acesso | Cadastro e entrada por e-mail e senha, entrada com Google e fluxo de recuperação de senha; depende da configuração do Firebase Authentication. |
+| Transações | Receitas e despesas com criação, edição, exclusão, consulta mensal, busca, filtros, ordenação e paginação. |
+| Parcelamento | Despesas parceladas são criadas em lote; há edição e exclusão de parcelas conforme o fluxo disponível. Não existe controle de parcelas liquidadas ou faturas. |
+| Planejamento | Orçamentos mensais por categoria e tipo Entrada, Fixo ou Variável, com comparação ao realizado. |
+| Catálogos | Categorias e métodos predefinidos no código, com consulta e filtros; cadastro próprio indisponível. |
+| Outras telas | Dashboard, Minha conta e Configurações exibem estado em construção. |
+
+### Dados e segurança
+
+Novas transações e planejamentos são gravados em `usuarios/{uid}/transacoes` e `usuarios/{uid}/planejamentos`, com `userId` e valores monetários inteiros em centavos. Transações também são lidas da coleção raiz legada; na edição individual, um registro legado é movido para o caminho privado. O planejamento lê apenas registros privados com ID determinístico `orcamento-{mesAno}-{tipo}-{categoria}`: planejamentos antigos fora desse contrato não aparecem e não são apagados automaticamente. Consulte os serviços e as regras para o contrato preciso.
+
+As regras locais restringem dados privados ao usuário autenticado e validam campos; a existência dessas regras no repositório não comprova sua publicação no ambiente da banca. Os catálogos apresentados pela aplicação são arquivos locais; regras para catálogos futuros não significam que sua gestão esteja disponível. A configuração ativa não publica Cloud Functions.
+
+### Roteiro de demonstração
+
+1. Entrar com uma conta de demonstração preparada no ambiente escolhido.
+2. Registrar uma receita e uma despesa, e apresentar os totais mensais na Home.
+3. Consultar e filtrar as transações; demonstrar uma despesa parcelada e sua distribuição entre meses.
+4. Criar um planejamento para uma categoria com movimentação no mesmo mês e comparar previsto e realizado.
+5. Mostrar os catálogos e esclarecer que são predefinidos; indicar as telas em construção e as evoluções futuras.
+
+Antes da banca, confirme o acesso à conta, provedores e domínio autorizado, dados de demonstração, conexão, publicação da aplicação, regras e índices no projeto de destino. Esses pontos dependem do ambiente e não são comprovados apenas pelo código.
 
 ## Decisões do MVP
 

@@ -1,5 +1,7 @@
 # Vesttor - Arquitetura e Implementacao
 
+> **Registro histórico ou proposta:** o conteúdo abaixo preserva decisões e planos da época e pode divergir da implementação entregue. Para o estado do MVP e suas limitações, consulte [MVP](../MVP.md) e [índice da documentação](README.md). Não interprete requisitos propostos como funcionalidades prontas.
+
 > **Documento histórico e não normativo.** A arquitetura confirmada em 26/09/2026 está em [Arquitetura V2](arquitetura-v2.md). O conteúdo abaixo foi preservado apenas para rastreabilidade e inclui decisões superadas.
 
 ## 1. Visao tecnica
