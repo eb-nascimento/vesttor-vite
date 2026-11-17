@@ -1,5 +1,7 @@
 # Estratégia de Testes do Vesttor
 
+> **Registro histórico ou proposta:** o conteúdo abaixo preserva decisões e planos da época e pode divergir da implementação entregue. Para o estado do MVP e suas limitações, consulte [MVP](../MVP.md) e [índice da documentação](README.md). Não interprete requisitos propostos como funcionalidades prontas.
+
 **Revisão:** 26/09/2026
 
 > A estratégia vigente prioriza riscos de perda de dados, cálculo incorreto e acesso indevido. A última verificação registrada aprovou 30 testes Vitest e 5 testes das Security Rules. As contagens e a orientação reduzida das versões anteriores estão superadas por esta revisão.

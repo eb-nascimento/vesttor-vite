@@ -1,5 +1,7 @@
 # Especificação Funcional e Técnica: Transações V2
 
+> **Registro histórico ou proposta:** o conteúdo abaixo preserva decisões e planos da época e pode divergir da implementação entregue. Para o estado do MVP e suas limitações, consulte [MVP](../MVP.md) e [índice da documentação](README.md). Não interprete requisitos propostos como funcionalidades prontas.
+
 > **Situação em 26/09/2026: A ser refatorada.** A interface, os filtros, a paginação e os componentes existem. As três operações parceladas foram alinhadas aos nomes exportados por `useTransacoes` e possuem teste de regressão. Ainda faltam o modelo financeiro aprovado, paginação consistente, cards derivados de todos os filtros e tratamento correto de falhas.
 
 Documento de especificação técnica e de design para a página de **Transações V2**, elaborado a partir do Figma oficial (**Node 222:2 — Transações V2**) e alinhado via sessão de refinamento de domínio (_grilling_).

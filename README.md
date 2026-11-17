@@ -85,7 +85,7 @@ MVP funcional concluído e aceito pelo responsável em 13/11/2026. Inclui autent
 ### Documentação
 
 - [Índice da documentação e fontes atuais](docs/README.md).
-- [Especificação funcional](docs/especificacao-funcional.md) e [arquitetura atual](docs/arquitetura-v2.md).
+- [Referência do MVP entregue](MVP.md); especificações e arquitetura anteriores são registros históricos.
 - [Proposta de backend com Cloud Functions](docs/cloud-functions.md).
 - [Temas e identidade visual](docs/temas.md).
 - [Ambientes e publicação](docs/ambientes-e-deploy.md).
@@ -108,7 +108,7 @@ Parte da documentação contém registros históricos. Confira os avisos de cada
 - `.tmp/` e `output/`: arquivos temporários e saídas locais, ignorados pelo Git.
 - `dist/`, `node_modules/` e `.firebase/`: saídas de build, dependências e cache das ferramentas.
 
-As configurações de Vite e ESLint ficam em `config/`, e os arquivos `.env*` em `config/env/`. Use os scripts `npm run dev`, `npm run lint`, `npm run build`, `npm run preview` e `npm run test:run`, que já apontam para os novos caminhos. Os workflows usam esses scripts e continuam recebendo as variáveis pelo ambiente. `firebase.json`, `.firebaserc`, `.gitignore`, `package.json` e `package-lock.json` permanecem na raiz para o fluxo atual das ferramentas, junto ao `README.md`. A entrada HTML está em `src/index.html`; o Vite usa `src/` como raiz, lê os arquivos públicos de `public/` e continua gerando `dist/`. O Vitest mantém a raiz de testes no diretório do repositório. O glossário está em `docs/CONTEXT.md`. `config/skills-lock.json` preserva o registro anterior das skills; o instalador poderá gerar um novo lockfile na raiz, pois não descobre automaticamente a cópia arquivada. O Firebase pode voltar a gerar logs na raiz; arquivos `*.log` já são ignorados. A decisão existente de ignorar novos documentos em `docs/` foi preservada; documentos já versionados continuam sendo acompanhados pelo Git.
+As configurações de Vite e ESLint ficam em `config/`, e os arquivos `.env*` em `config/env/`. Use os scripts `npm run dev`, `npm run lint`, `npm run build`, `npm run preview` e `npm run test:run`, que já apontam para os novos caminhos. Os workflows usam esses scripts e continuam recebendo as variáveis pelo ambiente. `firebase.json`, `.firebaserc`, `.gitignore`, `package.json` e `package-lock.json` permanecem na raiz para o fluxo atual das ferramentas, junto ao `README.md`. A entrada HTML está em `src/index.html`; o Vite usa `src/` como raiz, lê os arquivos públicos de `public/` e continua gerando `dist/`. O Vitest mantém a raiz de testes no diretório do repositório. O glossário está em `docs/CONTEXT.md`. `config/skills-lock.json` preserva o registro anterior das skills; o instalador poderá gerar um novo lockfile na raiz, pois não descobre automaticamente a cópia arquivada. O Firebase pode voltar a gerar logs na raiz; arquivos `*.log` já são ignorados. Parte de `docs/` está ignorada pelo Git; documentos ainda não rastreados não entram automaticamente em commits.
 
 ---
 
@@ -181,7 +181,7 @@ The functional MVP was accepted by the project owner on November 13, 2026. It in
 The following documents are primarily in Portuguese:
 
 - [Documentation index and current sources](docs/README.md).
-- [Functional specification](docs/especificacao-funcional.md) and [current architecture](docs/arquitetura-v2.md).
+- [Delivered MVP reference](MVP.md); earlier specifications and architecture documents are historical.
 - [Proposed Cloud Functions backend](docs/cloud-functions.md).
 - [Themes and visual identity](docs/temas.md).
 - [Environments and deployment](docs/ambientes-e-deploy.md).

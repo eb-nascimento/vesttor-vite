@@ -1,5 +1,7 @@
 # Auditoria das telas — Vesttor V2/V3
 
+> **Registro histórico ou proposta:** o conteúdo abaixo preserva decisões e planos da época e pode divergir da implementação entregue. Para o estado do MVP e suas limitações, consulte [MVP](../MVP.md) e [índice da documentação](README.md). Não interprete requisitos propostos como funcionalidades prontas.
+
 Revisão consolidada em 25/09/2026. O escopo desta auditoria é o arquivo oficial do Figma e sua documentação. Ela não comprova a implementação das funcionalidades no React/Firebase.
 
 ## Resultado

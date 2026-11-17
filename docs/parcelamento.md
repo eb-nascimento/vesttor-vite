@@ -1,5 +1,7 @@
 # Especificação Funcional e Técnica: Transação e Parcelamento
 
+> **Registro histórico ou proposta:** o conteúdo abaixo preserva decisões e planos da época e pode divergir da implementação entregue. Para o estado do MVP e suas limitações, consulte [MVP](../MVP.md) e [índice da documentação](README.md). Não interprete requisitos propostos como funcionalidades prontas.
+
 > **Revisão de 26/09/2026.** A criação parcelada em lote está implementada. A edição atual da série está **A ser refatorada** porque ainda substitui documentos anteriores, inclusive parcelas liquidadas. Os nomes consumidos pela tela foram alinhados ao contrato de `useTransacoes` e receberam cobertura de regressão.
 
 Este documento define a arquitetura, regras de negócio, modelo de dados e comportamento de interface para compras parceladas no Vesttor, consolidado após sessão de refinamento de domínio (_grilling session_).

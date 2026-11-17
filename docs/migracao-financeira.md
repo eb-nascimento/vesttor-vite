@@ -1,5 +1,7 @@
 # Migração financeira — hierarquia privada e centavos
 
+> **Registro histórico ou proposta:** o conteúdo abaixo preserva decisões e planos da época e pode divergir da implementação entregue. Para o estado do MVP e suas limitações, consulte [MVP](../MVP.md) e [índice da documentação](README.md). Não interprete requisitos propostos como funcionalidades prontas.
+
 Revisão: 08/10/2026. Banco configurado: `(default)`, Standard. As ferramentas estão implementadas; nenhum dado de produção foi migrado e nenhuma regra ou índice foi publicado nesta etapa.
 
 ## Contrato implementado

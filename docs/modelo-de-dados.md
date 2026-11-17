@@ -1,5 +1,7 @@
 # Modelo de Dados do Vesttor
 
+> **Registro histórico ou proposta:** o conteúdo abaixo preserva decisões e planos da época e pode divergir da implementação entregue. Para o estado do MVP e suas limitações, consulte [MVP](../MVP.md) e [índice da documentação](README.md). Não interprete requisitos propostos como funcionalidades prontas.
+
 **Versão:** 2.0
 **Revisão:** 08/10/2026
 **Responsável:** Eduardo Bernardo do Nascimento
